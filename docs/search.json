@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "YOUR PROJECT TITLE - changed",
     "section": "",
-    "text": "1 Introduction",
+    "text": "1 Introduction\nHi, this is my intro",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
@@ -14,7 +14,7 @@
     "href": "data.html",
     "title": "2  Data",
     "section": "",
-    "text": "2.1 Description",
+    "text": "2.1 Description\nSome description",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
     ]
@@ -24,7 +24,7 @@
     "href": "data.html#missing-value-analysis",
     "title": "2  Data",
     "section": "2.2 Missing value analysis",
-    "text": "2.2 Missing value analysis",
+    "text": "2.2 Missing value analysis\nMissing value stuff goes here.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
     ]

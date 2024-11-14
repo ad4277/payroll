@@ -25,8 +25,9 @@ book:
 
 format:
   html:
-    # theme: cosmo
-    theme: darkly
+    theme: cosmo
+    # theme: darkly
+    # theme: Litera
     code-fold: true
 
 

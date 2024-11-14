@@ -1,4 +1,4 @@
-# Tutorial complete
+# Tutorial complete after email change
 
 This repo contains a [Quarto book](https://quarto.org/docs/books/) template for the EDAV final project.
 

@@ -6,11 +6,11 @@ execute:
   echo: true
 
 book:
-  title: "YOUR PROJECT TITLE"
+  title: "YOUR PROJECT TITLE - changed"
   author:
-    - AUTHOR1 (UNI1)
-    - AUTHOR2 (UNI2)
-  repo-url: https://github.com/YOUR_GITHUB_ACCOUNT/REPO_NAME
+    - AUTHOR1 (UNI1) me
+    - AUTHOR2 (UNI2) big bird
+  repo-url: https://github.com/ad4277/payroll
   date: today
   page-footer:
     right: |

@@ -26,7 +26,33 @@ changing to a new branch =)
 
 ## Description
 
-Some description
+Identify one or more data sources (see II. D. above) that you propose to draw on for the project. 
+
+
+For each, describe how the data are collected and by whom. 
+
+Describe the format of the data, 
+
+the frequency of updates, 
+
+dimensions, 
+
+and any other relevant information. 
+
+
+Note any issues / problems with the data, 
+either known or that you discover. 
+
+Explain how you plan to import the data. 
+Carefully document your sources with links to the precise data sources that you used. 
+
+If that is not possible (for example if your data is not available online, then explain that clearly.)
+
+
+https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data
+
+
+
 
 ## Missing value analysis
 

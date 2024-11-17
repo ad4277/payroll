@@ -3,10 +3,13 @@
 .RData
 .Ruserdata
 .DS_Store
+<<<<<<< HEAD
 .DS_Store?
 *.DS_Store
 */.DS_Store
 **/.DS_Store
+=======
+>>>>>>> bd09c9f79f4fa46c71813e200eaf5eb9c9f0beeb
 
 /.quarto/
 

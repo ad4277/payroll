@@ -1,75 +1,71 @@
-::: callout-note
-**Instruction**
-2 Data data.qmd
-
-  2.1 Technical description
-
-Identify one or more data sources (see II. D. above) that you propose to draw on for the project. For each, describe how the data are collected and by whom. Describe the format of the data, the frequency of updates, dimensions, and any other relevant information. Note any issues / problems with the data, either known or that you discover. Explain how you plan to import the data. Carefully document your sources with links to the precise data sources that you used. If that is not possible (for example if your data is not available online, then explain that clearly.)
-
-(suggested: 1/2 page) 250-500 words
-
- 
-
- 2.2 Missing value analysis
-
-Describe any patterns you discover in missing values. If no values are missing, graphs should still be included showing that.
-
-(suggested: 2 graphs plus commentary)
-:::
-
-
-
 # Data
 
-changing to a new branch =)
+For this project, we will be using a subset of the **Citywide Payroll Data**.\
+This dataset is available via NYC OpenData and provided by the Office of Payroll Administration (OPA).
 
+
+The final subset of data for this project will be based on 2 Agencies: \
+<p style="margin-top: -15px">
+-   Fire Department
+-   Police Department
+</p>
+
+First, we will examine the metadata of the entire dataset, followed by an analysis of missing values to identify any potential issues that may impact our analysis. Finally, we will outline the decision-making process for selecting a subset of the data.
 
 ## Description
 
-For this project, we will be using the **Citywide Payroll Data**. 
+**Data Metadata**
 
-This dataset is available via NYC OpenData and provided by the Office of Payroll Administration (OPA).
 ```{r}
+#| echo: false
+
 library(knitr)
+library(kableExtra)
 
 # Create a tibble for the metadata
 metadata <- tibble::tibble(
   Field = c(
-    "Agency",
-    "Data Category",
     "Dataset Name",
+    "Provided by",
+    "Data Category",
     "Frequency of Updates", 
     "Date Created", 
     "Data Last Updated", 
     "Dimensions",
-    "Each row represents"
+    "Each row represents",
+    "Source URL"
   ),
   Value = c(
+    "Citywide Payroll Data (Fiscal Year)",
     "Office of Payroll Administration (OPA)",
     "City Government",
-    "Citywide Payroll Data (Fiscal Year)",
     "Annually", 
     "October 31, 2015", 
     "October 30, 2024", 
     "6,225,611 rows and 17 columns",
-    "City Employee Salary per Fiscal Year"
+    "City Employee Salary per Fiscal Year",
+    "https://data.cityofnewyork.us/"
   )
 )
 
 # Print the metadata table using kable
-kable(metadata, col.names = NULL, caption = "Dataset Metadata", align = "l")
+kable(metadata, col.names = NULL, 
+      # caption = "Dataset Metadata",
+      align = "l")
 
 ```
 
+\
+\
 
-
-### Data Format
-
-This dataset contains a variety of Text, Number and Date columns.
+**Data Format**
 
 ```{r}
+#| echo: false
+
 library(tibble)
 library(knitr)
+library(kableExtra)
 
 payroll_data_format <- tibble(
   column_name = c(
@@ -102,7 +98,7 @@ payroll_data_format <- tibble(
   # ),
   data_type = c(
     "Number", "Number", "Text", "Text", "Text", 
-    "Text", "Floating Timestamp", "Text", 
+    "Text", "Timestamp", "Text", 
     "Text", "Text", "Number", 
     "Text", "Number", "Number", "Number", 
     "Number", "Number"
@@ -111,60 +107,224 @@ payroll_data_format <- tibble(
 
 names(payroll_data_format) <- c("Column Name","Description","Data Type")
 
-kable(payroll_data_format,caption = "Dataset Format", align = "l")
+kable(payroll_data_format,
+      # caption = "Dataset Format", 
+      align = "l") |>
+  kable_styling(full_width = FALSE) |>
+  column_spec(1, width = "200px")
 ```
 
+\
+\
 
+**Importing the data**\
 
+To access the data, we can go directly to the URL:\
+<p style="font-size:95%; font-style:italic">
+<https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data>
+</p>
 
+From this URL, you can click the button 'Export', and then select Download File-CSV format (All data 6225611 rows). This will download a file of about 840MB. Remember, we are using the data Last Updated on October 30, 2024.
 
+The file will be downloaded with the name: Citywide_Payroll_Data\_\_Fiscal_Year\_\_**YYYYMMDD**.csv\
+<p style="font-size:90%; font-style:italic">
+(YYYYMMDD refers to the date that you downloaded the file)
+</p>
 
-
-The data is update Annualy, and the last update was done on October 30, 2024. This dataset was created in October 31, 2015, so we have about 10 years on complete data.
-
-Dimensions: 6,225,611 rows and 17 columns
-
-Describe the format of the data, 
-
-the frequency of updates, 
-
-dimensions, 
-
-and any other relevant information. 
-
-
-Note any issues / problems with the data, 
-either known or that you discover. 
-
-Explain how you plan to import the data. 
-Carefully document your sources with links to the precise data sources that you used. 
-
-If that is not possible (for example if your data is not available online, then explain that clearly.)
-
-
-https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data
-
-
-
+Once the data was downloaded, it was added to a new folder inside the repository called 'data_source'.
 
 ## Missing value analysis
 
 Missing value stuff goes here.
 
+## Understanding the raw data
+
+Note any issues / problems with the data, either known or that you discover.
+
+## Deciding on final data subset
+
+Based on the analysis above, we will add a few filter to reduce and clean the dataset.
+
+**Filters applied to the dataset:**\
+
+```{r}
+#| echo: false
+
+library(tibble)
+library(knitr)
+library(kableExtra)
+
+payroll_data_format <- tibble(
+  column_name = c(
+    "Fiscal Year", 
+    "Agency Name", 
+    "Pay Basis"
+  ),
+  filter = c(
+    "From 2015 to 2024", 
+    "FIRE DEPARTMENT, POLICE DEPARTMENT",
+    "per Annum, per Day, per Hour"
+  )
+)
+
+names(payroll_data_format) <- c("Column Name","Filter")
+
+kable(payroll_data_format,
+      # caption = "Dataset Format", 
+      align = "l") |>
+  kable_styling(full_width = FALSE) |>
+  column_spec(1, width = "200px")
+```
+
+\
+\
+
+**Size of Final subset Data**\
+
+```{r}
+#| echo: false
+
+library(knitr)
+library(kableExtra)
+
+# Create a tibble for the metadata
+metadata <- tibble::tibble(
+  Field = c(
+    # "Dataset Name",
+    # "Provided by",
+    # "Data Category",
+    # "Frequency of Updates", 
+    # "Date Created", 
+    # "Data Last Updated", 
+    "Dimensions",
+    "Each row represents"
+    # "Source URL"
+  ),
+  Value = c(
+    # "Citywide Payroll Data (Fiscal Year)",
+    # "Office of Payroll Administration (OPA)",
+    # "City Government",
+    # "Annually", 
+    # "October 31, 2015", 
+    # "October 30, 2024", 
+    "821,348 rows and 17 columns",
+    "City Employee Salary per Fiscal Year"
+    # "https://data.cityofnewyork.us/"
+  )
+)
+
+# Print the metadata table using kable
+kable(metadata, col.names = NULL, 
+      # caption = "Dataset Metadata",
+      align = "l")
+
+```
+
+\
+
+**Record count by Department:**\
+
+```{r}
+#| message: false
+#| warning: false
+#| fig-width: 7
+#| fig-height: 3
+
+library(ggplot2)
+library(tibble)
+library(dplyr)
+
+# Create a dataframe with the data
+data <- tibble(
+  Department = c("Fire Department", "Police Department"),
+  Count = c(209272, 612076),
+  Color = c("red", "blue")
+)
+
+# Calculate percentages for each department
+data <- data %>%
+  mutate(Percentage = Count / sum(Count) * 100,
+         Label = paste(
+           # Department, "\n", 
+                       format(Count, big.mark = ","), "\n", " (", sprintf("%.0f", Percentage), "%)", sep = ""))
+
+# Create the pie chart using ggplot2
+ggplot(data, aes(x = "", y = Count, fill = Department)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +
+  scale_fill_manual(values = c("red", "deepskyblue")) +
+  # labs(title = "Record Count by Department") +
+  theme_void() +
+  # theme(legend.position = "none") +  # Remove the legend if you don't want it
+  geom_text(aes(label = Label), position = position_stack(vjust = 0.5), color = "white")
+
+```
+
+**Overall dataset Information:**\
+
+```{r}
+#| echo: false
+
+
+# Create a tibble for the metadata
+metadata_final_table <- tibble::tibble(
+  "Metrics" = c(
+    "Count of Records",
+    "Fiscal Years",
+    "Agency Start Date Range", 
+    "Work Location Borough",
+    "Title Description"
+  ),
+  "Fire Deparmtnet" = c(
+    "209272",
+    "10 years (2015-2024)",
+    "1968-04-22 to 2024-07-29   ", 
+    "5",
+    "100"
+  ),
+  "Police Department" = c(
+    "612076",
+    "10 years (2015-2024)",
+    "1960-11-14 to 2049-10-16", 
+    "5",
+    "200"
+  ),
+)
 
 
 
+# Print the metadata table using kable
+kable(metadata_final_table, 
+      # col.names = NULL, 
+      # caption = "Dataset Metadata",
+      align = "l")
 
+```
 
+\
+\
+\
+\
+\
+\
+\
+\
+\
 
-## Deciding on final data selection
+::: callout-note
+**Instruction**
 
+2 Data data.qmd
 
+2.1 Technical description
 
-here is a decision
+Identify one or more data sources (see II. D. above) that you propose to draw on for the project. For each, describe how the data are collected and by whom. Describe the format of the data, the frequency of updates, dimensions, and any other relevant information. Note any issues / problems with the data, either known or that you discover. Explain how you plan to import the data. Carefully document your sources with links to the precise data sources that you used. If that is not possible (for example if your data is not available online, then explain that clearly.)
 
+(suggested: 1/2 page) 250-500 words
 
+2.2 Missing value analysis
 
+Describe any patterns you discover in missing values. If no values are missing, graphs should still be included showing that.
 
-
-
+(suggested: 2 graphs plus commentary)
+:::

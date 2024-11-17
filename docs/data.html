@@ -102,6 +102,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
 
 </head>
@@ -183,12 +185,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description"><span class="header-section-number">2.1</span> Description</a>
-  <ul class="collapse">
-  <li><a href="#data-format" id="toc-data-format" class="nav-link" data-scroll-target="#data-format"><span class="header-section-number">2.1.1</span> Data Format</a></li>
-  </ul></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description"><span class="header-section-number">2.1</span> Description</a></li>
   <li><a href="#missing-value-analysis" id="toc-missing-value-analysis" class="nav-link" data-scroll-target="#missing-value-analysis"><span class="header-section-number">2.2</span> Missing value analysis</a></li>
-  <li><a href="#deciding-on-final-data-selection" id="toc-deciding-on-final-data-selection" class="nav-link" data-scroll-target="#deciding-on-final-data-selection"><span class="header-section-number">2.3</span> Deciding on final data selection</a></li>
+  <li><a href="#understanding-the-raw-data" id="toc-understanding-the-raw-data" class="nav-link" data-scroll-target="#understanding-the-raw-data"><span class="header-section-number">2.3</span> Understanding the raw data</a></li>
+  <li><a href="#deciding-on-final-data-subset" id="toc-deciding-on-final-data-subset" class="nav-link" data-scroll-target="#deciding-on-final-data-subset"><span class="header-section-number">2.4</span> Deciding on final data subset</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ad4277/payroll/edit/main/data.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ad4277/payroll/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -214,77 +214,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>Instruction</strong> 2 Data data.qmd</p>
-<p>2.1 Technical description</p>
-<p>Identify one or more data sources (see II. D. above) that you propose to draw on for the project. For each, describe how the data are collected and by whom. Describe the format of the data, the frequency of updates, dimensions, and any other relevant information. Note any issues / problems with the data, either known or that you discover. Explain how you plan to import the data. Carefully document your sources with links to the precise data sources that you used. If that is not possible (for example if your data is not available online, then explain that clearly.)</p>
-<p>(suggested: 1/2 page) 250-500 words</p>
-<p>2.2 Missing value analysis</p>
-<p>Describe any patterns you discover in missing values. If no values are missing, graphs should still be included showing that.</p>
-<p>(suggested: 2 graphs plus commentary)</p>
-</div>
-</div>
-<p>changing to a new branch =)</p>
+<p>For this project, we will be using a subset of the <strong>Citywide Payroll Data</strong>.<br>
+This dataset is available via NYC OpenData and provided by the Office of Payroll Administration (OPA).</p>
+The final subset of data for this project will be based on 2 Agencies:<br>
+
+<p style="margin-top: -15px">
+</p><ul>
+<li>Fire Department</li>
+<li>Police Department</li>
+</ul>
+<p></p>
+<p>First, we will examine the metadata of the entire dataset, followed by an analysis of missing values to identify any potential issues that may impact our analysis. Finally, we will outline the decision-making process for selecting a subset of the data.</p>
 <section id="description" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="description"><span class="header-section-number">2.1</span> Description</h2>
-<p>For this project, we will be using the <strong>Citywide Payroll Data</strong>.</p>
-<p>This dataset is available via NYC OpenData and provided by the Office of Payroll Administration (OPA).</p>
+<p><strong>Data Metadata</strong></p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a tibble for the metadata</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>metadata <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Field =</span> <span class="fu">c</span>(</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Agency"</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Data Category"</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Dataset Name"</span>,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Frequency of Updates"</span>, </span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Date Created"</span>, </span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Data Last Updated"</span>, </span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Dimensions"</span>,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Each row represents"</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Value =</span> <span class="fu">c</span>(</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Office of Payroll Administration (OPA)"</span>,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"City Government"</span>,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Citywide Payroll Data (Fiscal Year)"</span>,</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Annually"</span>, </span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"October 31, 2015"</span>, </span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"October 30, 2024"</span>, </span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"6,225,611 rows and 17 columns"</span>,</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"City Employee Salary per Fiscal Year"</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the metadata table using kable</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(metadata, <span class="at">col.names =</span> <span class="cn">NULL</span>, <span class="at">caption =</span> <span class="st">"Dataset Metadata"</span>, <span class="at">align =</span> <span class="st">"l"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
-<caption>Dataset Metadata</caption>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">Agency</td>
-<td style="text-align: left;">Office of Payroll Administration (OPA)</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Data Category</td>
-<td style="text-align: left;">City Government</td>
-</tr>
 <tr class="odd">
 <td style="text-align: left;">Dataset Name</td>
 <td style="text-align: left;">Citywide Payroll Data (Fiscal Year)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Provided by</td>
+<td style="text-align: left;">Office of Payroll Administration (OPA)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Data Category</td>
+<td style="text-align: left;">City Government</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Frequency of Updates</td>
@@ -306,185 +264,320 @@ Note
 <td style="text-align: left;">Each row represents</td>
 <td style="text-align: left;">City Employee Salary per Fiscal Year</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">Source URL</td>
+<td style="text-align: left;">https://data.cityofnewyork.us/</td>
+</tr>
 </tbody>
 </table>
 </div>
 </div>
-<section id="data-format" class="level3" data-number="2.1.1">
-<h3 data-number="2.1.1" class="anchored" data-anchor-id="data-format"><span class="header-section-number">2.1.1</span> Data Format</h3>
-<p>This dataset contains a variety of Text, Number and Date columns.</p>
+<p><br>
+<br>
+</p>
+<p><strong>Data Format</strong></p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>payroll_data_format <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_name =</span> <span class="fu">c</span>(</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Fiscal Year"</span>, <span class="st">"Payroll Number"</span>, <span class="st">"Agency Name"</span>, <span class="st">"Last Name"</span>, <span class="st">"First Name"</span>, </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Mid Init"</span>, <span class="st">"Agency Start Date"</span>, <span class="st">"Work Location Borough"</span>, </span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Title Description"</span>, <span class="st">"Leave Status as of June 30"</span>, <span class="st">"Base Salary"</span>, </span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Pay Basis"</span>, <span class="st">"Regular Hours"</span>, <span class="st">"Regular Gross Paid"</span>, <span class="st">"OT Hours"</span>, </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Total OT Paid"</span>, <span class="st">"Total Other Pay"</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">description =</span> <span class="fu">c</span>(</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Fiscal Year"</span>, <span class="st">"Payroll Number"</span>, <span class="st">"The Payroll agency that the employee works for"</span>, </span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Last name of employee"</span>, <span class="st">"First name of employee"</span>, </span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Middle initial of employee"</span>, <span class="st">"Date which employee began working for their current agency"</span>, </span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Borough of employee's primary work location"</span>, <span class="st">"Civil service title description of the employee"</span>, </span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Status of employee as of the close of the relevant fiscal year: Active, Ceased, or On Leave"</span>, </span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Base Salary assigned to the employee"</span>, </span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Lists whether the employee is paid on an hourly, per diem or annual basis"</span>, </span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number of regular hours employee worked in the fiscal year"</span>, </span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"The amount paid to the employee for base salary during the fiscal year"</span>, </span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Overtime Hours worked by employee in the fiscal year"</span>, </span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Total overtime pay paid to the employee in the fiscal year"</span>, </span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Includes any compensation in addition to gross salary and overtime pay, i.e., Differentials, lump sums, uniform allowance, meal allowance, retroactive pay increases, settlement amounts, and bonus pay, if applicable."</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># api_field_name = c(</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   "fiscal_year", "payroll_number", "agency_name", "last_name", "first_name", </span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   "mid_init", "agency_start_date", "work_location_borough", </span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   "title_description", "leave_status_as_of_june_30", "base_salary", </span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   "pay_basis", "regular_hours", "regular_gross_paid", "ot_hours", </span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   "total_ot_paid", "total_other_pay"</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ),</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">data_type =</span> <span class="fu">c</span>(</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number"</span>, <span class="st">"Number"</span>, <span class="st">"Text"</span>, <span class="st">"Text"</span>, <span class="st">"Text"</span>, </span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Text"</span>, <span class="st">"Floating Timestamp"</span>, <span class="st">"Text"</span>, </span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Text"</span>, <span class="st">"Text"</span>, <span class="st">"Number"</span>, </span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Text"</span>, <span class="st">"Number"</span>, <span class="st">"Number"</span>, <span class="st">"Number"</span>, </span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number"</span>, <span class="st">"Number"</span></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(payroll_data_format) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Column Name"</span>,<span class="st">"Description"</span>,<span class="st">"Data Type"</span>)</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(payroll_data_format,<span class="at">caption =</span> <span class="st">"Dataset Format"</span>, <span class="at">align =</span> <span class="st">"l"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>Dataset Format</caption>
-<colgroup>
-<col style="width: 10%">
-<col style="width: 82%">
-<col style="width: 7%">
-</colgroup>
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
-<th style="text-align: left;">Column Name</th>
-<th style="text-align: left;">Description</th>
-<th style="text-align: left;">Data Type</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Column Name</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Data Type</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Fiscal Year</td>
+<td style="text-align: left; width: 200px;">Fiscal Year</td>
 <td style="text-align: left;">Fiscal Year</td>
 <td style="text-align: left;">Number</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Payroll Number</td>
+<td style="text-align: left; width: 200px;">Payroll Number</td>
 <td style="text-align: left;">Payroll Number</td>
 <td style="text-align: left;">Number</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Agency Name</td>
+<td style="text-align: left; width: 200px;">Agency Name</td>
 <td style="text-align: left;">The Payroll agency that the employee works for</td>
 <td style="text-align: left;">Text</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Last Name</td>
+<td style="text-align: left; width: 200px;">Last Name</td>
 <td style="text-align: left;">Last name of employee</td>
 <td style="text-align: left;">Text</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">First Name</td>
+<td style="text-align: left; width: 200px;">First Name</td>
 <td style="text-align: left;">First name of employee</td>
 <td style="text-align: left;">Text</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Mid Init</td>
+<td style="text-align: left; width: 200px;">Mid Init</td>
 <td style="text-align: left;">Middle initial of employee</td>
 <td style="text-align: left;">Text</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Agency Start Date</td>
+<td style="text-align: left; width: 200px;">Agency Start Date</td>
 <td style="text-align: left;">Date which employee began working for their current agency</td>
-<td style="text-align: left;">Floating Timestamp</td>
+<td style="text-align: left;">Timestamp</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Work Location Borough</td>
-<td style="text-align: left;">Borough of employee’s primary work location</td>
+<td style="text-align: left; width: 200px;">Work Location Borough</td>
+<td style="text-align: left;">Borough of employee's primary work location</td>
 <td style="text-align: left;">Text</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Title Description</td>
+<td style="text-align: left; width: 200px;">Title Description</td>
 <td style="text-align: left;">Civil service title description of the employee</td>
 <td style="text-align: left;">Text</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Leave Status as of June 30</td>
+<td style="text-align: left; width: 200px;">Leave Status as of June 30</td>
 <td style="text-align: left;">Status of employee as of the close of the relevant fiscal year: Active, Ceased, or On Leave</td>
 <td style="text-align: left;">Text</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Base Salary</td>
+<td style="text-align: left; width: 200px;">Base Salary</td>
 <td style="text-align: left;">Base Salary assigned to the employee</td>
 <td style="text-align: left;">Number</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Pay Basis</td>
+<td style="text-align: left; width: 200px;">Pay Basis</td>
 <td style="text-align: left;">Lists whether the employee is paid on an hourly, per diem or annual basis</td>
 <td style="text-align: left;">Text</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Regular Hours</td>
+<td style="text-align: left; width: 200px;">Regular Hours</td>
 <td style="text-align: left;">Number of regular hours employee worked in the fiscal year</td>
 <td style="text-align: left;">Number</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Regular Gross Paid</td>
+<td style="text-align: left; width: 200px;">Regular Gross Paid</td>
 <td style="text-align: left;">The amount paid to the employee for base salary during the fiscal year</td>
 <td style="text-align: left;">Number</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">OT Hours</td>
+<td style="text-align: left; width: 200px;">OT Hours</td>
 <td style="text-align: left;">Overtime Hours worked by employee in the fiscal year</td>
 <td style="text-align: left;">Number</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Total OT Paid</td>
+<td style="text-align: left; width: 200px;">Total OT Paid</td>
 <td style="text-align: left;">Total overtime pay paid to the employee in the fiscal year</td>
 <td style="text-align: left;">Number</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Total Other Pay</td>
+<td style="text-align: left; width: 200px;">Total Other Pay</td>
 <td style="text-align: left;">Includes any compensation in addition to gross salary and overtime pay, i.e., Differentials, lump sums, uniform allowance, meal allowance, retroactive pay increases, settlement amounts, and bonus pay, if applicable.</td>
 <td style="text-align: left;">Number</td>
 </tr>
 </tbody>
 </table>
+
+
 </div>
 </div>
-<p>The data is update Annualy, and the last update was done on October 30, 2024. This dataset was created in October 31, 2015, so we have about 10 years on complete data.</p>
-<p>Dimensions: 6,225,611 rows and 17 columns</p>
-<p>Describe the format of the data,</p>
-<p>the frequency of updates,</p>
-<p>dimensions,</p>
-<p>and any other relevant information.</p>
-<p>Note any issues / problems with the data, either known or that you discover.</p>
-<p>Explain how you plan to import the data. Carefully document your sources with links to the precise data sources that you used.</p>
-<p>If that is not possible (for example if your data is not available online, then explain that clearly.)</p>
-<p>https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data</p>
-</section>
+<p><br>
+<br>
+</p>
+<p><strong>Importing the data</strong><br>
+</p>
+To access the data, we can go directly to the URL:<br>
+
+<p style="font-size:95%; font-style:italic">
+<a href="https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data" class="uri">https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data</a>
+</p>
+<p>From this URL, you can click the button ‘Export’, and then select Download File-CSV format (All data 6225611 rows). This will download a file of about 840MB. Remember, we are using the data Last Updated on October 30, 2024.</p>
+The file will be downloaded with the name: Citywide_Payroll_Data__Fiscal_Year__<strong>YYYYMMDD</strong>.csv<br>
+
+<p style="font-size:90%; font-style:italic">
+(YYYYMMDD refers to the date that you downloaded the file)
+</p>
+<p>Once the data was downloaded, it was added to a new folder inside the repository called ‘data_source’.</p>
 </section>
 <section id="missing-value-analysis" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="missing-value-analysis"><span class="header-section-number">2.2</span> Missing value analysis</h2>
 <p>Missing value stuff goes here.</p>
 </section>
-<section id="deciding-on-final-data-selection" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="deciding-on-final-data-selection"><span class="header-section-number">2.3</span> Deciding on final data selection</h2>
-<p>here is a decision</p>
+<section id="understanding-the-raw-data" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="understanding-the-raw-data"><span class="header-section-number">2.3</span> Understanding the raw data</h2>
+<p>Note any issues / problems with the data, either known or that you discover.</p>
+</section>
+<section id="deciding-on-final-data-subset" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="deciding-on-final-data-subset"><span class="header-section-number">2.4</span> Deciding on final data subset</h2>
+<p>Based on the analysis above, we will add a few filter to reduce and clean the dataset.</p>
+<p><strong>Filters applied to the dataset:</strong><br>
+</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Column Name</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Filter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 200px;">Fiscal Year</td>
+<td style="text-align: left;">From 2015 to 2024</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 200px;">Agency Name</td>
+<td style="text-align: left;">FIRE DEPARTMENT, POLICE DEPARTMENT</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 200px;">Pay Basis</td>
+<td style="text-align: left;">per Annum, per Day, per Hour</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p><br>
+<br>
+</p>
+<p><strong>Size of Final subset Data</strong><br>
+</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Dimensions</td>
+<td style="text-align: left;">821,348 rows and 17 columns</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Each row represents</td>
+<td style="text-align: left;">City Employee Salary per Fiscal Year</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><br>
+</p>
+<p><strong>Record count by Department:</strong><br>
+</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a dataframe with the data</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Department =</span> <span class="fu">c</span>(<span class="st">"Fire Department"</span>, <span class="st">"Police Department"</span>),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Count =</span> <span class="fu">c</span>(<span class="dv">209272</span>, <span class="dv">612076</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Color =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"blue"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate percentages for each department</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Percentage =</span> Count <span class="sc">/</span> <span class="fu">sum</span>(Count) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">Label =</span> <span class="fu">paste</span>(</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>           <span class="co"># Department, "\n", </span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">format</span>(Count, <span class="at">big.mark =</span> <span class="st">","</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="st">" ("</span>, <span class="fu">sprintf</span>(<span class="st">"%.0f"</span>, Percentage), <span class="st">"%)"</span>, <span class="at">sep =</span> <span class="st">""</span>))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the pie chart using ggplot2</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> Count, <span class="at">fill =</span> Department)) <span class="sc">+</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">width =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_polar</span>(<span class="at">theta =</span> <span class="st">"y"</span>) <span class="sc">+</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"deepskyblue"</span>)) <span class="sc">+</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># labs(title = "Record Count by Department") +</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># theme(legend.position = "none") +  # Remove the legend if you don't want it</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> Label), <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>), <span class="at">color =</span> <span class="st">"white"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="data_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Overall dataset Information:</strong><br>
+</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 32%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Metrics</th>
+<th style="text-align: left;">Fire Deparmtnet</th>
+<th style="text-align: left;">Police Department</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Count of Records</td>
+<td style="text-align: left;">209272</td>
+<td style="text-align: left;">612076</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fiscal Years</td>
+<td style="text-align: left;">10 years (2015-2024)</td>
+<td style="text-align: left;">10 years (2015-2024)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Agency Start Date Range</td>
+<td style="text-align: left;">1968-04-22 to 2024-07-29</td>
+<td style="text-align: left;">1960-11-14 to 2049-10-16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Work Location Borough</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Title Description</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">200</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Instruction</strong></p>
+<p>2 Data data.qmd</p>
+<p>2.1 Technical description</p>
+<p>Identify one or more data sources (see II. D. above) that you propose to draw on for the project. For each, describe how the data are collected and by whom. Describe the format of the data, the frequency of updates, dimensions, and any other relevant information. Note any issues / problems with the data, either known or that you discover. Explain how you plan to import the data. Carefully document your sources with links to the precise data sources that you used. If that is not possible (for example if your data is not available online, then explain that clearly.)</p>
+<p>(suggested: 1/2 page) 250-500 words</p>
+<p>2.2 Missing value analysis</p>
+<p>Describe any patterns you discover in missing values. If no values are missing, graphs should still be included showing that.</p>
+<p>(suggested: 2 graphs plus commentary)</p>
+</div>
+</div>
 
 
 </section>

@@ -4,12 +4,9 @@ For this project, we will be using a subset of the **Citywide Payroll Data**.\
 This dataset is available via NYC OpenData and provided by the Office of Payroll Administration (OPA).
 
 The final subset of data for this project will be based on 2 Agencies:\
-
 <p style="margin-top: -15px">
-
 -   Fire Department
 -   Police Department
-
 </p>
 
 First, we will examine the metadata of the entire dataset, followed by an analysis of missing values to identify any potential issues that may impact our analysis. Finally, we will outline the decision-making process for selecting a subset of the data.
@@ -127,21 +124,15 @@ kable(payroll_data_format,
 **Importing the data**\
 
 To access the data, we can go directly to the URL:\
-
 <p style="font-size:95%; font-style:italic">
-
 <https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data>
-
 </p>
 
 From this URL, you can click the button 'Export', and then select Download File-CSV format (All data 6225611 rows). This will download a file of about 840MB. Remember, we are using the data Last Updated on October 30, 2024.
 
 The file will be downloaded with the name: Citywide_Payroll_Data\_\_Fiscal_Year\_\_**YYYYMMDD**.csv\
-
 <p style="font-size:90%; font-style:italic">
-
 (YYYYMMDD refers to the date that you downloaded the file)
-
 </p>
 
 Once the data was downloaded, it was added to a new folder inside the repository called 'data_source'.
@@ -195,13 +186,10 @@ payroll_data |>
 
 Many of the agencies in the raw data have the following format: AGENCY_NAME #NUMBER.\
 Examples:\
-
 <p style="margin-top: -15px; font-size:85%;">
-
 -   BROOKLYN COMMUNITY BOARD #1
 -   BROOKLYN COMMUNITY BOARD #2
 -   BROOKLYN COMMUNITY BOARD #3
-
 </p>
 
 We will group Agency names by aggregating all agencies that have the same name, but different numbers. This will reduce overall number os agencies.

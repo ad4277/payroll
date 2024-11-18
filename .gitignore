@@ -12,5 +12,6 @@
 
 data_cache/
 data_files/
+!/docs/data_files
 
 data_source/

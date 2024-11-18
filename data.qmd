@@ -3,14 +3,21 @@
 For this project, we will be using a subset of the **Citywide Payroll Data**.\
 This dataset is available via NYC OpenData and provided by the Office of Payroll Administration (OPA).
 
+The final subset of data for this project will be based on 2 Agencies:\
 
-The final subset of data for this project will be based on 2 Agencies: \
 <p style="margin-top: -15px">
+
 -   Fire Department
 -   Police Department
+
 </p>
 
 First, we will examine the metadata of the entire dataset, followed by an analysis of missing values to identify any potential issues that may impact our analysis. Finally, we will outline the decision-making process for selecting a subset of the data.
+
+```{r}
+#| echo: false
+rm(list = ls())
+```
 
 ## Description
 
@@ -120,24 +127,398 @@ kable(payroll_data_format,
 **Importing the data**\
 
 To access the data, we can go directly to the URL:\
+
 <p style="font-size:95%; font-style:italic">
+
 <https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data>
+
 </p>
 
 From this URL, you can click the button 'Export', and then select Download File-CSV format (All data 6225611 rows). This will download a file of about 840MB. Remember, we are using the data Last Updated on October 30, 2024.
 
 The file will be downloaded with the name: Citywide_Payroll_Data\_\_Fiscal_Year\_\_**YYYYMMDD**.csv\
+
 <p style="font-size:90%; font-style:italic">
+
 (YYYYMMDD refers to the date that you downloaded the file)
+
 </p>
 
 Once the data was downloaded, it was added to a new folder inside the repository called 'data_source'.
 
 ## Missing value analysis
 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r, cache=TRUE}
+#| echo: false
+#| message: false
+#| warning: false
+payroll_data_source <- read.csv("./data_source/Citywide_Payroll_Data__Fiscal_Year__20241111.csv") 
+# payroll_data <- payroll_data_source
+```
+
+
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+payroll_data <- data.frame(payroll_data_source)
+
+names(payroll_data) <- gsub("[\\.]+", "_", tolower(names(payroll_data_source)))
+
+```
+
+
+```{r}
+payroll_data |> 
+  summarise(
+    "Number of Agencies"     = n_distinct(agency_name),
+    "Number of Titles"       = n_distinct(title_description),
+    "Number of Locations"    = n_distinct(work_location_borough),
+    "Number of Pay Basis"    = n_distinct(pay_basis),
+    "Number of Fiscal Years" = n_distinct(fiscal_year)
+  ) |> 
+  kable()
+```
+
+### Agencies
+
+Many of the agencies in the raw data have the following format: AGENCY_NAME #NUMBER.\
+Examples:\
+
+<p style="margin-top: -15px; font-size:85%;">
+
+-   BROOKLYN COMMUNITY BOARD #1
+-   BROOKLYN COMMUNITY BOARD #2
+-   BROOKLYN COMMUNITY BOARD #3
+
+</p>
+
+We will group Agency names by aggregating all agencies that have the same name, but different numbers. This will reduce overall number os agencies.
+
+```{r}
+payroll_data <- 
+  payroll_data |> 
+  mutate(agency_name_clean = trimws(gsub("#\\d+$", "", agency_name)))
+
+payroll_data |> 
+  summarise(
+    "Number of Agencies Before" = n_distinct(agency_name),
+    "Number of Agencies After"  = n_distinct(agency_name_clean),
+  ) |> 
+  kable()
+```
+
+\
+\
+
+Now, let's take a look at the top 10 Agencies:
+
+```{r}
+library(dplyr)
+library(kableExtra)
+
+
+payroll_data_summary <- payroll_data |> 
+  group_by(agency_name_clean) |> 
+  summarise(
+    Total_records = n()
+  ) |> 
+  arrange(desc(Total_records)) |> 
+  slice_head(n = 10)  
+
+
+payroll_data_summary |> 
+  kable(col.names = c("Agency", "Total Records")) |> 
+  row_spec(which(payroll_data_summary$agency_name_clean == "FIRE DEPARTMENT"),   background = "#f94144", color = "white") |> 
+  row_spec(which(payroll_data_summary$agency_name_clean == "POLICE DEPARTMENT"), background = "deepskyblue3", color = "white")
+
+
+```
+
+### Work Location Borough
+
+When looking at the Work Location Borough, we see many recording with missing data (506,234 rows). We can also observe that the names of the locations are not standardized, some names are Uppercase and some are not (MANHATTAN vs Manhattan).
+
+```{r}
+payroll_data |> 
+  group_by(work_location_borough) |> 
+  summarise(
+    Total_records = n()
+  ) |> 
+  arrange(desc(Total_records)) |> 
+  slice_head(n = 10) |> 
+  kable(col.names = c("Locations", "Total Records")) |> 
+  row_spec(which(payroll_data |> 
+                 group_by(work_location_borough) |> 
+                 summarise(Total_records = n()) |> 
+                 arrange(desc(Total_records)) |> 
+                 slice_head(n = 10) |> 
+                 pull(work_location_borough) %in% c("","Bronx", "MANHATTAN", "Manhattan")),   background = "#fcefb4", color = "black")
+```
+
+
+\
+\
+
+Our first step here is to capitalize all the location names.
+
+```{r}
+payroll_data <- payroll_data |> 
+  mutate(work_location_borough_clean = toupper(work_location_borough))
+
+```
+
+```{r}
+#| echo: false
+
+# payroll_data |> 
+#   group_by(work_location_borough_clean) |> 
+#   summarise(
+#     Total_records = n()
+#   ) |> 
+#   arrange((work_location_borough_clean)) |> 
+#   slice_head(n = 10) |> 
+#   kable(col.names = c("Locations", "Total Records"))
+```
+
+```{r}
+payroll_data |> 
+  summarise(
+    "Number of Locations Before" = n_distinct(work_location_borough),
+    "Number of Locations After"  = n_distinct(work_location_borough_clean),
+  ) |> 
+  kable()
+```
+
+\
+\
+
+Now let's take a look at the locations from the top 10 Agencies.
+
+
+
+```{r}
+
+required_boroughs <- c("BRONX", "BROOKLYN", "MANHATTAN", "QUEENS", "RICHMOND")
+
+agencies_present_in_required_boroughs <-
+payroll_data |>
+  filter(work_location_borough_clean %in% required_boroughs) |> 
+  group_by(agency_name_clean) |>  
+  summarise(
+    borough_count = n_distinct(work_location_borough_clean)  
+  ) |>
+  filter(borough_count == length(required_boroughs)) |> 
+  filter(agency_name_clean %in% payroll_data_summary$agency_name_clean) |> 
+  pull(agency_name_clean)
+```
+
+```{r}
+
+payroll_data_agencies_present_in_required_boroughs <-
+payroll_data |> 
+  filter(agency_name_clean %in% payroll_data_summary$agency_name_clean) |> 
+  filter(agency_name_clean %in% agencies_present_in_required_boroughs) |> 
+  group_by(agency_name_clean) |> 
+  summarise(
+    Total_records = n(),
+    "Number of Locations" = n_distinct(work_location_borough_clean)
+  ) |> 
+  arrange(desc(Total_records)) 
+
+payroll_data_agencies_present_in_required_boroughs |> 
+  kable(col.names = c("Agency", "Total Records", "Number of Locations")) |> 
+  row_spec(which(payroll_data_agencies_present_in_required_boroughs$agency_name_clean == "FIRE DEPARTMENT"),   background = "#f94144", color = "white") |> 
+  row_spec(which(payroll_data_agencies_present_in_required_boroughs$agency_name_clean == "POLICE DEPARTMENT"), background = "deepskyblue3", color = "white")
+
+```
+
+```{r}
+payroll_data |> 
+  filter(agency_name_clean %in%  c("POLICE DEPARTMENT","FIRE DEPARTMENT")) |> 
+  filter(agency_name_clean %in% agencies_present_in_required_boroughs) |> 
+  group_by(agency_name_clean,work_location_borough_clean,fiscal_year) |> 
+  summarise(
+    Total_records = n(), .groups = 'drop'
+  ) |> 
+  arrange(agency_name_clean,work_location_borough_clean,fiscal_year) |> 
+  filter (!work_location_borough_clean %in% required_boroughs) |> 
+  kable(col.names = c("Agency", "Location", "Fiscal Year", "Total Records"))
+```
+
+### Fiscal Year
+
+```{r}
+# Create the pivot table
+pivot_table_fiscal_year <- payroll_data |>
+filter(agency_name_clean %in%  c(
+    "POLICE DEPARTMENT",
+    "FIRE DEPARTMENT"
+    )) |> 
+  group_by(fiscal_year, agency_name_clean) |> 
+  summarise(count = n(), .groups = 'drop') |> 
+  pivot_wider(
+    names_from = agency_name_clean,  
+    values_from = count,  
+    values_fill = list(count = 0) 
+  )
+
+pivot_table_fiscal_year |>
+  kable(col.names = c("Fiscal Year", "FIRE DEPARTMENT", "POLICE DEPARTMENT")) |> 
+  kable_styling() |>
+  column_spec(3, background = ifelse(as.matrix(pivot_table_fiscal_year[, 3]) == 0, "#fcefb4", ""))
+```
+
+### Pay Basis
+
+```{r}
+payroll_data |> 
+  # filter(fiscal_year == "2024") |>
+  filter(agency_name_clean %in%  c(
+    "POLICE DEPARTMENT",
+    "FIRE DEPARTMENT"
+    )) |> 
+  group_by(agency_name_clean,pay_basis) |> 
+  summarise(
+    Total_records = n()
+    , .groups = 'drop'
+  ) |> 
+  arrange(desc(Total_records)) |>
+  kable(col.names = c("Agency", "Pay Basis", "Total Records"))
+```
+
+```{r}
+payroll_data |> 
+  # filter(fiscal_year == "2024") |>
+  filter(agency_name_clean %in%  c(
+    "POLICE DEPARTMENT",
+    "FIRE DEPARTMENT"
+    )) |> 
+  filter(pay_basis == "Prorated Annual") |>
+  filter(title_description == "CHAPLAIN") |> 
+  group_by(agency_name_clean,pay_basis,title_description) |> 
+  summarise(
+    Total_records = n()
+    , .groups = 'drop'
+  ) |> 
+  arrange(agency_name_clean) |>
+  kable(col.names = c("Agency", "Pay Basis", "Title", "Total Records"))
+```
+
+
+```{r}
+payroll_data_filtered <- 
+  payroll_data |> 
+  filter(agency_name_clean %in%  c("POLICE DEPARTMENT","FIRE DEPARTMENT")) |> 
+  filter(work_location_borough_clean %in%   c("BRONX", "BROOKLYN", "MANHATTAN", "QUEENS", "RICHMOND")) |> 
+  filter(fiscal_year > "2014") |> 
+  filter(pay_basis %in%   c("per Annum", "per Day", "per Hour"))
+  
+```
+
+
+
+```{r}
+# library(dplyr)
+# library(tidyr)
+
+# Count NA values and pivot
+na_summary <- payroll_data_filtered |>
+  summarise(across(everything(), ~ sum(is.na(.)))) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Column",
+    values_to = "NA Count"
+  )
+
+# Count blank values and pivot
+blank_summary <- payroll_data_filtered |>
+  summarise(across(everything(), ~ sum(. == "", na.rm = TRUE))) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Column",
+    values_to = "Blank Count"
+  )
+
+# Count zero values and pivot
+zero_summary <- payroll_data_filtered |>
+  summarise(across(everything(), ~ sum(. == 0, na.rm = TRUE))) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Column",
+    values_to = "Zero Count"
+  )
+
+# Combine all three summaries into one dataframe
+combined_summary <- na_summary |>
+  inner_join(blank_summary, by = "Column") |>
+  inner_join(zero_summary, by = "Column")
+
+# Display the combined result using kable
+combined_summary |>
+  filter(`NA Count` > 0 | `Blank Count` > 0 | `Zero Count` > 0) |> 
+  kable(col.names = c("Column", "NA Count", "Blank Count", "Zero Count"))
+
+```
+
+
+
+```{r}
+payroll_data_filtered_payroll <- payroll_data_filtered |> 
+  group_by(agency_name_clean,payroll_number,fiscal_year) |> 
+  summarise(
+    Total_records = n()
+    ,.groups = "drop"
+  ) |> 
+  arrange(agency_name_clean,fiscal_year,desc(Total_records))
+
+payroll_data_filtered_payroll |> 
+  kable(col.names = c("Agency", "Payroll Number", "Fiscal Year", "Total Records")) |>
+  column_spec(2, background = ifelse(is.na(as.matrix(payroll_data_filtered_payroll[, 2])), "#fcefb4", ""))
+```
+
+### Agency Start Date
+
+```{r}
+payroll_data_fire_police <- 
+  payroll_data_filtered |>
+  mutate(
+    payroll_number = case_when(
+      is.na(payroll_number) & agency_name_clean == "FIRE DEPARTMENT" ~ 57,
+      is.na(payroll_number) & agency_name_clean == "POLICE DEPARTMENT" ~ 56,
+      TRUE ~ payroll_number
+    )
+  ) |> 
+  mutate(
+    agency_name = agency_name_clean,
+    work_location_borough = work_location_borough_clean
+  ) |>
+  select(-agency_name_clean, -work_location_borough_clean)
+```
+
+
+**Save final Data:**\
+
+```{r}
+# write.csv(payroll_data_fire_police, "data_source/payroll_data_fire_police.csv", row.names = FALSE)
+```
+
+
+
 Missing value stuff goes here.
 
-## Understanding the raw data
+## Understanding and cleaning the raw data
 
 Note any issues / problems with the data, either known or that you discover.
 
@@ -179,6 +560,44 @@ kable(payroll_data_format,
 \
 \
 
+**Cleaning data and Handling NAs:**\
+
+```{r}
+#| echo: false
+
+library(tibble)
+library(knitr)
+library(kableExtra)
+
+payroll_data_format <- tibble(
+  column_name = c(
+    "Fiscal Year", 
+    "Agency Name",
+    "Payroll Number",
+    "Work Location Borough", 
+    "Pay Basis"
+  ),
+  filter = c(
+    "2014 had missing data for Police Department. 2014 will be removed.", 
+    "Group agencies with similar names.",
+    "Missing values have been backfilled based on Agency Name.",
+    "Uppercase all names. Filtering data only for top 5 Boroughs.",
+    "Keeping only the top 3 Pay Basis."
+  )
+)
+
+names(payroll_data_format) <- c("Column Name","Note")
+
+kable(payroll_data_format,
+      # caption = "Dataset Format", 
+      align = "l") |>
+  kable_styling(full_width = FALSE) |>
+  column_spec(1, width = "200px")
+```
+
+\
+\
+
 **Size of Final subset Data**\
 
 ```{r}
@@ -207,7 +626,7 @@ metadata <- tibble::tibble(
     # "Annually", 
     # "October 31, 2015", 
     # "October 30, 2024", 
-    "821,348 rows and 17 columns",
+    "804,630 rows and 17 columns",
     "City Employee Salary per Fiscal Year"
     # "https://data.cityofnewyork.us/"
   )
@@ -222,7 +641,7 @@ kable(metadata, col.names = NULL,
 
 \
 
-**Record count by Department:**\
+**Record count by Agency:**\
 
 ```{r}
 #| message: false
@@ -234,31 +653,26 @@ library(ggplot2)
 library(tibble)
 library(dplyr)
 
-# Create a dataframe with the data
-data <- tibble(
-  Department = c("Fire Department", "Police Department"),
-  Count = c(209272, 612076),
-  Color = c("red", "blue")
-)
-
-# Calculate percentages for each department
-data <- data %>%
+payroll_data_fire_police |> 
+  group_by(agency_name) |> 
+  summarise(
+    Count = n()
+    , .groups = 'drop'
+  ) |> 
+  arrange(desc(Count)) |>
   mutate(Percentage = Count / sum(Count) * 100,
          Label = paste(
-           # Department, "\n", 
-                       format(Count, big.mark = ","), "\n", " (", sprintf("%.0f", Percentage), "%)", sep = ""))
-
-# Create the pie chart using ggplot2
-ggplot(data, aes(x = "", y = Count, fill = Department)) +
+                       format(Count, big.mark = ","), "\n", " (", sprintf("%.0f", Percentage), "%)", sep = "")) |> 
+ggplot(aes(x = "", y = Count, fill = agency_name)) +
   geom_bar(stat = "identity", width = 1) +
   coord_polar(theta = "y") +
-  scale_fill_manual(values = c("red", "deepskyblue")) +
+  scale_fill_manual(name= 'Agency', values = c("#f94144", "deepskyblue3")) +
   # labs(title = "Record Count by Department") +
   theme_void() +
-  # theme(legend.position = "none") +  # Remove the legend if you don't want it
   geom_text(aes(label = Label), position = position_stack(vjust = 0.5), color = "white")
 
 ```
+
 
 **Overall dataset Information:**\
 
@@ -276,18 +690,18 @@ metadata_final_table <- tibble::tibble(
     "Title Description"
   ),
   "Fire Deparmtnet" = c(
-    "209272",
+    "192,638",
     "10 years (2015-2024)",
     "1968-04-22 to 2024-07-29   ", 
     "5",
-    "100"
+    "238"
   ),
   "Police Department" = c(
-    "612076",
+    "611,992",
     "10 years (2015-2024)",
     "1960-11-14 to 2049-10-16", 
     "5",
-    "200"
+    "335"
   ),
 )
 

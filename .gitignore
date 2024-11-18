@@ -10,4 +10,7 @@
 
 /.quarto/
 
+data_cache/
+data_files/
+
 data_source/

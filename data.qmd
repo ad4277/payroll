@@ -30,6 +30,7 @@ library(tidyverse)
 library(ggplot2)
 library(dplyr)
 library(visdat)
+library(HH)
 ```
 
 
@@ -189,17 +190,21 @@ names(payroll_data) <- gsub("[\\.]+", "_", tolower(names(payroll_data_source)))
 
 
 
-
+Missing data (NA + Blank) in the original dataset.
 
 
 ```{r}
 payroll_data_missing <- 
   payroll_data |>
-  sample_n(100000) |>
+  sample_n(1000) |>
   mutate(across(everything(), ~ if_else(. == "", NA, .)))
 ```
 
+
 ```{r}
+#| fig-width: 9
+#| fig-height: 6
+
 payroll_data_missing |> 
   # select (-agency_name_clean, -work_location_borough_clean) |> 
   # sample_n(10000) |>
@@ -208,7 +213,14 @@ payroll_data_missing |>
     # cluster = TRUE,
     show_perc_col = TRUE,
     warn_large_data = FALSE,
-    ) 
+    ) + 
+  ggtitle("Missing Values - Original Data")+
+  theme(
+    # axis.title.x=element_blank(),
+        # axis.text.x=element_blank(),
+        # axis.ticks.x=element_blank()
+    plot.margin = margin(r = 50)
+    )
 ```
 
 
@@ -259,7 +271,7 @@ payroll_data_combined_summary <-
 
 
 ```{r}
-payroll_data_combined_summary
+# payroll_data_combined_summary
 ```
 
 
@@ -274,14 +286,10 @@ payroll_data_combined_summary |>
   dplyr::select(`Column`,`NA`,`Blank`,Zero,`Present`) |> 
   filter(!Column %in% c('agency_name_clean','work_location_borough_clean'))
 
-payroll_data_combined_summary_likert
+# payroll_data_combined_summary_likert
 ```
 
 
-
-```{r}
-library(HH)
-```
 
 
 ```{r}
@@ -291,20 +299,20 @@ library(HH)
 likert_colors <- c("NA" = "#D7191C",
                    "Blank" = "#FDAE61",
                    "Zero" = "#ABD9E9",
-                   "Present" = "#2C7BB6") 
+                   "Present" = "#2C7BB6")
 
 
 
-HH::likert(x=Column~ .,payroll_data_combined_summary_likert, 
-           positive.order=TRUE,
-           as.percent = T,
-           main = 'Diverging Stacked Bar',
-           xlab='Percentage',
-           ylab='Columns',
-           col = likert_colors,
-           ReferenceZero=2.5,
-           rightAxis=FALSE
-           )
+# HH::likert(x=Column~ .,payroll_data_combined_summary_likert, 
+#            positive.order=TRUE,
+#            as.percent = T,
+#            main = 'Diverging Stacked Bar',
+#            xlab='Percentage',
+#            ylab='Columns',
+#            col = likert_colors,
+#            ReferenceZero=2.5,
+#            rightAxis=FALSE
+#            )
 ```
 
 
@@ -343,24 +351,16 @@ payroll_data_fire_police_zero_summary <- payroll_data_fire_police |>
     values_to = "Zero"
   )
 
-```
 
-
-
-```{r}
 payroll_data_fire_police_combined_summary <- 
   payroll_data_fire_police_total_summary |> 
   inner_join(payroll_data_fire_police_na_summary, by = "Column") |> 
   inner_join(payroll_data_fire_police_blank_summary, by = "Column") |> 
   inner_join(payroll_data_fire_police_zero_summary, by = "Column")
 
-```
 
-
-
-```{r}
 payroll_data_fire_police_combined_summary_likert <-
-payroll_data_fire_police_combined_summary |> 
+  payroll_data_fire_police_combined_summary |> 
   mutate(`Present` = `Total Count` - `NA` - `Blank` - Zero) |> 
   mutate(`Present` = `Present` / `Total Count`) |> 
   mutate(`NA` = `NA` / `Total Count`) |> 
@@ -374,24 +374,18 @@ payroll_data_fire_police_combined_summary |>
 
 
 ```{r}
+#| fig-width: 9
+#| fig-height: 5
+
 payroll_data_missing_group_likert <- bind_rows(
   payroll_data_combined_summary_likert |> mutate(group= 'Original Data'), 
   payroll_data_fire_police_combined_summary_likert |> mutate(group= 'Final Subset Data')
 )
 
-# payroll_data_missing_group_likert
-```
-
-
-
-```{r}
-#| fig-width: 10
-#| fig-height: 5
-
 HH::likert(x=Column~. | group,payroll_data_missing_group_likert, 
            positive.order=TRUE,
            as.percent = T,
-           main = 'Diverging Stacked Bar',
+           main = 'Missing Values',
            xlab='Percentage',
            ylab='Columns',
            col = likert_colors,

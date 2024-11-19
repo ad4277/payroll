@@ -13,8 +13,25 @@ First, we will examine the metadata of the entire dataset, followed by an analys
 
 ```{r}
 #| echo: false
+
 rm(list = ls())
 ```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+# Import Libraries
+library(tibble)
+library(knitr)
+library(kableExtra)
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(visdat)
+```
+
 
 ## Description
 
@@ -22,9 +39,6 @@ rm(list = ls())
 
 ```{r}
 #| echo: false
-
-library(knitr)
-library(kableExtra)
 
 # Create a tibble for the metadata
 metadata <- tibble::tibble(
@@ -67,9 +81,7 @@ kable(metadata, col.names = NULL,
 ```{r}
 #| echo: false
 
-library(tibble)
-library(knitr)
-library(kableExtra)
+
 
 payroll_data_format <- tibble(
   column_name = c(
@@ -137,16 +149,15 @@ The file will be downloaded with the name: Citywide_Payroll_Data\_\_Fiscal_Year\
 
 Once the data was downloaded, it was added to a new folder inside the repository called 'data_source'.
 
-## Missing value analysis
 
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
 
-library(tidyverse)
-library(ggplot2)
-```
+
+
+
+
+
+
+
 
 ```{r, cache=TRUE}
 #| echo: false
@@ -170,6 +181,246 @@ names(payroll_data) <- gsub("[\\.]+", "_", tolower(names(payroll_data_source)))
 ```
 
 
+
+
+
+
+## Missing value analysis
+
+
+
+
+
+
+```{r}
+payroll_data_missing <- 
+  payroll_data |>
+  sample_n(100000) |>
+  mutate(across(everything(), ~ if_else(. == "", NA, .)))
+```
+
+```{r}
+payroll_data_missing |> 
+  # select (-agency_name_clean, -work_location_borough_clean) |> 
+  # sample_n(10000) |>
+  vis_miss(
+    sort_miss = TRUE,
+    # cluster = TRUE,
+    show_perc_col = TRUE,
+    warn_large_data = FALSE,
+    ) 
+```
+
+
+```{r}
+payroll_data_total_summary <- payroll_data |>
+  summarise(across(everything(), ~ n())) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Column",
+    values_to = "Total Count"
+  )
+
+payroll_data_na_summary <- payroll_data |>
+  summarise(across(everything(), ~ sum(is.na(.)))) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Column",
+    values_to = "NA"
+  )
+
+payroll_data_blank_summary <- payroll_data |>
+  summarise(across(everything(), ~ sum(. == "", na.rm = TRUE))) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Column",
+    values_to = "Blank"
+  )
+
+payroll_data_zero_summary <- payroll_data |>
+  summarise(across(everything(), ~ sum(. == 0, na.rm = TRUE))) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Column",
+    values_to = "Zero"
+  )
+```
+
+
+
+
+```{r}
+payroll_data_combined_summary <- 
+  payroll_data_total_summary |> 
+  inner_join(payroll_data_na_summary, by = "Column") |> 
+  inner_join(payroll_data_blank_summary, by = "Column") |> 
+  inner_join(payroll_data_zero_summary, by = "Column")
+```
+
+
+```{r}
+payroll_data_combined_summary
+```
+
+
+```{r}
+payroll_data_combined_summary_likert <-
+payroll_data_combined_summary |> 
+  mutate(`Present` = `Total Count` - `NA` - `Blank` - Zero) |> 
+  mutate(`Present` = `Present` / `Total Count`) |> 
+  mutate(`NA` = `NA` / `Total Count`) |> 
+  mutate(`Blank` = `Blank` / `Total Count`) |> 
+  mutate(`Zero` = Zero / `Total Count`) |> 
+  dplyr::select(`Column`,`NA`,`Blank`,Zero,`Present`) |> 
+  filter(!Column %in% c('agency_name_clean','work_location_borough_clean'))
+
+payroll_data_combined_summary_likert
+```
+
+
+
+```{r}
+library(HH)
+```
+
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+
+likert_colors <- c("NA" = "#D7191C",
+                   "Blank" = "#FDAE61",
+                   "Zero" = "#ABD9E9",
+                   "Present" = "#2C7BB6") 
+
+
+
+HH::likert(x=Column~ .,payroll_data_combined_summary_likert, 
+           positive.order=TRUE,
+           as.percent = T,
+           main = 'Diverging Stacked Bar',
+           xlab='Percentage',
+           ylab='Columns',
+           col = likert_colors,
+           ReferenceZero=2.5,
+           rightAxis=FALSE
+           )
+```
+
+
+```{r}
+payroll_data_fire_police <- readRDS("data_source/payroll_data_fire_police.rds")
+
+payroll_data_fire_police_total_summary <- payroll_data_fire_police |>
+  summarise(across(everything(), ~ n())) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Column",
+    values_to = "Total Count"
+  )
+
+payroll_data_fire_police_na_summary <- payroll_data_fire_police |>
+  summarise(across(everything(), ~ sum(is.na(.)))) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Column",
+    values_to = "NA"
+  )
+
+payroll_data_fire_police_blank_summary <- payroll_data_fire_police |>
+  summarise(across(everything(), ~ sum(. == "", na.rm = TRUE))) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Column",
+    values_to = "Blank"
+  )
+
+payroll_data_fire_police_zero_summary <- payroll_data_fire_police |>
+  summarise(across(everything(), ~ sum(. == 0, na.rm = TRUE))) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Column",
+    values_to = "Zero"
+  )
+
+```
+
+
+
+```{r}
+payroll_data_fire_police_combined_summary <- 
+  payroll_data_fire_police_total_summary |> 
+  inner_join(payroll_data_fire_police_na_summary, by = "Column") |> 
+  inner_join(payroll_data_fire_police_blank_summary, by = "Column") |> 
+  inner_join(payroll_data_fire_police_zero_summary, by = "Column")
+
+```
+
+
+
+```{r}
+payroll_data_fire_police_combined_summary_likert <-
+payroll_data_fire_police_combined_summary |> 
+  mutate(`Present` = `Total Count` - `NA` - `Blank` - Zero) |> 
+  mutate(`Present` = `Present` / `Total Count`) |> 
+  mutate(`NA` = `NA` / `Total Count`) |> 
+  mutate(`Blank` = `Blank` / `Total Count`) |> 
+  mutate(`Zero` = Zero / `Total Count`) |> 
+  dplyr::select(`Column`,`NA`,`Blank`,Zero,`Present`) |> 
+  filter(!Column %in% c('agency_name_clean','work_location_borough_clean'))
+```
+
+
+
+
+```{r}
+payroll_data_missing_group_likert <- bind_rows(
+  payroll_data_combined_summary_likert |> mutate(group= 'Original Data'), 
+  payroll_data_fire_police_combined_summary_likert |> mutate(group= 'Final Subset Data')
+)
+
+# payroll_data_missing_group_likert
+```
+
+
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+
+HH::likert(x=Column~. | group,payroll_data_missing_group_likert, 
+           positive.order=TRUE,
+           as.percent = T,
+           main = 'Diverging Stacked Bar',
+           xlab='Percentage',
+           ylab='Columns',
+           col = likert_colors,
+           ReferenceZero=2.5,
+           rightAxis=FALSE,
+           xlimEqualLeftRight=TRUE
+           )
+```
+
+
+
+
+```{r}
+payroll_data_fire_police |> 
+  filter(last_name == "") |> 
+  group_by(agency_name) |> 
+  summarise(`Count of Blank Records` = n()) |> 
+  kable(col.names = c("Agency", "Count of Blank Records")) 
+```
+
+
+
+
+
+
+## Understanding and cleaning the raw data
+
+
+
 ```{r}
 payroll_data |> 
   summarise(
@@ -181,6 +432,8 @@ payroll_data |>
   ) |> 
   kable()
 ```
+
+
 
 ### Agencies
 
@@ -213,10 +466,6 @@ payroll_data |>
 Now, let's take a look at the top 10 Agencies:
 
 ```{r}
-library(dplyr)
-library(kableExtra)
-
-
 payroll_data_summary <- payroll_data |> 
   group_by(agency_name_clean) |> 
   summarise(
@@ -301,7 +550,7 @@ Now let's take a look at the locations from the top 10 Agencies.
 required_boroughs <- c("BRONX", "BROOKLYN", "MANHATTAN", "QUEENS", "RICHMOND")
 
 agencies_present_in_required_boroughs <-
-payroll_data |>
+  payroll_data |>
   filter(work_location_borough_clean %in% required_boroughs) |> 
   group_by(agency_name_clean) |>  
   summarise(
@@ -315,7 +564,7 @@ payroll_data |>
 ```{r}
 
 payroll_data_agencies_present_in_required_boroughs <-
-payroll_data |> 
+  payroll_data |> 
   filter(agency_name_clean %in% payroll_data_summary$agency_name_clean) |> 
   filter(agency_name_clean %in% agencies_present_in_required_boroughs) |> 
   group_by(agency_name_clean) |> 
@@ -379,11 +628,12 @@ payroll_data |>
     )) |> 
   group_by(agency_name_clean,pay_basis) |> 
   summarise(
-    Total_records = n()
+    Total_records = n(),
+    Count_of_titles = n_distinct(title_description)
     , .groups = 'drop'
   ) |> 
   arrange(desc(Total_records)) |>
-  kable(col.names = c("Agency", "Pay Basis", "Total Records"))
+  kable(col.names = c("Agency", "Pay Basis", "Total Records", "Count of Titles"))
 ```
 
 ```{r}
@@ -418,8 +668,6 @@ payroll_data_filtered <-
 
 
 ```{r}
-# library(dplyr)
-# library(tidyr)
 
 # Count NA values and pivot
 na_summary <- payroll_data_filtered |>
@@ -460,7 +708,7 @@ combined_summary |>
 
 ```
 
-
+### Payroll Number	
 
 ```{r}
 payroll_data_filtered_payroll <- payroll_data_filtered |> 
@@ -476,7 +724,7 @@ payroll_data_filtered_payroll |>
   column_spec(2, background = ifelse(is.na(as.matrix(payroll_data_filtered_payroll[, 2])), "#fcefb4", ""))
 ```
 
-### Agency Start Date
+
 
 ```{r}
 payroll_data_fire_police <- 
@@ -492,16 +740,34 @@ payroll_data_fire_police <-
     agency_name = agency_name_clean,
     work_location_borough = work_location_borough_clean
   ) |>
-  select(-agency_name_clean, -work_location_borough_clean)
+  dplyr::select(-agency_name_clean, -work_location_borough_clean)
 ```
+
+
+### Agency Start Date
+
+```{r}
+library(lubridate)
+
+payroll_data_fire_police <- 
+  payroll_data_fire_police |> 
+  mutate(agency_start_date = mdy(agency_start_date))
+```
+
+
+
 
 
 **Save final Data:**\
 
 ```{r}
+# CSV
 # write.csv(payroll_data_fire_police, "data_source/payroll_data_fire_police.csv", row.names = FALSE)
-```
 
+# RDS
+# saveRDS(payroll_data_fire_police, "data_source/payroll_data_fire_police.rds")
+# payroll_data_fire_police <- readRDS("data_source/payroll_data_fire_police.rds")
+```
 
 
 Missing value stuff goes here.

@@ -6,10 +6,9 @@ execute:
   echo: true
 
 book:
-  title: "YOUR PROJECT TITLE - changed"
+  title: "Fire and Police Department Payroll"
   author:
-    - AUTHOR1 (UNI1) me
-    - AUTHOR2 (UNI2) big bird
+    - Alex (ad4277)
   repo-url: https://github.com/ad4277/payroll
   date: today
   page-footer:

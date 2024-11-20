@@ -3,13 +3,47 @@
 For this project, we will be using a subset of the **Citywide Payroll Data**.\
 This dataset is available via NYC OpenData and provided by the Office of Payroll Administration (OPA).
 
-The final subset of data for this project will be based on 2 Agencies:\
+The final subset of data for this project will be focused on 2 Agencies:\
 <p style="margin-top: -15px">
--   Fire Department
--   Police Department
+-   Fire Department 🧑‍🚒 🚒
+-   Police Department 👮🚓
 </p>
 
-First, we will examine the metadata of the entire dataset, followed by an analysis of missing values to identify any potential issues that may impact our analysis. Finally, we will outline the decision-making process for selecting a subset of the data.
+Here are the filters applied to the original data to produce our final subset of data:
+```{r}
+#| echo: false
+
+library(tibble)
+library(knitr)
+library(kableExtra)
+
+payroll_data_format <- tibble(
+  column_name = c(
+    "Fiscal Year", 
+    "Agency Name", 
+    "Work Location Borough",
+    "Pay Basis"
+  ),
+  filter = c(
+    "From 2015 to 2024", 
+    "FIRE DEPARTMENT, POLICE DEPARTMENT",
+    "BRONX, BROOKLYN, MANHATTAN, QUEENS, RICHMOND",
+    "per Annum, per Day, per Hour"
+  )
+)
+
+names(payroll_data_format) <- c("Column Name","Filter")
+
+kable(payroll_data_format,
+      # caption = "Dataset Format", 
+      align = "l") |>
+  kable_styling(full_width = FALSE) |>
+  column_spec(1, width = "200px")
+```
+
+\
+
+First, we will examine the metadata of the entire dataset, followed by an analysis of missing values to identify any potential issues that may impact our analysis. Finally, we will outline the decision-making process for selecting a subset of the data and transforming the original dataset with 6,225,611 rows to our final dataset with 804,630 rows.
 
 ```{r}
 #| echo: false
@@ -33,6 +67,8 @@ library(visdat)
 library(HH)
 ```
 
+\
+\
 
 ## Description
 
@@ -150,81 +186,75 @@ The file will be downloaded with the name: Citywide_Payroll_Data\_\_Fiscal_Year\
 
 Once the data was downloaded, it was added to a new folder inside the repository called 'data_source'.
 
-
-
-
-
-
-
-
-
-
-
 ```{r, cache=TRUE}
-#| echo: false
 #| message: false
 #| warning: false
+
+# import original data
 payroll_data_source <- read.csv("./data_source/Citywide_Payroll_Data__Fiscal_Year__20241111.csv") 
-# payroll_data <- payroll_data_source
-```
 
-
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
+# make a copy of original data for transformations
 payroll_data <- data.frame(payroll_data_source)
 
+# rename columns
 names(payroll_data) <- gsub("[\\.]+", "_", tolower(names(payroll_data_source)))
-
 ```
 
 
+\
+\
 
 
 
 
 ## Missing value analysis
 
+To analyse missing data, we will classify our data in 4 categories: \
+&nbsp;&nbsp;&nbsp; [■]{style="color:#D7191C;"}  NA      - any values equal to *NA* \
+&nbsp;&nbsp;&nbsp; [■]{style="color:#FDAE61;"}  Blank   - string values equal to "" \
+&nbsp;&nbsp;&nbsp; [■]{style="color:#ABD9E9;"}  Zero    - numeric values equal to 0 \
+&nbsp;&nbsp;&nbsp; [■]{style="color:#2C7BB6;"}  Present - any values with data \
 
 
-Missing data (NA + Blank) in the original dataset.
+First, let's check the missing values of the original dataset.\
+Using a sample of 1 million records (from 6.22 million rows) we have close to **4.5%** of missing data classified as NA or Blank by the vis_miss() plot. We can also observe missing values in 7 columns**\***: \
+<p style="margin-top: -15px;">
+-  3 columns related to a person's name (first_name, mid_init, last_name)
+-  payroll_number
+-  work_location_borough
+-  title_description
+-  agency_start_date \
+</p>
+[**(\*based on the black highlights and the percentages listed in the column names)**]{style="font-size:80%;margin-top: -15px;"}
 
-
-```{r}
-payroll_data_missing <- 
-  payroll_data |>
-  sample_n(1000) |>
-  mutate(across(everything(), ~ if_else(. == "", NA, .)))
-```
 
 
 ```{r}
 #| fig-width: 9
 #| fig-height: 6
 
+payroll_data_missing <- 
+  payroll_data |>
+  sample_n(100000) |>
+  mutate(across(everything(), ~ if_else(. == "", NA, .)))
+
 payroll_data_missing |> 
-  # select (-agency_name_clean, -work_location_borough_clean) |> 
-  # sample_n(10000) |>
   vis_miss(
     sort_miss = TRUE,
     # cluster = TRUE,
     show_perc_col = TRUE,
     warn_large_data = FALSE,
     ) + 
-  ggtitle("Missing Values - Original Data")+
-  theme(
-    # axis.title.x=element_blank(),
-        # axis.text.x=element_blank(),
-        # axis.ticks.x=element_blank()
-    plot.margin = margin(r = 50)
-    )
+  ggtitle("Missing Values (NA or Blank) - Original Data Sample")+
+  theme(plot.margin = margin(r = 50))
 ```
 
+\
+After transforming our original data to create our final subset data (Fire and Police Departments), we can now examine how the missing values from the original compares to the final dataset.
 
 ```{r}
+#Data Transformation
+
 payroll_data_total_summary <- payroll_data |>
   summarise(across(everything(), ~ n())) |>
   pivot_longer(
@@ -256,26 +286,16 @@ payroll_data_zero_summary <- payroll_data |>
     names_to = "Column",
     values_to = "Zero"
   )
-```
 
-
-
-
-```{r}
 payroll_data_combined_summary <- 
   payroll_data_total_summary |> 
   inner_join(payroll_data_na_summary, by = "Column") |> 
   inner_join(payroll_data_blank_summary, by = "Column") |> 
   inner_join(payroll_data_zero_summary, by = "Column")
-```
 
 
-```{r}
 # payroll_data_combined_summary
-```
 
-
-```{r}
 payroll_data_combined_summary_likert <-
 payroll_data_combined_summary |> 
   mutate(`Present` = `Total Count` - `NA` - `Blank` - Zero) |> 
@@ -286,15 +306,6 @@ payroll_data_combined_summary |>
   dplyr::select(`Column`,`NA`,`Blank`,Zero,`Present`) |> 
   filter(!Column %in% c('agency_name_clean','work_location_borough_clean'))
 
-# payroll_data_combined_summary_likert
-```
-
-
-
-
-```{r}
-#| fig-width: 10
-#| fig-height: 5
 
 likert_colors <- c("NA" = "#D7191C",
                    "Blank" = "#FDAE61",
@@ -303,20 +314,6 @@ likert_colors <- c("NA" = "#D7191C",
 
 
 
-# HH::likert(x=Column~ .,payroll_data_combined_summary_likert, 
-#            positive.order=TRUE,
-#            as.percent = T,
-#            main = 'Diverging Stacked Bar',
-#            xlab='Percentage',
-#            ylab='Columns',
-#            col = likert_colors,
-#            ReferenceZero=2.5,
-#            rightAxis=FALSE
-#            )
-```
-
-
-```{r}
 payroll_data_fire_police <- readRDS("data_source/payroll_data_fire_police.rds")
 
 payroll_data_fire_police_total_summary <- payroll_data_fire_police |>
@@ -370,9 +367,6 @@ payroll_data_fire_police_combined_summary_likert <-
   filter(!Column %in% c('agency_name_clean','work_location_borough_clean'))
 ```
 
-
-
-
 ```{r}
 #| fig-width: 9
 #| fig-height: 5
@@ -385,35 +379,42 @@ payroll_data_missing_group_likert <- bind_rows(
 HH::likert(x=Column~. | group,payroll_data_missing_group_likert, 
            positive.order=TRUE,
            as.percent = T,
-           main = 'Missing Values',
+           main = 'Missing Value Analysis',
            xlab='Percentage',
            ylab='Columns',
            col = likert_colors,
            ReferenceZero=2.5,
            rightAxis=FALSE,
-           xlimEqualLeftRight=TRUE
+           # xlimEqualLeftRight=TRUE,
+           xlim=c(-50,100),
            )
 ```
 
+Our original dataset has [■]{style="color:#D7191C;"} NA data for payroll_number, first_name, last_name. It also has [■]{style="color:#FDAE61;"} Blank data in 6 columns: first_name, mid_init, last_name, work_location_borough, title_description, agency_start_date.
 
 
+For both datasets, [■]{style="color:#ABD9E9;"} Zero values show up in columns related to the amount paid to a person, which can be 3 categories: regular, overtime, other. If a certain category is 0, it means the person did not receive any money for that category. This in an important information because it does not requires us to exclude or impute these values. We can observe a significant reduction of zero values in the subset dataset compared to the original.
 
+Our final subset data (Fire and Police Departments) no longer contains [■]{style="color:#D7191C;"} NA data, but still contains [■]{style="color:#FDAE61;"} Blank data in 3 columns: first_name, mid_init, last_name. 
+
+For **mid_init** (Middle Name Initials), 29% of the data in the final subset is Blank, it is ok for us to have blanks in the data, this will not affect the future analysis. For **first_name** and **last_name** blank data (1.2% of the data in the final subset is Blank), these values are blank on purpose by the data provider: \
+[*...As a part of FISA-OPA’s routine process for reviewing and releasing Citywide Payroll Data, data for some agencies (specifically NYC Police Department (NYPD) and the District Attorneys’ Offices (Manhattan, Kings, Queens, Richmond, Bronx, and Special Narcotics)) have been redacted since they are exempt from disclosure pursuant to the Freedom of Information Law, POL § 87(2)(f), on the ground that disclosure of the information could endanger the life and safety of the public servants listed thereon...*]{style="font-size:70%;"}
+
+Based on this disclosure, we can confirm the Blank values for the names are part of the Police Department agency:
 ```{r}
 payroll_data_fire_police |> 
-  filter(last_name == "") |> 
+  filter(first_name == "" | last_name == "") |> 
   group_by(agency_name) |> 
   summarise(`Count of Blank Records` = n()) |> 
   kable(col.names = c("Agency", "Count of Blank Records")) 
 ```
 
-
-
-
-
+\
+\
 
 ## Understanding and cleaning the raw data
 
-
+Starting with the original data (6.22 million rows). This is quick summary of how many categories we have in each column:
 
 ```{r}
 payroll_data |> 
@@ -427,6 +428,8 @@ payroll_data |>
   kable()
 ```
 
+\
+\
 
 
 ### Agencies
@@ -455,8 +458,6 @@ payroll_data |>
 ```
 
 \
-\
-
 Now, let's take a look at the top 10 Agencies:
 
 ```{r}
@@ -476,6 +477,9 @@ payroll_data_summary |>
 
 
 ```
+
+\
+\
 
 ### Work Location Borough
 
@@ -498,32 +502,13 @@ payroll_data |>
                  pull(work_location_borough) %in% c("","Bronx", "MANHATTAN", "Manhattan")),   background = "#fcefb4", color = "black")
 ```
 
-
 \
-\
-
 Our first step here is to capitalize all the location names.
 
 ```{r}
 payroll_data <- payroll_data |> 
   mutate(work_location_borough_clean = toupper(work_location_borough))
 
-```
-
-```{r}
-#| echo: false
-
-# payroll_data |> 
-#   group_by(work_location_borough_clean) |> 
-#   summarise(
-#     Total_records = n()
-#   ) |> 
-#   arrange((work_location_borough_clean)) |> 
-#   slice_head(n = 10) |> 
-#   kable(col.names = c("Locations", "Total Records"))
-```
-
-```{r}
 payroll_data |> 
   summarise(
     "Number of Locations Before" = n_distinct(work_location_borough),
@@ -533,11 +518,8 @@ payroll_data |>
 ```
 
 \
-\
-
-Now let's take a look at the locations from the top 10 Agencies.
-
-
+The main 5 locations of this dataset are: BRONX, BROOKLYN, MANHATTAN, QUEENS, RICHMOND\
+Using the top 10 agencies that we found previously, we will keep all the agencies that have at least data for all 5 locations:
 
 ```{r}
 
@@ -553,9 +535,7 @@ agencies_present_in_required_boroughs <-
   filter(borough_count == length(required_boroughs)) |> 
   filter(agency_name_clean %in% payroll_data_summary$agency_name_clean) |> 
   pull(agency_name_clean)
-```
 
-```{r}
 
 payroll_data_agencies_present_in_required_boroughs <-
   payroll_data |> 
@@ -575,6 +555,10 @@ payroll_data_agencies_present_in_required_boroughs |>
 
 ```
 
+\
+Since we are interested in the POLICE and FIRE departments, let's take a closer look at the FIRE DEPARTMENT since it contains 7 locations. Based on these results, we have 1 record with location OTHER and 16555 with Blank location.
+
+
 ```{r}
 payroll_data |> 
   filter(agency_name_clean %in%  c("POLICE DEPARTMENT","FIRE DEPARTMENT")) |> 
@@ -588,7 +572,19 @@ payroll_data |>
   kable(col.names = c("Agency", "Location", "Fiscal Year", "Total Records"))
 ```
 
+\
+The final decision for location is to keep only data for the major 5 locations: \
+BRONX, BROOKLYN, MANHATTAN, QUEENS, RICHMOND.
+
+\
+\
+
 ### Fiscal Year
+
+Using only the FIRE and POLICE department, we can observe that we have no records for 2014 for the Police department. Please note that the 16555 in the FIRE department for 2014 are the same records with blank location we found before. 
+
+The final decision for Fiscal Year is to drop 2014 and keep only data from 2015 to 2024.
+
 
 ```{r}
 # Create the pivot table
@@ -611,7 +607,16 @@ pivot_table_fiscal_year |>
   column_spec(3, background = ifelse(as.matrix(pivot_table_fiscal_year[, 3]) == 0, "#fcefb4", ""))
 ```
 
+\
+\
+
 ### Pay Basis
+
+Based on the different types of pay basis, we will drop the `Prorated Annual` as it is the category with the lowest amount of records and it only affects 1 job title (Chaplain).
+
+The final decision for Pay Basis is to keep only data for the categories: \
+per Annum, per Day, per Hour.
+
 
 ```{r}
 payroll_data |> 
@@ -628,9 +633,7 @@ payroll_data |>
   ) |> 
   arrange(desc(Total_records)) |>
   kable(col.names = c("Agency", "Pay Basis", "Total Records", "Count of Titles"))
-```
 
-```{r}
 payroll_data |> 
   # filter(fiscal_year == "2024") |>
   filter(agency_name_clean %in%  c(
@@ -649,6 +652,26 @@ payroll_data |>
 ```
 
 
+
+
+
+\
+\
+
+
+### Payroll Number	
+
+First let's start create a dataset filtered based on the criteria we discussed above:\
+<p style="margin-top: -15px">
+-   Agency ("POLICE DEPARTMENT","FIRE DEPARTMENT")
+-   Location ("BRONX", "BROOKLYN", "MANHATTAN", "QUEENS", "RICHMOND"), 
+-   Fiscal Year (2015-2024)
+-   Pay Basis ("per Annum", "per Day", "per Hour")
+</p>
+
+From this dataset, we still have 243,601 NA records for the column `Payroll Number'. By doing a group by analysis per fiscal year, we can observe the NA are related to the years 2015, 2016, and 2017. So we will backfill those years with the proper payroll number code based on each agency. This way we will no longer have NA values in the new dataset.
+
+
 ```{r}
 payroll_data_filtered <- 
   payroll_data |> 
@@ -656,14 +679,9 @@ payroll_data_filtered <-
   filter(work_location_borough_clean %in%   c("BRONX", "BROOKLYN", "MANHATTAN", "QUEENS", "RICHMOND")) |> 
   filter(fiscal_year > "2014") |> 
   filter(pay_basis %in%   c("per Annum", "per Day", "per Hour"))
-  
-```
 
 
-
-```{r}
-
-# Count NA values and pivot
+# Count NA values
 na_summary <- payroll_data_filtered |>
   summarise(across(everything(), ~ sum(is.na(.)))) |>
   pivot_longer(
@@ -672,7 +690,7 @@ na_summary <- payroll_data_filtered |>
     values_to = "NA Count"
   )
 
-# Count blank values and pivot
+# Count blank values
 blank_summary <- payroll_data_filtered |>
   summarise(across(everything(), ~ sum(. == "", na.rm = TRUE))) |>
   pivot_longer(
@@ -681,7 +699,7 @@ blank_summary <- payroll_data_filtered |>
     values_to = "Blank Count"
   )
 
-# Count zero values and pivot
+# Count zero values
 zero_summary <- payroll_data_filtered |>
   summarise(across(everything(), ~ sum(. == 0, na.rm = TRUE))) |>
   pivot_longer(
@@ -690,19 +708,21 @@ zero_summary <- payroll_data_filtered |>
     values_to = "Zero Count"
   )
 
-# Combine all three summaries into one dataframe
+
 combined_summary <- na_summary |>
   inner_join(blank_summary, by = "Column") |>
   inner_join(zero_summary, by = "Column")
 
-# Display the combined result using kable
-combined_summary |>
-  filter(`NA Count` > 0 | `Blank Count` > 0 | `Zero Count` > 0) |> 
-  kable(col.names = c("Column", "NA Count", "Blank Count", "Zero Count"))
+# combined_summary |>
+#   filter(`NA Count` > 0 | `Blank Count` > 0 | `Zero Count` > 0) |> 
+#   kable(col.names = c("Column", "NA Count", "Blank Count", "Zero Count"))
 
+na_summary |> 
+  filter(`NA Count` > 0) |> 
+  kable(col.names = c("Column", "NA Count"))
 ```
 
-### Payroll Number	
+
 
 ```{r}
 payroll_data_filtered_payroll <- payroll_data_filtered |> 
@@ -721,6 +741,7 @@ payroll_data_filtered_payroll |>
 
 
 ```{r}
+# Backfill NA values with the proper payroll number based on each agency
 payroll_data_fire_police <- 
   payroll_data_filtered |>
   mutate(
@@ -737,8 +758,12 @@ payroll_data_fire_police <-
   dplyr::select(-agency_name_clean, -work_location_borough_clean)
 ```
 
+\
+\
 
 ### Agency Start Date
+
+The column agency_start_date is loaded as a character when we read the data for the first time. We will change the type to date using `lubridate`.
 
 ```{r}
 library(lubridate)
@@ -748,11 +773,13 @@ payroll_data_fire_police <-
   mutate(agency_start_date = mdy(agency_start_date))
 ```
 
+\
+\
 
 
+### Saving Subset Data
 
-
-**Save final Data:**\
+We will save the Final Subset Data into a folder, so we can load later inside `results.qmd`.
 
 ```{r}
 # CSV
@@ -764,15 +791,14 @@ payroll_data_fire_police <-
 ```
 
 
-Missing value stuff goes here.
+\
+\
+\
 
-## Understanding and cleaning the raw data
-
-Note any issues / problems with the data, either known or that you discover.
 
 ## Deciding on final data subset
 
-Based on the analysis above, we will add a few filter to reduce and clean the dataset.
+Based on the analysis above, we will add a few filters to produce and clean our final dataset.
 
 **Filters applied to the dataset:**\
 
@@ -785,13 +811,15 @@ library(kableExtra)
 
 payroll_data_format <- tibble(
   column_name = c(
-    "Fiscal Year", 
     "Agency Name", 
+    "Work Location Borough",
+    "Fiscal Year", 
     "Pay Basis"
   ),
   filter = c(
-    "From 2015 to 2024", 
     "FIRE DEPARTMENT, POLICE DEPARTMENT",
+    "BRONX, BROOKLYN, MANHATTAN, QUEENS, RICHMOND",
+    "From 2015 to 2024", 
     "per Annum, per Day, per Hour"
   )
 )
@@ -819,18 +847,20 @@ library(kableExtra)
 
 payroll_data_format <- tibble(
   column_name = c(
-    "Fiscal Year", 
     "Agency Name",
-    "Payroll Number",
     "Work Location Borough", 
-    "Pay Basis"
+    "Fiscal Year", 
+    "Pay Basis",
+    "Payroll Number",
+    "Agency Start Date"
   ),
   filter = c(
-    "2014 had missing data for Police Department. 2014 will be removed.", 
-    "Group agencies with similar names.",
-    "Missing values have been backfilled based on Agency Name.",
+    "Group agencies with similar names. Keep only FIRE and POLICE.",
     "Uppercase all names. Filtering data only for top 5 Boroughs.",
-    "Keeping only the top 3 Pay Basis."
+    "2014 had missing data for Police Department. 2014 will be removed.", 
+    "Keeping only the top 3 Pay Basis.",
+    "Missing NA values have been backfilled based on Agency Name.",
+    "Convert strings to date using lubridate."
   )
 )
 
@@ -973,6 +1003,8 @@ kable(metadata_final_table,
 \
 \
 
+```{textile}
+#| echo: false
 ::: callout-note
 **Instruction**
 
@@ -990,3 +1022,4 @@ Describe any patterns you discover in missing values. If no values are missing, 
 
 (suggested: 2 graphs plus commentary)
 :::
+```

@@ -1,15 +1,26 @@
-::: callout-note
-**Instruction**
-
-1 Introduction index.qmd
-
-Explain why you chose this topic, and the questions you are interested in studying. Provide context for readers who are not familiar with the topic.
-
-(suggested: 1/2 page) 250-500 words
-:::
+---
+engine: knitr
+---
 
 # Introduction
 
-Hi, this is my intro
+My experience in the financial industry has fostered a strong interest in working with high-volume salary datasets.
 
-Creating a new branch!
+For this project, I will analyze **10 years of payroll data for the Fire and Police departments** in New York City. This dataset represents a well-defined and comprehensive universe of information, making it ideal for thorough exploration and analysis.
+
+One of the reasons I selected this dataset is its versatility; it includes a variety of data types such as categorical text with differing levels of granularity, numerical data, dates, and fields with missing or outlier values. These characteristics provide opportunities to practice a range of analytical techniques, from data cleaning to advanced visualizations for pattern discovery.
+
+Specifically, I am interested in studying trends such as workforce growth, salary composition across different roles, and identifying the top-ranking positions and locations with the highest payroll activity. By delving into these questions, I aim to uncover meaningful insights into the structure and evolution of these essential public service departments. Let’s uncover the stories hidden in the data!
+
+
+[🚒 💵 🚓]{style="font-size:300%;"}
+
+
+<!-- **Instruction** -->
+
+<!-- 1 Introduction index.qmd -->
+
+<!-- Explain why you chose this topic, and the questions you are interested in studying. Provide context for readers who are not familiar with the topic. -->
+
+<!-- (suggested: 1/2 page) 250-500 words -->
+

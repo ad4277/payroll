@@ -10,9 +10,7 @@ For this project, I will analyze **10 years of payroll data for the Fire and Pol
 
 One of the reasons I selected this dataset is its versatility; it includes a variety of data types such as categorical text with differing levels of granularity, numerical data, dates, and fields with missing or outlier values. These characteristics provide opportunities to practice a range of analytical techniques, from data cleaning to advanced visualizations for pattern discovery.
 
-Specifically, I am interested in studying trends such as workforce growth, salary composition across different roles, and identifying the top-ranking positions and locations with the highest payroll activity. By delving into these questions, I aim to uncover meaningful insights into the structure and evolution of these essential public service departments.
-
-Let’s uncover the stories hidden in the data!
+Specifically, I am interested in studying trends such as workforce growth, salary composition across different roles, and identifying the top-ranking positions and locations with the highest payroll activity. By delving into these questions, I aim to uncover meaningful insights into the structure and evolution of these essential public service departments. Let’s uncover the stories hidden in the data!
 
 
 [🚒 💵 🚓]{style="font-size:300%;"}

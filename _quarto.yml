@@ -8,7 +8,7 @@ execute:
 book:
   title: "Fire and Police Department Payroll"
   author:
-    - Alex (ad4277)
+    - Alex J (ad4277)
   repo-url: https://github.com/ad4277/payroll
   date: today
   page-footer:
@@ -28,5 +28,6 @@ format:
     # theme: darkly
     # theme: Litera
     code-fold: true
+    
 
 

@@ -46,74 +46,12 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="tutorial-complete-after-email-change-2" class="level1">
-<h1>Tutorial complete after email change 2</h1>
-<p>This repo contains a <a href="https://quarto.org/docs/books/">Quarto book</a> template for the EDAV final project.</p>
-<section id="follow-these-instructions-carefully" class="level2">
-<h2 class="anchored" data-anchor-id="follow-these-instructions-carefully">Follow these instructions carefully</h2>
-<p><em>If you have any difficulties or have feedback of any kind, please <a href="https://github.com/jtr13/quarto-edav-template/issues">file an issue</a> or ask questions in the <a href="https://github.com/jtr13/quarto-edav-template/discussions">Discussions</a> section.</em></p>
-<p><a href="https://www.youtube.com/watch?v=emgS2JI4jCk">Video tutorial</a> (walkthrough of steps below)</p>
-<section id="copy-this-template-github" class="level3">
-<h3 class="anchored" data-anchor-id="copy-this-template-github">Copy this template (GitHub)</h3>
-<ul class="task-list">
-<li><p><label><input type="checkbox">1. Click the green “Use this template” button above and choose “Create a new repository”. If you don’t see the “Use this template” option, log in to GitHub. DO NOT FORK THE REPO. Choose a descriptive name for your repo, such as “federalbudget” or “AIDSdeaths”. (If you change your topic before you do any work, delete the repo and start over.)</label></p></li>
-<li><p><label><input type="checkbox">2. Leave the setting for viewing the repo as “Public”. (Otherwise, we will not be able to access your rendered book.)</label></p></li>
-<li><p><label><input type="checkbox">3. In the Description field, write “Source files for EDAV final project” then click “Create repository”.</label></p></li>
-</ul>
-</section>
-<section id="set-up-pages-github" class="level3">
-<h3 class="anchored" data-anchor-id="set-up-pages-github">Set up Pages (GitHub)</h3>
-<ul class="task-list">
-<li><p><label><input type="checkbox">1. You’ve now left the template page and are viewing your new repo on GitHub. On the home page, click Settings. Click the “Pages” section on the left. In the Build and Deployment section, set Source to “Deploy from a branch” (Classic Pages experience) and Branch to main with /docs folder. Click Save.</label></p></li>
-<li><p><label><input type="checkbox">2. Click the little gear button near “About” on the top right side of the home page of the repo and check the “Use your Github Pages website” box under “Website”. Click “Save changes”. Test the link and you should see a web site with a stick figure on it. It may take a few minutes to build so if it’s not working do a few more steps and then come back to check.</label></p></li>
-</ul>
-</section>
-<section id="copy-the-repo-link-github" class="level3">
-<h3 class="anchored" data-anchor-id="copy-the-repo-link-github">Copy the repo link (GitHub)</h3>
-<ul class="task-list">
-<li><label><input type="checkbox">1. Click the green Code button, choose “HTTPS” and copy the link below. It should have the format: https﻿://github.com/[USERNAME]/[REPONAME].git</label></li>
-</ul>
-</section>
-<section id="clone-the-repo-rstudio" class="level3">
-<h3 class="anchored" data-anchor-id="clone-the-repo-rstudio">Clone the repo (RStudio)</h3>
-<ul class="task-list">
-<li><label><input type="checkbox">1. Clone your new repo with <em>File, New Project…, Version Control, Git</em> in RStudio. You will need to paste the link from the previous step in the Repository URL box. If it’s not automatically populated, enter the repo name in the “Project directory name:” box. Choose the location of the project.</label></li>
-</ul>
-</section>
-<section id="edit-_quarto.yml-rstudio" class="level3">
-<h3 class="anchored" data-anchor-id="edit-_quarto.yml-rstudio">Edit <code>_quarto.yml</code> (RStudio)</h3>
-<p>Tip: From the file pane in RStudio, open <code>README.md</code>, which contains these instructions. You can delete steps as you complete them.</p>
-<ul class="task-list">
-<li><label><input type="checkbox">1. Change the all caps info in the <code>title:</code>, <code>author:</code> and <code>repo-url</code> fields in the YAML (top) section of <code>_quarto.yml</code> to your info. (Note: it’s very important to maintain the indenting structure in this file precisely as is – be careful!)</label></li>
-</ul>
-</section>
-<section id="render-the-book-rstudio" class="level3">
-<h3 class="anchored" data-anchor-id="render-the-book-rstudio">Render the book (RStudio)</h3>
-<ul class="task-list">
-<li><p><label><input type="checkbox">1. If you haven’t already, click “Help” “Check for Updates” to make sure you have the latest version of RStudio (and thus have Quarto installed.)</label></p></li>
-<li><p><label><input type="checkbox">2. Render the web site locally by clicking the “Build” tap on the right and then “Render Book”.</label></p></li>
-<li><p><label><input type="checkbox">3. Use <code>browseURL("docs/index.html")</code> to view your book locally (or just open <code>docs/index.html</code> in a browser).</label></p></li>
-<li><p><label><input type="checkbox">4. If it looks good, commit and push all changed files to GitHub.</label></p></li>
-</ul>
-<p>(You will need to repeat steps 2 and 4 every time you wish to update the book on GitHub Pages.)</p>
-</section>
-<section id="update-readme-github-or-rstudio" class="level3">
-<h3 class="anchored" data-anchor-id="update-readme-github-or-rstudio">Update README (GitHub or RStudio)</h3>
-<ul class="task-list">
-<li><label><input type="checkbox">1. Delete the content of this <strong>README</strong> and add a short description of your project in its place. If you’re working locally, be sure to commit and push the changes to GitHub.</label></li>
-</ul>
-</section>
-<section id="optional" class="level3">
-<h3 class="anchored" data-anchor-id="optional">Optional</h3>
-<ul class="task-list">
-<li><label><input type="checkbox">1. Choose a theme from <a href="https://bootswatch.com/">https://bootswatch.com/</a> and replace “cosmo” in <code>_quarto.yml</code> with your prefered theme.</label></li>
-</ul>
-</section>
-<section id="additional-features" class="level3">
-<h3 class="anchored" data-anchor-id="additional-features">Additional features</h3>
-<p>Please consult the official guide to <strong>quarto</strong> book websites: <a href="https://quarto.org/docs/books/">https://quarto.org/docs/books/</a></p>
-</section>
-</section>
+<section id="analysis-of-fire-and-police-department-payroll-data" class="level1">
+<h1>Analysis of Fire and Police Department Payroll Data</h1>
+<p>For this project, I will analyze 10 years of payroll data for the Fire and Police departments in New York City. This dataset represents a well-defined and comprehensive universe of information, making it ideal for thorough exploration and analysis.</p>
+<p>It includes a variety of data types such as categorical text with differing levels of granularity, numerical data, dates, and fields with missing or outlier values. These characteristics provide opportunities to practice a range of analytical techniques, from data cleaning to advanced visualizations for pattern discovery.</p>
+<p>Let’s uncover the stories hidden in the data!</p>
+<p><span style="font-size:300%;">🚒 💵 🚓</span></p>
 </section>
 
 </main>

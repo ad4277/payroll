@@ -6,6 +6,4 @@ It includes a variety of data types such as categorical text with differing leve
 
 Let’s uncover the stories hidden in the data!
 
-[🚒 💵 🚓]{style="font-size:300%;"}
-
-
+# 🚒 💵 🚓

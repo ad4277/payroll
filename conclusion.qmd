@@ -6,7 +6,6 @@ hi, this is my conclusion
 # this is test
 ```
 
-
 ```{mermaid}
 flowchart LR
   A[Importing Data] --> B[Understanding and \n cleaning the raw data]
@@ -17,6 +16,7 @@ flowchart LR
   D --> F[Saving Subset Data]
   E --> F[Saving Subset Data]
 ```
+
 ```{r}
 #| echo: false
 
@@ -62,3 +62,109 @@ kable(metadata,
   kable_styling()
 
 ```
+
+
+\
+\
+
+\
+\
+
+::: panel-tabset
+## **Importing the data**\
+
+To access the data, we can go directly to the URL:\
+<p style="font-size:95%; font-style:italic">
+<https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data>
+</p>
+
+From this URL, you can click the button 'Export', and then select Download File-CSV format (All data 6225611 rows). This will download a file of about 840MB. Remember, we are using the data Last Updated on October 30, 2024.
+
+The file will be downloaded with the name: Citywide_Payroll_Data\_\_Fiscal_Year\_\_**YYYYMMDD**.csv\
+<p style="font-size:90%; font-style:italic">
+(YYYYMMDD refers to the date that you downloaded the file)
+</p>
+
+Once the data was downloaded, it was added to a new folder inside the repository called 'data_source'.
+
+```{r, cache=TRUE}
+#| message: false
+#| warning: false
+
+# # import original data
+# payroll_data_source <- read.csv("./data_source/Citywide_Payroll_Data__Fiscal_Year__20241111.csv") 
+# 
+# # make a copy of original data for transformations
+# payroll_data <- data.frame(payroll_data_source)
+# 
+# # rename columns
+# names(payroll_data) <- gsub("[\\.]+", "_", tolower(names(payroll_data_source)))
+```
+
+
+
+\
+\
+
+## **Creating the final subset data**\
+
+The decision-making process for selecting a subset of the data and the detailed transformation the original dataset with 6,225,611 rows to our final dataset with 804,630 rows.
+
+
+To generate the final subset use the code below:
+
+```{r}
+# payroll_data_fire_police <-
+#   payroll_data |> 
+#   # clean agency name: 
+#   mutate(agency_name_clean = trimws(gsub("#\\d+$", "", agency_name))) |> 
+#   # clean location name: 
+#   mutate(work_location_borough_clean = toupper(work_location_borough)) |> 
+# 
+#   # filtering data:
+#   filter(agency_name_clean %in%  c("POLICE DEPARTMENT","FIRE DEPARTMENT")) |> 
+#   filter(work_location_borough_clean %in%   c("BRONX", "BROOKLYN", "MANHATTAN", "QUEENS", "RICHMOND")) |> 
+#   filter(fiscal_year >= "2015" & fiscal_year <= "2024") |> 
+#   filter(pay_basis %in%   c("per Annum", "per Day", "per Hour")) |> 
+#   
+#   # backfill payroll number after filtering
+#   mutate(
+#     payroll_number_clean = case_when(
+#       is.na(payroll_number) & agency_name_clean == "FIRE DEPARTMENT" ~ 57,
+#       is.na(payroll_number) & agency_name_clean == "POLICE DEPARTMENT" ~ 56,
+#       TRUE ~ payroll_number
+#     )) |> 
+#   
+#   # converting dates:
+#   mutate(agency_start_date_clean = mdy(agency_start_date)) |> 
+# 
+#   # renaming clean columns to original names:
+#   mutate(
+#     agency_name = agency_name_clean,
+#     work_location_borough = work_location_borough_clean,
+#     payroll_number = payroll_number_clean,
+#     agency_start_date = agency_start_date_clean
+#   ) |>
+#   
+#   # dropping clean columns
+#   dplyr::select(-agency_name_clean, 
+#                 -work_location_borough_clean, 
+#                 -payroll_number_clean,
+#                 -agency_start_date_clean)
+  
+
+
+# Please uncomment the CSV or the RDS method to save the subset data:
+
+# Save the data CSV
+# write.csv(payroll_data_fire_police, "data_source/payroll_data_fire_police.csv", row.names = FALSE)
+
+# Save the data RDS
+# saveRDS(payroll_data_fire_police, "data_source/payroll_data_fire_police.rds")
+
+# Read the data RDS
+# payroll_data_fire_police <- readRDS("data_source/payroll_data_fire_police.rds")
+```
+
+
+:::

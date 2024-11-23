@@ -46,7 +46,7 @@ kable(payroll_data_format,
 
 \
 
-First, we will examine the metadata of the entire dataset, followed by an analysis of missing values to identify any potential issues that may impact our analysis. Finally, we will outline the decision-making process for selecting a subset of the data and transforming the original dataset with 6,225,611 rows to our final dataset with 804,630 rows.
+First, we will examine the metadata of the dataset, followed by an analysis of missing values to identify any potential issues that may impact our analysis. Finally, we will outline the decision-making process for selecting a subset of the data and transforming the original dataset with 6,225,611 rows to our final dataset with 804,630 rows.
 
 ```{r}
 #| echo: false
@@ -87,7 +87,7 @@ metadata <- tibble::tibble(
     "Dataset Name",
     "Provided by",
     "Data Category",
-    "Frequency of Updates", 
+    "Frequency of Updates ", 
     "Date Created", 
     "Data Last Updated", 
     "Dimensions",
@@ -101,16 +101,21 @@ metadata <- tibble::tibble(
     "Annually", 
     "October 31, 2015", 
     "October 30, 2024", 
-    "6,225,611 rows and 17 columns",
+    "Raw Data: 6,225,611 rows | 17 columns <br> \n Subset Data: 804,630 rows | 17 columns",
     "City Employee Salary per Fiscal Year",
     "https://data.cityofnewyork.us/"
   )
 )
 
 # Print the metadata table using kable
-kable(metadata, col.names = NULL, 
+kable(metadata, 
+      col.names = NULL, 
+      escape = F,
+      format = "html",
       # caption = "Dataset Metadata",
-      align = "l")
+      align = "l")  |>
+  column_spec(1, width = "200px") |>
+  kable_styling()
 
 ```
 

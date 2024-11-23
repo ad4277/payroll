@@ -1,5 +1,21 @@
 # Appendix
 
+## Creating the subset data
+
+In this section, we will explore the decision-making process for selecting a subset of the data and the detailed transformation the original dataset with 6,225,611 rows to our final dataset with 804,630 rows.
+
+
+```{mermaid}
+flowchart LR
+  A[Importing Data] --> B[Understanding and \n cleaning the raw data]
+  B --> C(Transforming Columns)
+  B --> D(Filtering Data)
+  B --> E(Backfilling NA)
+  C --> F[Saving Subset Data]
+  D --> F[Saving Subset Data]
+  E --> F[Saving Subset Data]
+```
+
 
 ## Importing the data
 
@@ -410,9 +426,9 @@ payroll_data_filtered <-
 \
 
 
-### Saving Subset Data
+## Saving Subset Data
 
-We will save the Final Subset Data into a folder, so we can load later inside `results.qmd`.
+We will save the Final Subset Data into the folder /data_source/, so we can load it later inside `results.qmd`.
 
 ```{r}
 payroll_data_fire_police <-
@@ -431,12 +447,8 @@ payroll_data_fire_police <-
                 -work_location_borough_clean, 
                 -payroll_number_clean,
                 -agency_start_date_clean)
-```
 
 
-
-
-```{r}
 # Please uncomment the CSV or the RDS method to save the subset data:
 
 # Save the data CSV
@@ -455,7 +467,7 @@ payroll_data_fire_police <-
 \
 
 
-## Deciding on final data subset
+## Final Subset Data Information
 
 Based on the analysis above, we will add a few filters to produce and clean our final dataset.
 

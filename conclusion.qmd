@@ -1,1 +1,64 @@
 # Conclusion
+
+hi, this is my conclusion
+
+```{r}
+# this is test
+```
+
+
+```{mermaid}
+flowchart LR
+  A[Importing Data] --> B[Understanding and \n cleaning the raw data]
+  B --> C(Transforming columns)
+  B --> D(Filtering Data)
+  B --> E(Backfilling NA)
+  C --> F[Saving Subset Data]
+  D --> F[Saving Subset Data]
+  E --> F[Saving Subset Data]
+```
+```{r}
+#| echo: false
+
+
+library(tibble)
+library(knitr)
+library(kableExtra)
+
+# Create a tibble for the metadata
+metadata <- tibble::tibble(
+  Field = c(
+    "Dataset Name",
+    "Provided by",
+    "Data Category",
+    "Frequency of Updates ", 
+    "Date Created", 
+    "Data Last Updated", 
+    "Dimensions",
+    "Each row represents",
+    "Source URL"
+  ),
+  Value = c(
+    "Citywide Payroll Data (Fiscal Year)",
+    "Office of Payroll Administration (OPA)",
+    "City Government",
+    "Annually", 
+    "October 31, 2015", 
+    "October 30, 2024", 
+    "Raw Data: 6,225,611 rows | 17 columns <br> \n Subset Data: 804,630 rows | 17 columns",
+    "City Employee Salary per Fiscal Year",
+    "https://data.cityofnewyork.us/"
+  )
+)
+
+# Print the metadata table using kable
+kable(metadata, 
+      col.names = NULL, 
+      escape = F,
+      format = "html",
+      # caption = "Dataset Metadata",
+      align = "l")  |>
+  column_spec(1, width = "200px") |>
+  kable_styling()
+
+```

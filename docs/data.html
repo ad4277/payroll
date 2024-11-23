@@ -241,7 +241,7 @@ The final subset of data for this project will be focused on 2 Agencies:<br>
 <tbody>
 <tr class="odd">
 <td style="text-align: left; width: 200px;">Fiscal Year</td>
-<td style="text-align: left;">From 2015 to 2024</td>
+<td style="text-align: left;">From 2015 to 2024 (10 years)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; width: 200px;">Agency Name</td>
@@ -263,7 +263,7 @@ The final subset of data for this project will be focused on 2 Agencies:<br>
 </div>
 <p><br>
 </p>
-<p>First, we will examine the metadata of the entire dataset, followed by an analysis of missing values to identify any potential issues that may impact our analysis. Finally, we will outline the decision-making process for selecting a subset of the data and transforming the original dataset with 6,225,611 rows to our final dataset with 804,630 rows.</p>
+<p>First, we will examine the metadata of the dataset, followed by an analysis of missing values to identify any potential issues that may impact our analysis. Finally, we will outline the decision-making process for selecting a subset of the data and transforming the original dataset with 6,225,611 rows to our final dataset with 804,630 rows.</p>
 <p><br>
 <br>
 </p>
@@ -272,46 +272,53 @@ The final subset of data for this project will be focused on 2 Agencies:<br>
 <p><strong>Data Metadata</strong></p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Dataset Name</td>
+<td style="text-align: left; width: 200px;">Dataset Name</td>
 <td style="text-align: left;">Citywide Payroll Data (Fiscal Year)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Provided by</td>
+<td style="text-align: left; width: 200px;">Provided by</td>
 <td style="text-align: left;">Office of Payroll Administration (OPA)</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Data Category</td>
+<td style="text-align: left; width: 200px;">Data Category</td>
 <td style="text-align: left;">City Government</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Frequency of Updates</td>
+<td style="text-align: left; width: 200px;">Frequency of Updates</td>
 <td style="text-align: left;">Annually</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Date Created</td>
+<td style="text-align: left; width: 200px;">Date Created</td>
 <td style="text-align: left;">October 31, 2015</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Data Last Updated</td>
+<td style="text-align: left; width: 200px;">Data Last Updated</td>
 <td style="text-align: left;">October 30, 2024</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Dimensions</td>
-<td style="text-align: left;">6,225,611 rows and 17 columns</td>
+<td style="text-align: left; width: 200px;">Dimensions</td>
+<td style="text-align: left;">Raw Data: 6,225,611 rows | 17 columns<br>
+Subset Data: 804,630 rows | 17 columns</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Each row represents</td>
+<td style="text-align: left; width: 200px;">Each row represents</td>
 <td style="text-align: left;">City Employee Salary per Fiscal Year</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Source URL</td>
+<td style="text-align: left; width: 200px;">Source URL</td>
 <td style="text-align: left;">https://data.cityofnewyork.us/</td>
 </tr>
 </tbody>
 </table>
+
+
 </div>
 </div>
 <p><br>
@@ -455,6 +462,7 @@ The file will be downloaded with the name: Citywide_Payroll_Data__Fiscal_Year__<
 </p>
 <p><strong>Creating the final subset data</strong><br>
 </p>
+<p>The decision-making process for selecting a subset of the data and the detailed transformation the original dataset with 6,225,611 rows to our final dataset with 804,630 rows.</p>
 <p>To generate the final subset use the code below:</p>
 <div class="cell">
 <details class="code-fold">

@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -68,6 +102,11 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
 
 </head>
@@ -175,6 +214,94 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>hi, this is my conclusion</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this is test</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell" data-layout-align="default">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  A[Importing Data] --&gt; B[Understanding and \n cleaning the raw data]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  B --&gt; C(Transforming columns)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  B --&gt; D(Filtering Data)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  B --&gt; E(Backfilling NA)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  C --&gt; F[Saving Subset Data]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  D --&gt; F[Saving Subset Data]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  E --&gt; F[Saving Subset Data]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A[Importing Data] --&gt; B[Understanding and \n cleaning the raw data]
+  B --&gt; C(Transforming columns)
+  B --&gt; D(Filtering Data)
+  B --&gt; E(Backfilling NA)
+  C --&gt; F[Saving Subset Data]
+  D --&gt; F[Saving Subset Data]
+  E --&gt; F[Saving Subset Data]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 200px;">Dataset Name</td>
+<td style="text-align: left;">Citywide Payroll Data (Fiscal Year)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 200px;">Provided by</td>
+<td style="text-align: left;">Office of Payroll Administration (OPA)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 200px;">Data Category</td>
+<td style="text-align: left;">City Government</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 200px;">Frequency of Updates</td>
+<td style="text-align: left;">Annually</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 200px;">Date Created</td>
+<td style="text-align: left;">October 31, 2015</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 200px;">Data Last Updated</td>
+<td style="text-align: left;">October 30, 2024</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 200px;">Dimensions</td>
+<td style="text-align: left;">Raw Data: 6,225,611 rows | 17 columns<br>
+Subset Data: 804,630 rows | 17 columns</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 200px;">Each row represents</td>
+<td style="text-align: left;">City Employee Salary per Fiscal Year</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 200px;">Source URL</td>
+<td style="text-align: left;">https://data.cityofnewyork.us/</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
 
 
 

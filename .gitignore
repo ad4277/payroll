@@ -15,4 +15,11 @@ data_cache/
 data_files/
 !/docs/data_files
 
+appendix_cache/
+appendix_files/
+!/docs/appendix_files
+
 data_source/
+
+
+d3practice*

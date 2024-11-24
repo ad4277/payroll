@@ -87,7 +87,7 @@ The file will be downloaded with the name: Citywide_Payroll_Data\_\_Fiscal_Year\
 
 Once the data was downloaded, it was added to a new folder inside the repository called 'data_source'.
 
-```{r, cache=TRUE}
+```{r}
 #| message: false
 #| warning: false
 

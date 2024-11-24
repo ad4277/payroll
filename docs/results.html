@@ -214,114 +214,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.4     ✔ readr     2.1.5
-✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-✔ purrr     1.0.2     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the data RDS</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data_source/payroll_data_fire_police.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>payroll_data_source <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"./data_source/Citywide_Payroll_Data__Fiscal_Year__20241111.csv"</span>) </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="ot">&lt;-</span> payroll_data_source</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(payroll_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(payroll_data_fire_police,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] "Fiscal.Year"                "Payroll.Number"            
- [3] "Agency.Name"                "Last.Name"                 
- [5] "First.Name"                 "Mid.Init"                  
- [7] "Agency.Start.Date"          "Work.Location.Borough"     
- [9] "Title.Description"          "Leave.Status.as.of.June.30"
-[11] "Base.Salary"                "Pay.Basis"                 
-[13] "Regular.Hours"              "Regular.Gross.Paid"        
-[15] "OT.Hours"                   "Total.OT.Paid"             
-[17] "Total.Other.Pay"           </code></pre>
+<pre><code>  fiscal_year payroll_number       agency_name last_name first_name mid_init
+1        2020             56 POLICE DEPARTMENT   MORALES       JOSE         
+2        2020             56 POLICE DEPARTMENT     BOYNE     DANIEL        G
+3        2020             56 POLICE DEPARTMENT    MURTHA      KEVIN         
+4        2020             56 POLICE DEPARTMENT MASTRANDE      JAMES        J
+5        2020             56 POLICE DEPARTMENT     AROCA       ALMA        P
+  agency_start_date work_location_borough                 title_description
+1        1998-12-20             MANHATTAN     SUPERVISOR OF SCHOOL SECURITY
+2        2016-04-25             MANHATTAN               STATIONARY ENGINEER
+3        1995-04-30             MANHATTAN LIEUTENANT D/A SPECIAL ASSIGNMENT
+4        2013-12-16             MANHATTAN               STATIONARY ENGINEER
+5        2012-07-11             MANHATTAN                    POLICE OFFICER
+  leave_status_as_of_june_30 base_salary pay_basis regular_hours
+1                     CEASED     57813.0 per Annum          0.00
+2                     ACTIVE       508.8   per Day       2080.00
+3                     CEASED    141196.0 per Annum        665.18
+4                     ACTIVE       508.8   per Day       2080.00
+5                     CEASED     85292.0 per Annum         22.87
+  regular_gross_paid ot_hours total_ot_paid total_other_pay
+1               0.00     0.00           0.0       650000.00
+2          140146.17  1125.25      117728.1        40696.41
+3           48008.86  2451.57      162000.5        78132.88
+4          140146.17  1007.00      103227.0        27980.42
+5          227914.67     0.00           0.0        30289.83</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(payroll_data_source)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(payroll_data,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Fiscal.Year Payroll.Number                    Agency.Name Last.Name
-1        2020             17 OFFICE OF EMERGENCY MANAGEMENT   BEREZIN
-2        2020             17 OFFICE OF EMERGENCY MANAGEMENT    GEAGER
-3        2020             17 OFFICE OF EMERGENCY MANAGEMENT    RAMANI
-4        2020             17 OFFICE OF EMERGENCY MANAGEMENT     ROTTA
-5        2020             17 OFFICE OF EMERGENCY MANAGEMENT WILSON II
-  First.Name Mid.Init Agency.Start.Date Work.Location.Borough
-1    MIKHAIL                 08/10/2015              BROOKLYN
-2   VERONICA        M        09/12/2016              BROOKLYN
-3   SHRADDHA                 02/22/2016              BROOKLYN
-4   JONATHAN        D        09/16/2013              BROOKLYN
-5     ROBERT        P        04/30/2018              BROOKLYN
-               Title.Description Leave.Status.as.of.June.30 Base.Salary
-1 EMERGENCY PREPAREDNESS MANAGER                     ACTIVE       86005
-2 EMERGENCY PREPAREDNESS MANAGER                     ACTIVE       86005
-3 EMERGENCY PREPAREDNESS MANAGER                     ACTIVE       86005
-4 EMERGENCY PREPAREDNESS MANAGER                     ACTIVE       86005
-5 EMERGENCY PREPAREDNESS MANAGER                     ACTIVE       86005
-  Pay.Basis Regular.Hours Regular.Gross.Paid OT.Hours Total.OT.Paid
-1 per Annum          1820           84698.21        0             0
-2 per Annum          1820           84698.21        0             0
-3 per Annum          1820           84698.21        0             0
-4 per Annum          1820           84698.21        0             0
-5 per Annum          1820           84698.21        0             0
-  Total.Other.Pay
-1               0
-2               0
-3               0
-4               0
-5               0</code></pre>
-</div>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">names</span>(payroll_data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code> [1] "Fiscal.Year"                "Payroll.Number"            
- [3] "Agency.Name"                "Last.Name"                 
- [5] "First.Name"                 "Mid.Init"                  
- [7] "Agency.Start.Date"          "Work.Location.Borough"     
- [9] "Title.Description"          "Leave.Status.as.of.June.30"
-[11] "Base.Salary"                "Pay.Basis"                 
-[13] "Regular.Hours"              "Regular.Gross.Paid"        
-[15] "OT.Hours"                   "Total.OT.Paid"             
-[17] "Total.Other.Pay"           </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(payroll_data) <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"[</span><span class="sc">\\</span><span class="st">.]+"</span>, <span class="st">"_"</span>, <span class="fu">tolower</span>(<span class="fu">names</span>(payroll_data_source)))</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">names</span>(payroll_data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(payroll_data_fire_police)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "fiscal_year"                "payroll_number"            
@@ -338,418 +270,281 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name, work_location_borough) <span class="sc">|&gt;</span> </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_start_date_year =</span> lubridate<span class="sc">::</span><span class="fu">year</span>(agency_start_date)) <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_start_date_year <span class="sc">&gt;</span> <span class="dv">2014</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the bar chart</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> agency_start_date_year, <span class="at">fill =</span> agency_name)) <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Count of Records by Agency Start Year"</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Agency Start Year"</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Records"</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Agency Name"</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="results_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name, work_location_borough) <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'agency_name'. You can override using the
 `.groups` argument.</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 507 × 3
-# Groups:   agency_name [170]
-   agency_name               work_location_borough Total_records
-   &lt;chr&gt;                     &lt;chr&gt;                         &lt;int&gt;
- 1 ADMIN FOR CHILDREN'S SVCS ""                             6627
- 2 ADMIN FOR CHILDREN'S SVCS "BRONX"                       14245
- 3 ADMIN FOR CHILDREN'S SVCS "BROOKLYN"                    15564
- 4 ADMIN FOR CHILDREN'S SVCS "MANHATTAN"                   40037
- 5 ADMIN FOR CHILDREN'S SVCS "QUEENS"                       8204
- 6 ADMIN FOR CHILDREN'S SVCS "RICHMOND"                     2256
- 7 ADMIN TRIALS AND HEARINGS ""                              632
- 8 ADMIN TRIALS AND HEARINGS "BRONX"                         457
- 9 ADMIN TRIALS AND HEARINGS "BROOKLYN"                      761
-10 ADMIN TRIALS AND HEARINGS "MANHATTAN"                    4527
-# ℹ 497 more rows</code></pre>
+<pre><code># A tibble: 10 × 3
+# Groups:   agency_name [2]
+   agency_name       work_location_borough Total_records
+   &lt;chr&gt;             &lt;chr&gt;                         &lt;int&gt;
+ 1 FIRE DEPARTMENT   BRONX                         29662
+ 2 FIRE DEPARTMENT   BROOKLYN                      73830
+ 3 FIRE DEPARTMENT   MANHATTAN                     35750
+ 4 FIRE DEPARTMENT   QUEENS                        43557
+ 5 FIRE DEPARTMENT   RICHMOND                       9839
+ 6 POLICE DEPARTMENT BRONX                         72253
+ 7 POLICE DEPARTMENT BROOKLYN                     134890
+ 8 POLICE DEPARTMENT MANHATTAN                    274486
+ 9 POLICE DEPARTMENT QUEENS                       112008
+10 POLICE DEPARTMENT RICHMOND                      18355</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name) <span class="sc">|&gt;</span> </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n_distinct</span>(work_location_borough)</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(work_location_borough, agency_name) <span class="sc">|&gt;</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> agency_name,  </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> count,  </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_fill =</span> <span class="fu">list</span>(<span class="at">count =</span> <span class="dv">0</span>) </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 170 × 2
-   agency_name                    Total_records
-   &lt;chr&gt;                                  &lt;int&gt;
- 1 ADMIN FOR CHILDREN'S SVCS                  6
- 2 ADMIN TRIALS AND HEARINGS                  6
- 3 BOARD OF CORRECTION                        2
- 4 BOARD OF CORRECTIONS                       1
- 5 BOARD OF ELECTION                          6
- 6 BOARD OF ELECTION POLL WORKERS             4
- 7 BOROUGH PRESIDENT-BRONX                    2
- 8 BOROUGH PRESIDENT-BROOKLYN                 2
- 9 BOROUGH PRESIDENT-QUEENS                   2
-10 BOROUGH PRESIDENT-STATEN IS                2
-# ℹ 160 more rows</code></pre>
+<pre><code># A tibble: 5 × 3
+  work_location_borough `FIRE DEPARTMENT` `POLICE DEPARTMENT`
+  &lt;chr&gt;                             &lt;int&gt;               &lt;int&gt;
+1 BRONX                             29662               72253
+2 BROOKLYN                          73830              134890
+3 MANHATTAN                         35750              274486
+4 QUEENS                            43557              112008
+5 RICHMOND                           9839               18355</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name) <span class="sc">|&gt;</span> </span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 170 × 2
-   agency_name                    Total_records
-   &lt;chr&gt;                                  &lt;int&gt;
- 1 ADMIN FOR CHILDREN'S SVCS              86933
- 2 ADMIN TRIALS AND HEARINGS               7676
- 3 BOARD OF CORRECTION                      299
- 4 BOARD OF CORRECTIONS                      17
- 5 BOARD OF ELECTION                      11695
- 6 BOARD OF ELECTION POLL WORKERS        375001
- 7 BOROUGH PRESIDENT-BRONX                  714
- 8 BOROUGH PRESIDENT-BROOKLYN               912
- 9 BOROUGH PRESIDENT-QUEENS                 818
-10 BOROUGH PRESIDENT-STATEN IS              568
-# ℹ 160 more rows</code></pre>
-</div>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_name_clean =</span> <span class="fu">trimws</span>(<span class="fu">gsub</span>(<span class="st">"#</span><span class="sc">\\</span><span class="st">d+$"</span>, <span class="st">""</span>, agency_name))) <span class="sc">|&gt;</span> </span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean) <span class="sc">|&gt;</span> </span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 116 × 2
-   agency_name_clean              Total_records
-   &lt;chr&gt;                                  &lt;int&gt;
- 1 ADMIN FOR CHILDREN'S SVCS              86933
- 2 ADMIN TRIALS AND HEARINGS               7676
- 3 BOARD OF CORRECTION                      299
- 4 BOARD OF CORRECTIONS                      17
- 5 BOARD OF ELECTION                      11695
- 6 BOARD OF ELECTION POLL WORKERS        375001
- 7 BOROUGH PRESIDENT-BRONX                  714
- 8 BOROUGH PRESIDENT-BROOKLYN               912
- 9 BOROUGH PRESIDENT-QUEENS                 818
-10 BOROUGH PRESIDENT-STATEN IS              568
-# ℹ 106 more rows</code></pre>
-</div>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="ot">&lt;-</span> </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_name_clean =</span> <span class="fu">trimws</span>(<span class="fu">gsub</span>(<span class="st">"#</span><span class="sc">\\</span><span class="st">d+$"</span>, <span class="st">""</span>, agency_name)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(agency_name_clean = trimws(gsub("#\\d+$", "", agency_name))) |&gt; </span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean) <span class="sc">|&gt;</span> </span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 116 × 2
-   agency_name_clean              Total_records
-   &lt;chr&gt;                                  &lt;int&gt;
- 1 DEPT OF ED PEDAGOGICAL               1207427
- 2 DEPT OF ED PER SESSION TEACHER        997983
- 3 POLICE DEPARTMENT                     612076
- 4 DEPT OF ED PARA PROFESSIONALS         412698
- 5 BOARD OF ELECTION POLL WORKERS        375001
- 6 DEPT OF ED HRLY SUPPORT STAFF         255501
- 7 FIRE DEPARTMENT                       209272
- 8 DEPARTMENT OF EDUCATION ADMIN         181282
- 9 DEPT OF PARKS &amp; RECREATION            170200
-10 HRA/DEPT OF SOCIAL SERVICES           157963
-# ℹ 106 more rows</code></pre>
-</div>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span>  <span class="fu">c</span>(</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PEDAGOGICAL"</span>,</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PER SESSION TEACHER"</span>,</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED HRLY SUPPORT STAFF"</span>,<span class="st">"DEPT OF ED PARA PROFESSIONALS"</span>,</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PEDAGOGICAL"</span>,</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PER DIEM TEACHERS"</span>, </span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PER SESSION TEACHER"</span>,</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"POLICE DEPARTMENT"</span>,</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FIRE DEPARTMENT"</span></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span> </span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(agency_name_clean) <span class="sc">|&gt;</span> </span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_work_location_borough =</span> <span class="fu">n_distinct</span>(work_location_borough)</span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 7 × 3
-  agency_name_clean              Total_records n_work_location_borough
-  &lt;chr&gt;                                  &lt;int&gt;                   &lt;int&gt;
-1 DEPT OF ED PEDAGOGICAL                108209                       2
-2 DEPT OF ED PER SESSION TEACHER         87361                       1
-3 POLICE DEPARTMENT                      65901                       5
-4 DEPT OF ED PARA PROFESSIONALS          41305                       2
-5 DEPT OF ED HRLY SUPPORT STAFF          23545                       1
-6 FIRE DEPARTMENT                        21412                       5
-7 DEPT OF ED PER DIEM TEACHERS           16662                       1</code></pre>
-</div>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span>  <span class="fu">c</span>(</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PEDAGOGICAL"</span>,</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PER SESSION TEACHER"</span>,</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED HRLY SUPPORT STAFF"</span>,<span class="st">"DEPT OF ED PARA PROFESSIONALS"</span>,</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PEDAGOGICAL"</span>,</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PER DIEM TEACHERS"</span>, </span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PER SESSION TEACHER"</span>,</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"POLICE DEPARTMENT"</span>,</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FIRE DEPARTMENT"</span></span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span> </span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(agency_name_clean,work_location_borough) <span class="sc">|&gt;</span> </span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name_clean,work_location_borough)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'agency_name_clean'. You can override using
-the `.groups` argument.</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 17 × 3
-# Groups:   agency_name_clean [7]
-   agency_name_clean              work_location_borough Total_records
-   &lt;chr&gt;                          &lt;chr&gt;                         &lt;int&gt;
- 1 DEPT OF ED HRLY SUPPORT STAFF  "MANHATTAN"                   23545
- 2 DEPT OF ED PARA PROFESSIONALS  ""                                1
- 3 DEPT OF ED PARA PROFESSIONALS  "MANHATTAN"                   41304
- 4 DEPT OF ED PEDAGOGICAL         "MANHATTAN"                  103920
- 5 DEPT OF ED PEDAGOGICAL         "OTHER"                        4289
- 6 DEPT OF ED PER DIEM TEACHERS   "MANHATTAN"                   16662
- 7 DEPT OF ED PER SESSION TEACHER "MANHATTAN"                   87361
- 8 FIRE DEPARTMENT                "BRONX"                        3249
- 9 FIRE DEPARTMENT                "BROOKLYN"                     8911
-10 FIRE DEPARTMENT                "MANHATTAN"                    3707
-11 FIRE DEPARTMENT                "QUEENS"                       4518
-12 FIRE DEPARTMENT                "RICHMOND"                     1027
-13 POLICE DEPARTMENT              "BRONX"                        6638
-14 POLICE DEPARTMENT              "BROOKLYN"                    12186
-15 POLICE DEPARTMENT              "MANHATTAN"                   34818
-16 POLICE DEPARTMENT              "QUEENS"                      10575
-17 POLICE DEPARTMENT              "RICHMOND"                     1684</code></pre>
-</div>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2024") |&gt;</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span>  <span class="fu">c</span>(</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"POLICE DEPARTMENT"</span>,</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FIRE DEPARTMENT"</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span> </span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(agency_name_clean) <span class="sc">|&gt;</span> </span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name) <span class="sc">|&gt;</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n_distinct</span>(work_location_borough)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 2
-  agency_name_clean Total_records
+  agency_name       Total_records
   &lt;chr&gt;                     &lt;int&gt;
-1 FIRE DEPARTMENT          209272
-2 POLICE DEPARTMENT        612076</code></pre>
+1 FIRE DEPARTMENT               5
+2 POLICE DEPARTMENT             5</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2024") |&gt;</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span>  <span class="fu">c</span>(</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"POLICE DEPARTMENT"</span>,</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FIRE DEPARTMENT"</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span> </span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(agency_name_clean,fiscal_year) <span class="sc">|&gt;</span> </span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name_clean,fiscal_year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name) <span class="sc">|&gt;</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  agency_name       Total_records
+  &lt;chr&gt;                     &lt;int&gt;
+1 FIRE DEPARTMENT          192638
+2 POLICE DEPARTMENT        611992</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name <span class="sc">%in%</span>  <span class="fu">c</span>(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PEDAGOGICAL"</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PER SESSION TEACHER"</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED HRLY SUPPORT STAFF"</span>,<span class="st">"DEPT OF ED PARA PROFESSIONALS"</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PEDAGOGICAL"</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PER DIEM TEACHERS"</span>, </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PER SESSION TEACHER"</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"POLICE DEPARTMENT"</span>,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FIRE DEPARTMENT"</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span> </span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(agency_name) <span class="sc">|&gt;</span> </span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_work_location_borough =</span> <span class="fu">n_distinct</span>(work_location_borough)</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  agency_name       Total_records n_work_location_borough
+  &lt;chr&gt;                     &lt;int&gt;                   &lt;int&gt;
+1 POLICE DEPARTMENT         65893                       5
+2 FIRE DEPARTMENT           21405                       5</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name <span class="sc">%in%</span>  <span class="fu">c</span>(</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PEDAGOGICAL"</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PER SESSION TEACHER"</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED HRLY SUPPORT STAFF"</span>,<span class="st">"DEPT OF ED PARA PROFESSIONALS"</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PEDAGOGICAL"</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PER DIEM TEACHERS"</span>, </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEPT OF ED PER SESSION TEACHER"</span>,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"POLICE DEPARTMENT"</span>,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FIRE DEPARTMENT"</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span> </span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(agency_name,work_location_borough) <span class="sc">|&gt;</span> </span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name,work_location_borough)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'agency_name_clean'. You can override using
-the `.groups` argument.</code></pre>
+<pre><code>`summarise()` has grouped output by 'agency_name'. You can override using the
+`.groups` argument.</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 21 × 3
-# Groups:   agency_name_clean [2]
-   agency_name_clean fiscal_year Total_records
+<pre><code># A tibble: 10 × 3
+# Groups:   agency_name [2]
+   agency_name       work_location_borough Total_records
+   &lt;chr&gt;             &lt;chr&gt;                         &lt;int&gt;
+ 1 FIRE DEPARTMENT   BRONX                          3249
+ 2 FIRE DEPARTMENT   BROOKLYN                       8904
+ 3 FIRE DEPARTMENT   MANHATTAN                      3707
+ 4 FIRE DEPARTMENT   QUEENS                         4518
+ 5 FIRE DEPARTMENT   RICHMOND                       1027
+ 6 POLICE DEPARTMENT BRONX                          6638
+ 7 POLICE DEPARTMENT BROOKLYN                      12186
+ 8 POLICE DEPARTMENT MANHATTAN                     34810
+ 9 POLICE DEPARTMENT QUEENS                        10575
+10 POLICE DEPARTMENT RICHMOND                       1684</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2024") |&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name <span class="sc">%in%</span>  <span class="fu">c</span>(</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"POLICE DEPARTMENT"</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FIRE DEPARTMENT"</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span> </span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(agency_name,fiscal_year) <span class="sc">|&gt;</span> </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name,fiscal_year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'agency_name'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 3
+# Groups:   agency_name [2]
+   agency_name       fiscal_year Total_records
    &lt;chr&gt;                   &lt;int&gt;         &lt;int&gt;
- 1 FIRE DEPARTMENT          2014         16555
- 2 FIRE DEPARTMENT          2015         17380
- 3 FIRE DEPARTMENT          2016         19934
- 4 FIRE DEPARTMENT          2017         18687
- 5 FIRE DEPARTMENT          2018         18391
- 6 FIRE DEPARTMENT          2019         18679
- 7 FIRE DEPARTMENT          2020         19193
- 8 FIRE DEPARTMENT          2021         19049
- 9 FIRE DEPARTMENT          2022         20920
-10 FIRE DEPARTMENT          2023         19072
-# ℹ 11 more rows</code></pre>
+ 1 FIRE DEPARTMENT          2015         17372
+ 2 FIRE DEPARTMENT          2016         19926
+ 3 FIRE DEPARTMENT          2017         18679
+ 4 FIRE DEPARTMENT          2018         18383
+ 5 FIRE DEPARTMENT          2019         18671
+ 6 FIRE DEPARTMENT          2020         19186
+ 7 FIRE DEPARTMENT          2021         19042
+ 8 FIRE DEPARTMENT          2022         20911
+ 9 FIRE DEPARTMENT          2023         19063
+10 FIRE DEPARTMENT          2024         21405
+11 POLICE DEPARTMENT        2015         59257
+12 POLICE DEPARTMENT        2016         65860
+13 POLICE DEPARTMENT        2017         62507
+14 POLICE DEPARTMENT        2018         59802
+15 POLICE DEPARTMENT        2019         59961
+16 POLICE DEPARTMENT        2020         60308
+17 POLICE DEPARTMENT        2021         59001
+18 POLICE DEPARTMENT        2022         60795
+19 POLICE DEPARTMENT        2023         58608
+20 POLICE DEPARTMENT        2024         65893</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="ot">&lt;-</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2024") |&gt;</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span>  <span class="fu">c</span>(</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"POLICE DEPARTMENT"</span>,</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FIRE DEPARTMENT"</span></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    )) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  fiscal_year   payroll_number  agency_name         last_name        
- Min.   :2024   Min.   :56.00   Length:87313       Length:87313      
- 1st Qu.:2024   1st Qu.:56.00   Class :character   Class :character  
- Median :2024   Median :56.00   Mode  :character   Mode  :character  
- Mean   :2024   Mean   :56.25                                        
- 3rd Qu.:2024   3rd Qu.:56.00                                        
- Max.   :2024   Max.   :57.00                                        
-  first_name          mid_init         agency_start_date  work_location_borough
- Length:87313       Length:87313       Length:87313       Length:87313         
- Class :character   Class :character   Class :character   Class :character     
- Mode  :character   Mode  :character   Mode  :character   Mode  :character     
-                                                                               
-                                                                               
-                                                                               
- title_description  leave_status_as_of_june_30  base_salary       
- Length:87313       Length:87313               Min.   :    11.98  
- Class :character   Class :character           1st Qu.: 53790.00  
- Mode  :character   Mode  :character           Median : 91610.00  
-                                               Mean   : 82765.04  
-                                               3rd Qu.:105146.00  
-                                               Max.   :277605.00  
-  pay_basis         regular_hours  regular_gross_paid    ot_hours     
- Length:87313       Min.   :-634   Min.   :-17474     Min.   : -72.0  
- Class :character   1st Qu.:1023   1st Qu.: 32795     1st Qu.:   0.0  
- Mode  :character   Median :2080   Median : 66875     Median : 190.1  
-                    Mean   :1548   Mean   : 77730     Mean   : 249.9  
-                    3rd Qu.:2080   3rd Qu.:121729     3rd Qu.: 427.4  
-                    Max.   :2942   Max.   :289829     Max.   :2091.7  
- total_ot_paid      total_other_pay  agency_name_clean 
- Min.   : -2408.3   Min.   :-29727   Length:87313      
- 1st Qu.:   949.1   1st Qu.:  3012   Class :character  
- Median : 12269.7   Median :  9846   Mode  :character  
- Mean   : 21291.7   Mean   : 14044                     
- 3rd Qu.: 34277.8   3rd Qu.: 24321                     
- Max.   :215680.3   Max.   :347513                     </code></pre>
-</div>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean,title_description) <span class="sc">|&gt;</span> </span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    ,<span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name_clean,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name,title_description) <span class="sc">|&gt;</span> </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    ,<span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 440 × 3
-   agency_name_clean title_description                             Total_records
-   &lt;chr&gt;             &lt;chr&gt;                                                 &lt;int&gt;
- 1 FIRE DEPARTMENT   FIREFIGHTER                                            9804
- 2 FIRE DEPARTMENT   EMERGENCY MEDICAL SPECIALIST-EMT                       3968
- 3 FIRE DEPARTMENT   LIEUTENANT                                             1620
- 4 FIRE DEPARTMENT   EMERGENCY MEDICAL SPECIALIST-PARAMEDIc                 1296
- 5 FIRE DEPARTMENT   CAPTAIN                                                 727
- 6 FIRE DEPARTMENT   SUPERVISING EMERGENCY MEDICAL SERVICE SPECIA…           657
- 7 FIRE DEPARTMENT   BATTALION CHIEF                                         464
- 8 FIRE DEPARTMENT   ASSOCIATE FIRE PROTECTION INSPECTOR                     210
- 9 FIRE DEPARTMENT   FIRE PROTECTION INSPECTOR                               200
-10 FIRE DEPARTMENT   FIRE ALARM DISPATCHER                                   197
-# ℹ 430 more rows</code></pre>
+<pre><code># A tibble: 439 × 3
+   agency_name     title_description                               Total_records
+   &lt;chr&gt;           &lt;chr&gt;                                                   &lt;int&gt;
+ 1 FIRE DEPARTMENT FIREFIGHTER                                              9804
+ 2 FIRE DEPARTMENT EMERGENCY MEDICAL SPECIALIST-EMT                         3968
+ 3 FIRE DEPARTMENT LIEUTENANT                                               1620
+ 4 FIRE DEPARTMENT EMERGENCY MEDICAL SPECIALIST-PARAMEDIc                   1296
+ 5 FIRE DEPARTMENT CAPTAIN                                                   727
+ 6 FIRE DEPARTMENT SUPERVISING EMERGENCY MEDICAL SERVICE SPECIALI…           657
+ 7 FIRE DEPARTMENT BATTALION CHIEF                                           464
+ 8 FIRE DEPARTMENT ASSOCIATE FIRE PROTECTION INSPECTOR                       210
+ 9 FIRE DEPARTMENT FIRE PROTECTION INSPECTOR                                 200
+10 FIRE DEPARTMENT FIRE ALARM DISPATCHER                                     197
+# ℹ 429 more rows</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="ot">&lt;-</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_pay =</span> <span class="fu">rowSums</span>(<span class="fu">across</span>(<span class="fu">c</span>(regular_gross_paid, total_ot_paid, total_other_pay)),<span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="ot">&lt;-</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_start_date_year =</span> <span class="fu">year</span>(agency_start_date)) <span class="sc">|&gt;</span> </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_pay =</span> <span class="fu">rowSums</span>(<span class="fu">across</span>(<span class="fu">c</span>(regular_gross_paid, total_ot_paid, total_other_pay)),<span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="ot">&lt;-</span> </span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_start_date_clean =</span> <span class="fu">mdy</span>(agency_start_date))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(agency_start_date, agency_start_date_clean) <span class="sc">|&gt;</span> </span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  agency_start_date agency_start_date_clean
-1        12/20/1998              1998-12-20
-2        04/25/2016              2016-04-25
-3        04/30/1995              1995-04-30
-4        12/16/2013              2013-12-16
-5        07/11/2012              2012-07-11
-6        07/09/2014              2014-07-09</code></pre>
-</div>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(payroll_data_fire_police)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(payroll_data_fire_police)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  fiscal_year payroll_number       agency_name last_name first_name mid_init
@@ -760,12 +555,12 @@ the `.groups` argument.</code></pre>
 5        2020             56 POLICE DEPARTMENT     AROCA       ALMA        P
 6        2020             56 POLICE DEPARTMENT     TABBS     RONALD        G
   agency_start_date work_location_borough                 title_description
-1        12/20/1998             MANHATTAN     SUPERVISOR OF SCHOOL SECURITY
-2        04/25/2016             MANHATTAN               STATIONARY ENGINEER
-3        04/30/1995             MANHATTAN LIEUTENANT D/A SPECIAL ASSIGNMENT
-4        12/16/2013             MANHATTAN               STATIONARY ENGINEER
-5        07/11/2012             MANHATTAN                    POLICE OFFICER
-6        07/09/2014             MANHATTAN                    POLICE OFFICER
+1        1998-12-20             MANHATTAN     SUPERVISOR OF SCHOOL SECURITY
+2        2016-04-25             MANHATTAN               STATIONARY ENGINEER
+3        1995-04-30             MANHATTAN LIEUTENANT D/A SPECIAL ASSIGNMENT
+4        2013-12-16             MANHATTAN               STATIONARY ENGINEER
+5        2012-07-11             MANHATTAN                    POLICE OFFICER
+6        2014-07-09             MANHATTAN                    POLICE OFFICER
   leave_status_as_of_june_30 base_salary pay_basis regular_hours
 1                     CEASED     57813.0 per Annum          0.00
 2                     ACTIVE       508.8   per Day       2080.00
@@ -773,373 +568,336 @@ the `.groups` argument.</code></pre>
 4                     ACTIVE       508.8   per Day       2080.00
 5                     CEASED     85292.0 per Annum         22.87
 6                   ON LEAVE     85292.0 per Annum       1822.85
-  regular_gross_paid ot_hours total_ot_paid total_other_pay agency_name_clean
-1               0.00     0.00          0.00       650000.00 POLICE DEPARTMENT
-2          140146.17  1125.25     117728.07        40696.41 POLICE DEPARTMENT
-3           48008.86  2451.57     162000.47        78132.88 POLICE DEPARTMENT
-4          140146.17  1007.00     103226.97        27980.42 POLICE DEPARTMENT
-5          227914.67     0.00          0.00        30289.83 POLICE DEPARTMENT
-6          230597.55    55.27       3071.28        22856.71 POLICE DEPARTMENT
-  total_pay agency_start_date_clean
-1  650000.0              1998-12-20
-2  298570.7              2016-04-25
-3  288142.2              1995-04-30
-4  271353.6              2013-12-16
-5  258204.5              2012-07-11
-6  256525.5              2014-07-09</code></pre>
+  regular_gross_paid ot_hours total_ot_paid total_other_pay
+1               0.00     0.00          0.00       650000.00
+2          140146.17  1125.25     117728.07        40696.41
+3           48008.86  2451.57     162000.47        78132.88
+4          140146.17  1007.00     103226.97        27980.42
+5          227914.67     0.00          0.00        30289.83
+6          230597.55    55.27       3071.28        22856.71
+  agency_start_date_year total_pay
+1                   1998  650000.0
+2                   2016  298570.7
+3                   1995  288142.2
+4                   2013  271353.6
+5                   2012  258204.5
+6                   2014  256525.5</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  fiscal_year payroll_number agency_name last_name first_name mid_init
-1           0         243649           0         0          0        0
+1           0              0           0         0          0        0
   agency_start_date work_location_borough title_description
 1                 0                     0                 0
   leave_status_as_of_june_30 base_salary pay_basis regular_hours
 1                          0           0         0             0
-  regular_gross_paid ot_hours total_ot_paid total_other_pay agency_name_clean
-1                  0        0             0               0                 0
-  total_pay agency_start_date_clean
-1         0                       0</code></pre>
+  regular_gross_paid ot_hours total_ot_paid total_other_pay
+1                  0        0             0               0
+  agency_start_date_year total_pay
+1                      0         0</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2024") |&gt;</span></span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(fiscal_year,payroll_number) <span class="sc">|&gt;</span> </span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(fiscal_year,payroll_number)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2024") |&gt;</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(fiscal_year,payroll_number) <span class="sc">|&gt;</span> </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(fiscal_year,payroll_number)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'fiscal_year'. You can override using the
 `.groups` argument.</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 18 × 3
-# Groups:   fiscal_year [11]
+<pre><code># A tibble: 20 × 3
+# Groups:   fiscal_year [10]
    fiscal_year payroll_number Total_records
-         &lt;int&gt;          &lt;int&gt;         &lt;int&gt;
- 1        2014             57         16555
- 2        2015             NA         76644
- 3        2016             NA         85802
- 4        2017             NA         81203
- 5        2018             56         59811
- 6        2018             57         18391
- 7        2019             56         59970
- 8        2019             57         18679
- 9        2020             56         60316
-10        2020             57         19193
-11        2021             56         59009
-12        2021             57         19049
-13        2022             56         60804
-14        2022             57         20920
-15        2023             56         58617
-16        2023             57         19072
-17        2024             56         65901
-18        2024             57         21412</code></pre>
+         &lt;int&gt;          &lt;dbl&gt;         &lt;int&gt;
+ 1        2015             56         59257
+ 2        2015             57         17372
+ 3        2016             56         65860
+ 4        2016             57         19926
+ 5        2017             56         62507
+ 6        2017             57         18679
+ 7        2018             56         59802
+ 8        2018             57         18383
+ 9        2019             56         59961
+10        2019             57         18671
+11        2020             56         60308
+12        2020             57         19186
+13        2021             56         59001
+14        2021             57         19042
+15        2022             56         60795
+16        2022             57         20911
+17        2023             56         58608
+18        2023             57         19063
+19        2024             56         65893
+20        2024             57         21405</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2024") |&gt;</span></span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean) <span class="sc">|&gt;</span> </span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">min</span>(agency_start_date_clean),</span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">max</span>(agency_start_date_clean)</span>
-<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name_clean,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2024") |&gt;</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name) <span class="sc">|&gt;</span> </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">min</span>(agency_start_date),</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">max</span>(agency_start_date)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 4
-  agency_name_clean Total_records min(agency_start_date…¹ max(agency_start_dat…²
+  agency_name       Total_records min(agency_start_date…¹ max(agency_start_dat…²
   &lt;chr&gt;                     &lt;int&gt; &lt;date&gt;                  &lt;date&gt;                
-1 FIRE DEPARTMENT          209272 1968-04-22              2024-07-29            
-2 POLICE DEPARTMENT        612076 1960-11-14              2049-10-16            
-# ℹ abbreviated names: ¹​`min(agency_start_date_clean)`,
-#   ²​`max(agency_start_date_clean)`</code></pre>
+1 FIRE DEPARTMENT          192638 1968-04-22              2024-07-29            
+2 POLICE DEPARTMENT        611992 1960-11-14              2049-10-16            
+# ℹ abbreviated names: ¹​`min(agency_start_date)`, ²​`max(agency_start_date)`</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># good for alluvium, year start, year paid</span></span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year_agency_start_date_clean =</span> <span class="fu">year</span>(agency_start_date_clean)) <span class="sc">|&gt;</span> </span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year_agency_start_date_clean) <span class="sc">|&gt;</span> </span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
-<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year_agency_start_date_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># good for alluvium, year start, year paid</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_start_date_year =</span> <span class="fu">year</span>(agency_start_date)) <span class="sc">|&gt;</span> </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_start_date_year) <span class="sc">|&gt;</span> </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_start_date_year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 62 × 2
-   year_agency_start_date_clean Total_records
-                          &lt;dbl&gt;         &lt;int&gt;
- 1                         1960             1
- 2                         1962             9
- 3                         1966            10
- 4                         1967             3
- 5                         1968             9
- 6                         1969            15
- 7                         1970            39
- 8                         1971            25
- 9                         1972            20
-10                         1973           162
+   agency_start_date_year Total_records
+                    &lt;dbl&gt;         &lt;int&gt;
+ 1                   1960             1
+ 2                   1962             9
+ 3                   1966            10
+ 4                   1967             3
+ 5                   1968             8
+ 6                   1969            11
+ 7                   1970            34
+ 8                   1971            24
+ 9                   1972            18
+10                   1973           158
 # ℹ 52 more rows</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># good for alluvium, year start, year paid</span></span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year_agency_start_date_clean =</span> <span class="fu">year</span>(agency_start_date_clean)) <span class="sc">|&gt;</span> </span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year_agency_start_date_clean <span class="sc">==</span> <span class="dv">1960</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># good for alluvium, year start, year paid</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_start_date_year <span class="sc">==</span> <span class="dv">1960</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  fiscal_year payroll_number       agency_name  last_name first_name mid_init
-1        2015             NA POLICE DEPARTMENT FITZGERALD       JOAN        T
+1        2015             56 POLICE DEPARTMENT FITZGERALD       JOAN        T
   agency_start_date work_location_borough title_description
-1        11/14/1960             MANHATTAN       STAFF NURSE
+1        1960-11-14             MANHATTAN       STAFF NURSE
   leave_status_as_of_june_30 base_salary pay_basis regular_hours
 1                     CEASED       79000 per Annum             0
-  regular_gross_paid ot_hours total_ot_paid total_other_pay agency_name_clean
-1           13659.74        0             0               0 POLICE DEPARTMENT
-  total_pay agency_start_date_clean year_agency_start_date_clean
-1  13659.74              1960-11-14                         1960</code></pre>
+  regular_gross_paid ot_hours total_ot_paid total_other_pay
+1           13659.74        0             0               0
+  agency_start_date_year total_pay
+1                   1960  13659.74</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean,pay_basis) <span class="sc">|&gt;</span> </span>
-<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
-<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_pay =</span> <span class="fu">sum</span>(total_pay),</span>
-<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_regular_gross_paid =</span> <span class="fu">sum</span>(regular_gross_paid),</span>
-<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_ot_paid =</span> <span class="fu">sum</span>(total_ot_paid),</span>
-<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_other_pay =</span> <span class="fu">sum</span>(total_other_pay),</span>
-<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_total_pay =</span> <span class="fu">sum</span>(total_pay) <span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
-<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_regular_gross_paid =</span> <span class="fu">sum</span>(regular_gross_paid)<span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
-<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_total_ot_paid =</span> <span class="fu">sum</span>(total_ot_paid)<span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
-<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_total_other_pay =</span> <span class="fu">sum</span>(total_other_pay)<span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
-<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">records_with_1 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(regular_gross_paid)),</span>
-<span id="cb58-15"><a href="#cb58-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">records_with_2 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(total_ot_paid)),</span>
-<span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">records_with_3 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(total_other_pay)),</span>
-<span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb58-18"><a href="#cb58-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name_clean,pay_basis,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># good for alluvium, year start, year paid</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_start_date_year <span class="sc">==</span> <span class="dv">2049</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  fiscal_year payroll_number       agency_name last_name first_name mid_init
+1        2016             56 POLICE DEPARTMENT     KIRBY    KATHLYN        L
+  agency_start_date work_location_borough   title_description
+1        2049-10-16             MANHATTAN RECREATION DIRECTOR
+  leave_status_as_of_june_30 base_salary pay_basis regular_hours
+1                     CEASED       55147 per Annum             0
+  regular_gross_paid ot_hours total_ot_paid total_other_pay
+1             346.18        0             0           14.58
+  agency_start_date_year total_pay
+1                   2049    360.76</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># good for alluvium, year start, year paid</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(last_name <span class="sc">==</span> <span class="st">'KIRBY'</span> <span class="sc">&amp;</span> first_name <span class="sc">==</span><span class="st">'KATHLYN'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  fiscal_year payroll_number       agency_name last_name first_name mid_init
+1        2016             56 POLICE DEPARTMENT     KIRBY    KATHLYN        L
+  agency_start_date work_location_borough   title_description
+1        2049-10-16             MANHATTAN RECREATION DIRECTOR
+  leave_status_as_of_june_30 base_salary pay_basis regular_hours
+1                     CEASED       55147 per Annum             0
+  regular_gross_paid ot_hours total_ot_paid total_other_pay
+1             346.18        0             0           14.58
+  agency_start_date_year total_pay
+1                   2049    360.76</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name,pay_basis) <span class="sc">|&gt;</span> </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_pay =</span> <span class="fu">sum</span>(total_pay),</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_regular_gross_paid =</span> <span class="fu">sum</span>(regular_gross_paid),</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_ot_paid =</span> <span class="fu">sum</span>(total_ot_paid),</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_other_pay =</span> <span class="fu">sum</span>(total_other_pay),</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_total_pay =</span> <span class="fu">sum</span>(total_pay) <span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_regular_gross_paid =</span> <span class="fu">sum</span>(regular_gross_paid)<span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_total_ot_paid =</span> <span class="fu">sum</span>(total_ot_paid)<span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_total_other_pay =</span> <span class="fu">sum</span>(total_other_pay)<span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">records_with_1 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(regular_gross_paid)),</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">records_with_2 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(total_ot_paid)),</span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">records_with_3 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(total_other_pay)),</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name,pay_basis,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'agency_name_clean'. You can override using
-the `.groups` argument.</code></pre>
+<pre><code>`summarise()` has grouped output by 'agency_name'. You can override using the
+`.groups` argument.</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 8 × 14
-# Groups:   agency_name_clean [2]
-  agency_name_clean pay_basis       Total_records TOTAL_total_pay
-  &lt;chr&gt;             &lt;chr&gt;                   &lt;int&gt;           &lt;dbl&gt;
-1 FIRE DEPARTMENT   Prorated Annual             7         228256.
-2 FIRE DEPARTMENT   per Annum               20848     2567186030.
-3 FIRE DEPARTMENT   per Day                   357       50577418.
-4 FIRE DEPARTMENT   per Hour                  200        7387331.
-5 POLICE DEPARTMENT Prorated Annual             8         317293.
-6 POLICE DEPARTMENT per Annum               62083     7122451821.
-7 POLICE DEPARTMENT per Day                   691       74276308.
-8 POLICE DEPARTMENT per Hour                 3119       49707895.
-# ℹ 10 more variables: TOTAL_regular_gross_paid &lt;dbl&gt;,
-#   TOTAL_total_ot_paid &lt;dbl&gt;, TOTAL_total_other_pay &lt;dbl&gt;,
+<pre><code># A tibble: 6 × 14
+# Groups:   agency_name [2]
+  agency_name     pay_basis Total_records TOTAL_total_pay TOTAL_regular_gross_…¹
+  &lt;chr&gt;           &lt;chr&gt;             &lt;int&gt;           &lt;dbl&gt;                  &lt;dbl&gt;
+1 FIRE DEPARTMENT per Annum         20848     2567186030.            1658830420.
+2 FIRE DEPARTMENT per Day             357       50577418.              35415659.
+3 FIRE DEPARTMENT per Hour            200        7387331.               6658687.
+4 POLICE DEPARTM… per Annum         62083     7122451821.            4980160943.
+5 POLICE DEPARTM… per Day             691       74276308.              58185150.
+6 POLICE DEPARTM… per Hour           3119       49707895.              47119200.
+# ℹ abbreviated name: ¹​TOTAL_regular_gross_paid
+# ℹ 9 more variables: TOTAL_total_ot_paid &lt;dbl&gt;, TOTAL_total_other_pay &lt;dbl&gt;,
 #   PCT_total_pay &lt;dbl&gt;, PCT_regular_gross_paid &lt;dbl&gt;, PCT_total_ot_paid &lt;dbl&gt;,
 #   PCT_total_other_pay &lt;dbl&gt;, records_with_1 &lt;int&gt;, records_with_2 &lt;int&gt;,
 #   records_with_3 &lt;int&gt;</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format(n=1)</span></span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format(scientific=TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format(n=1)</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format(scientific=TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(title_description <span class="sc">==</span> <span class="st">"CHAPLAIN"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(title_description <span class="sc">==</span> <span class="st">"CHAPLAIN"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>   fiscal_year payroll_number       agency_name       last_name first_name
-1         2024             56 POLICE DEPARTMENT         LIMONGI     CARLOS
-2         2024             56 POLICE DEPARTMENT      RECABARREN   JONATHAN
-3         2024             56 POLICE DEPARTMENT          KUKIQI      TAHIR
-4         2024             56 POLICE DEPARTMENT           LOPEZ    MICHAEL
-5         2024             56 POLICE DEPARTMENT           BROWN     VICTOR
-6         2024             56 POLICE DEPARTMENT      ANASTASIOU     GEORGE
-7         2024             56 POLICE DEPARTMENT WILLIAMS-HARRIS    BARBARA
-8         2024             56 POLICE DEPARTMENT          EGUINO    MICHAEL
-9         2024             56 POLICE DEPARTMENT          FRANCO     JOSEPH
-10        2024             56 POLICE DEPARTMENT         CASSATO      DAVID
-11        2024             56 POLICE DEPARTMENT            KASS      ALVIN
-12        2024             56 POLICE DEPARTMENT          ROMANO     ROBERT
-13        2024             57   FIRE DEPARTMENT       DELENDICK       JOHN
-14        2024             57   FIRE DEPARTMENT     GIGANTIELLO      JAMIE
-15        2024             57   FIRE DEPARTMENT          HOLMES     PAMELA
-16        2024             57   FIRE DEPARTMENT       TURNER JR V. SIMPSON
-17        2024             57   FIRE DEPARTMENT     FILACCHIONE       MARC
-18        2024             57   FIRE DEPARTMENT         HOFFMAN     JOSEPH
-19        2024             57   FIRE DEPARTMENT        POTASNIK     JOSEPH
-   mid_init agency_start_date work_location_borough title_description
-1         G        10/24/2022             MANHATTAN          CHAPLAIN
-2         J        03/27/2017             MANHATTAN          CHAPLAIN
-3         M        06/24/2019             MANHATTAN          CHAPLAIN
-4                  12/11/2017             MANHATTAN          CHAPLAIN
-5                  06/15/2015             MANHATTAN          CHAPLAIN
-6         J        06/02/2014             MANHATTAN          CHAPLAIN
-7         Y        09/08/2014             MANHATTAN          CHAPLAIN
-8         U        08/02/2021             MANHATTAN          CHAPLAIN
-9         E        03/27/2017             MANHATTAN          CHAPLAIN
-10        L        06/18/2001             MANHATTAN          CHAPLAIN
-11                 12/16/1966             MANHATTAN          CHAPLAIN
-12        J        10/13/1998             MANHATTAN          CHAPLAIN
-13        E        05/15/1996              BROOKLYN          CHAPLAIN
-14        J        12/20/2021              BROOKLYN          CHAPLAIN
-15        D        09/25/2023              BROOKLYN          CHAPLAIN
-16                 11/20/2013              BROOKLYN          CHAPLAIN
-17                 10/30/1995              BROOKLYN          CHAPLAIN
-18        M        11/19/2001              BROOKLYN          CHAPLAIN
-19                 06/25/1998              BROOKLYN          CHAPLAIN
-   leave_status_as_of_june_30 base_salary       pay_basis regular_hours
-1                      ACTIVE       28713 Prorated Annual       1040.00
-2                      ACTIVE       36132 Prorated Annual       1040.00
-3                      ACTIVE       70241       per Annum       1820.00
-4                      ACTIVE       36133 Prorated Annual       1040.00
-5                      ACTIVE       38613 Prorated Annual       1040.00
-6                      ACTIVE       39453 Prorated Annual       1037.15
-7                      ACTIVE       39453 Prorated Annual       1040.00
-8                      ACTIVE       33020 Prorated Annual       1040.00
-9                      ACTIVE       36132 Prorated Annual       1040.00
-10                     ACTIVE       76176       per Annum       2080.00
-11                     ACTIVE       81839       per Annum       2080.00
-12                     ACTIVE       81440       per Annum       2080.00
-13                     CEASED       32169 Prorated Annual        440.00
-14                     ACTIVE       28713 Prorated Annual       1040.00
-15                     ACTIVE       33118 Prorated Annual        760.00
-16                     ACTIVE       33020 Prorated Annual       1040.00
-17                     ACTIVE       33146 Prorated Annual       1040.00
-18                     ACTIVE       33093 Prorated Annual       1040.00
-19                     ACTIVE       33130 Prorated Annual       1040.00
-   regular_gross_paid ot_hours total_ot_paid total_other_pay agency_name_clean
-1            27727.30     0.00          0.00          631.00 POLICE DEPARTMENT
-2            34891.77     0.00        195.72          631.00 POLICE DEPARTMENT
-3            67828.94     0.00       1674.26          631.00 POLICE DEPARTMENT
-4            34892.81     4.00        460.61          631.00 POLICE DEPARTMENT
-5            37286.87    38.50       1382.44          631.00 POLICE DEPARTMENT
-6            35795.97   234.00       8489.87          631.00 POLICE DEPARTMENT
-7            38098.41   393.25      15452.32          631.00 POLICE DEPARTMENT
-8            31694.66    89.00       3328.63         1131.00 POLICE DEPARTMENT
-9            34891.77   184.50       6656.21         1131.00 POLICE DEPARTMENT
-10           73537.28     0.00          0.00         6173.67 POLICE DEPARTMENT
-11           79005.61     0.00          0.00         7672.90 POLICE DEPARTMENT
-12           78620.77     0.00          0.00         8172.90 POLICE DEPARTMENT
-13           13538.74     0.00          0.00         1745.04   FIRE DEPARTMENT
-14           27727.30    49.00       1308.41         1971.99   FIRE DEPARTMENT
-15           23368.10    34.00       1047.12         2102.20   FIRE DEPARTMENT
-16           31885.88    99.50       3216.94         3883.34   FIRE DEPARTMENT
-17           31996.39    35.00       1188.79         5963.17   FIRE DEPARTMENT
-18           31944.64    13.00        440.90         6306.18   FIRE DEPARTMENT
-19           31980.53     0.00          0.00         6640.37   FIRE DEPARTMENT
-   total_pay agency_start_date_clean
-1   28358.30              2022-10-24
-2   35718.49              2017-03-27
-3   70134.20              2019-06-24
-4   35984.42              2017-12-11
-5   39300.31              2015-06-15
-6   44916.84              2014-06-02
-7   54181.73              2014-09-08
-8   36154.29              2021-08-02
-9   42678.98              2017-03-27
-10  79710.95              2001-06-18
-11  86678.51              1966-12-16
-12  86793.67              1998-10-13
-13  15283.78              1996-05-15
-14  31007.70              2021-12-20
-15  26517.42              2023-09-25
-16  38986.16              2013-11-20
-17  39148.35              1995-10-30
-18  38691.72              2001-11-19
-19  38620.90              1998-06-25</code></pre>
+<pre><code>  fiscal_year payroll_number       agency_name last_name first_name mid_init
+1        2024             56 POLICE DEPARTMENT    KUKIQI      TAHIR        M
+2        2024             56 POLICE DEPARTMENT   CASSATO      DAVID        L
+3        2024             56 POLICE DEPARTMENT      KASS      ALVIN         
+4        2024             56 POLICE DEPARTMENT    ROMANO     ROBERT        J
+  agency_start_date work_location_borough title_description
+1        2019-06-24             MANHATTAN          CHAPLAIN
+2        2001-06-18             MANHATTAN          CHAPLAIN
+3        1966-12-16             MANHATTAN          CHAPLAIN
+4        1998-10-13             MANHATTAN          CHAPLAIN
+  leave_status_as_of_june_30 base_salary pay_basis regular_hours
+1                     ACTIVE       70241 per Annum          1820
+2                     ACTIVE       76176 per Annum          2080
+3                     ACTIVE       81839 per Annum          2080
+4                     ACTIVE       81440 per Annum          2080
+  regular_gross_paid ot_hours total_ot_paid total_other_pay
+1           67828.94        0       1674.26          631.00
+2           73537.28        0          0.00         6173.67
+3           79005.61        0          0.00         7672.90
+4           78620.77        0          0.00         8172.90
+  agency_start_date_year total_pay
+1                   2019  70134.20
+2                   2001  79710.95
+3                   1966  86678.51
+4                   1998  86793.67</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(pay_basis == "Prorated Annual") </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(pay_basis == "Prorated Annual") </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>remove pro_rated data “Prorated Annual”</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">&gt;</span> <span class="st">"2014"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean,fiscal_year) <span class="sc">|&gt;</span> </span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
-<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_pay =</span> <span class="fu">sum</span>(total_pay),</span>
-<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_regular_gross_paid =</span> <span class="fu">sum</span>(regular_gross_paid),</span>
-<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_ot_paid =</span> <span class="fu">sum</span>(total_ot_paid),</span>
-<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_other_pay =</span> <span class="fu">sum</span>(total_other_pay),</span>
-<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_total_pay =</span> <span class="fu">sum</span>(total_pay) <span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
-<span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_regular_gross_paid =</span> <span class="fu">sum</span>(regular_gross_paid)<span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
-<span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_total_ot_paid =</span> <span class="fu">sum</span>(total_ot_paid)<span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
-<span id="cb65-13"><a href="#cb65-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_total_other_pay =</span> <span class="fu">sum</span>(total_other_pay)<span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
-<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">records_with_1 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(regular_gross_paid)),</span>
-<span id="cb65-15"><a href="#cb65-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">records_with_2 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(total_ot_paid)),</span>
-<span id="cb65-16"><a href="#cb65-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">records_with_3 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(total_other_pay)),</span>
-<span id="cb65-17"><a href="#cb65-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb65-18"><a href="#cb65-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name_clean,fiscal_year,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">&gt;</span> <span class="st">"2014"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name,fiscal_year) <span class="sc">|&gt;</span> </span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_pay =</span> <span class="fu">sum</span>(total_pay),</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_regular_gross_paid =</span> <span class="fu">sum</span>(regular_gross_paid),</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_ot_paid =</span> <span class="fu">sum</span>(total_ot_paid),</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_other_pay =</span> <span class="fu">sum</span>(total_other_pay),</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_total_pay =</span> <span class="fu">sum</span>(total_pay) <span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_regular_gross_paid =</span> <span class="fu">sum</span>(regular_gross_paid)<span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_total_ot_paid =</span> <span class="fu">sum</span>(total_ot_paid)<span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">PCT_total_other_pay =</span> <span class="fu">sum</span>(total_other_pay)<span class="sc">/</span> <span class="fu">sum</span>(total_pay),</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">records_with_1 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(regular_gross_paid)),</span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">records_with_2 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(total_ot_paid)),</span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">records_with_3 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(total_other_pay)),</span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name,fiscal_year,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'agency_name_clean'. You can override using
-the `.groups` argument.</code></pre>
+<pre><code>`summarise()` has grouped output by 'agency_name'. You can override using the
+`.groups` argument.</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 20 × 14
-# Groups:   agency_name_clean [2]
-   agency_name_clean fiscal_year Total_records TOTAL_total_pay
-   &lt;chr&gt;                   &lt;int&gt;         &lt;int&gt;           &lt;dbl&gt;
- 1 FIRE DEPARTMENT          2015         17380     1634326504.
- 2 FIRE DEPARTMENT          2016         19934     1880395463.
- 3 FIRE DEPARTMENT          2017         18687     1802155816.
- 4 FIRE DEPARTMENT          2018         18391     1831077303.
- 5 FIRE DEPARTMENT          2019         18679     1785188573.
- 6 FIRE DEPARTMENT          2020         19193     1864413346.
- 7 FIRE DEPARTMENT          2021         19049     1932962516.
- 8 FIRE DEPARTMENT          2022         20920     2375560620.
- 9 FIRE DEPARTMENT          2023         19072     2204518077.
-10 FIRE DEPARTMENT          2024         21412     2625379035.
-11 POLICE DEPARTMENT        2015         59264     4595729044.
-12 POLICE DEPARTMENT        2016         65868     4852944949.
-13 POLICE DEPARTMENT        2017         62516     5317984531.
-14 POLICE DEPARTMENT        2018         59811     5044058215.
-15 POLICE DEPARTMENT        2019         59970     5162359791.
-16 POLICE DEPARTMENT        2020         60316     5356858768.
-17 POLICE DEPARTMENT        2021         59009     4914698674.
-18 POLICE DEPARTMENT        2022         60804     5340976504.
-19 POLICE DEPARTMENT        2023         58617     5227427707.
-20 POLICE DEPARTMENT        2024         65901     7246753318.
-# ℹ 10 more variables: TOTAL_regular_gross_paid &lt;dbl&gt;,
-#   TOTAL_total_ot_paid &lt;dbl&gt;, TOTAL_total_other_pay &lt;dbl&gt;,
+# Groups:   agency_name [2]
+   agency_name  fiscal_year Total_records TOTAL_total_pay TOTAL_regular_gross_…¹
+   &lt;chr&gt;              &lt;int&gt;         &lt;int&gt;           &lt;dbl&gt;                  &lt;dbl&gt;
+ 1 FIRE DEPART…        2015         17372     1634119567.            1154834510.
+ 2 FIRE DEPART…        2016         19926     1880178273.            1363189262.
+ 3 FIRE DEPART…        2017         18679     1801905808.            1312717663.
+ 4 FIRE DEPART…        2018         18383     1830837676.            1302973120.
+ 5 FIRE DEPART…        2019         18671     1784925547.            1307873584.
+ 6 FIRE DEPART…        2020         19186     1864198776.            1313646743.
+ 7 FIRE DEPART…        2021         19042     1932732426.            1380571789.
+ 8 FIRE DEPART…        2022         20911     2375326572.            1581986580.
+ 9 FIRE DEPART…        2023         19063     2204216644.            1408996580.
+10 FIRE DEPART…        2024         21405     2625150779.            1700904766.
+11 POLICE DEPA…        2015         59257     4595548106.            3409419582.
+12 POLICE DEPA…        2016         65860     4852742537.            3633110040.
+13 POLICE DEPA…        2017         62507     5317798046.            4003003829.
+14 POLICE DEPA…        2018         59802     5043802671.            3800480310.
+15 POLICE DEPA…        2019         59961     5162125279.            3895497643.
+16 POLICE DEPA…        2020         60308     5356617806.            3904542295.
+17 POLICE DEPA…        2021         59001     4914452895.            3768555825.
+18 POLICE DEPA…        2022         60795     5340710115.            3874060895.
+19 POLICE DEPA…        2023         58608     5227139221.            3692765151.
+20 POLICE DEPA…        2024         65893     7246436025.            5085465293.
+# ℹ abbreviated name: ¹​TOTAL_regular_gross_paid
+# ℹ 9 more variables: TOTAL_total_ot_paid &lt;dbl&gt;, TOTAL_total_other_pay &lt;dbl&gt;,
 #   PCT_total_pay &lt;dbl&gt;, PCT_regular_gross_paid &lt;dbl&gt;, PCT_total_ot_paid &lt;dbl&gt;,
 #   PCT_total_other_pay &lt;dbl&gt;, records_with_1 &lt;int&gt;, records_with_2 &lt;int&gt;,
 #   records_with_3 &lt;int&gt;</code></pre>
@@ -1148,105 +906,105 @@ the `.groups` argument.</code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">&gt;</span> <span class="st">"2014"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean,fiscal_year) <span class="sc">|&gt;</span> </span>
-<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
-<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_pay =</span> <span class="fu">n_distinct</span>(title_description)</span>
-<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name_clean,fiscal_year,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">&gt;</span> <span class="st">"2014"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name,fiscal_year) <span class="sc">|&gt;</span> </span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTAL_total_pay =</span> <span class="fu">n_distinct</span>(title_description)</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name,fiscal_year,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'agency_name_clean'. You can override using
-the `.groups` argument.</code></pre>
+<pre><code>`summarise()` has grouped output by 'agency_name'. You can override using the
+`.groups` argument.</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 20 × 4
-# Groups:   agency_name_clean [2]
-   agency_name_clean fiscal_year Total_records TOTAL_total_pay
+# Groups:   agency_name [2]
+   agency_name       fiscal_year Total_records TOTAL_total_pay
    &lt;chr&gt;                   &lt;int&gt;         &lt;int&gt;           &lt;int&gt;
- 1 FIRE DEPARTMENT          2015         17380             171
- 2 FIRE DEPARTMENT          2016         19934             171
- 3 FIRE DEPARTMENT          2017         18687             173
- 4 FIRE DEPARTMENT          2018         18391             174
- 5 FIRE DEPARTMENT          2019         18679             178
- 6 FIRE DEPARTMENT          2020         19193             178
- 7 FIRE DEPARTMENT          2021         19049             175
- 8 FIRE DEPARTMENT          2022         20920             183
- 9 FIRE DEPARTMENT          2023         19072             183
-10 FIRE DEPARTMENT          2024         21412             185
-11 POLICE DEPARTMENT        2015         59264             239
-12 POLICE DEPARTMENT        2016         65868             245
-13 POLICE DEPARTMENT        2017         62516             245
-14 POLICE DEPARTMENT        2018         59811             247
-15 POLICE DEPARTMENT        2019         59970             248
-16 POLICE DEPARTMENT        2020         60316             244
-17 POLICE DEPARTMENT        2021         59009             247
-18 POLICE DEPARTMENT        2022         60804             259
-19 POLICE DEPARTMENT        2023         58617             261
-20 POLICE DEPARTMENT        2024         65901             255</code></pre>
+ 1 FIRE DEPARTMENT          2015         17372             171
+ 2 FIRE DEPARTMENT          2016         19926             170
+ 3 FIRE DEPARTMENT          2017         18679             172
+ 4 FIRE DEPARTMENT          2018         18383             173
+ 5 FIRE DEPARTMENT          2019         18671             177
+ 6 FIRE DEPARTMENT          2020         19186             177
+ 7 FIRE DEPARTMENT          2021         19042             174
+ 8 FIRE DEPARTMENT          2022         20911             182
+ 9 FIRE DEPARTMENT          2023         19063             182
+10 FIRE DEPARTMENT          2024         21405             184
+11 POLICE DEPARTMENT        2015         59257             239
+12 POLICE DEPARTMENT        2016         65860             245
+13 POLICE DEPARTMENT        2017         62507             245
+14 POLICE DEPARTMENT        2018         59802             247
+15 POLICE DEPARTMENT        2019         59961             248
+16 POLICE DEPARTMENT        2020         60308             244
+17 POLICE DEPARTMENT        2021         59001             247
+18 POLICE DEPARTMENT        2022         60795             259
+19 POLICE DEPARTMENT        2023         58608             261
+20 POLICE DEPARTMENT        2024         65893             255</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year_agency_start_date_clean =</span> <span class="fu">year</span>(agency_start_date_clean)) <span class="sc">|&gt;</span> </span>
-<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year_agency_start_date_clean <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">&gt;</span> <span class="st">"2014"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean,title_description) <span class="sc">|&gt;</span> </span>
-<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a>    ,<span class="fu">mean</span>(base_salary)</span>
-<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name_clean,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(year_agency_start_date_clean = year(agency_start_date_clean)) |&gt; </span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_start_date_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">&gt;</span> <span class="st">"2014"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name,title_description) <span class="sc">|&gt;</span> </span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>    ,<span class="fu">mean</span>(base_salary)</span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'agency_name_clean'. You can override using
-the `.groups` argument.</code></pre>
+<pre><code>`summarise()` has grouped output by 'agency_name'. You can override using the
+`.groups` argument.</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 46 × 4
-# Groups:   agency_name_clean [2]
-   agency_name_clean title_description         Total_records `mean(base_salary)`
-   &lt;chr&gt;             &lt;chr&gt;                             &lt;int&gt;               &lt;dbl&gt;
- 1 FIRE DEPARTMENT   FIREFIGHTER                         266              54122 
- 2 FIRE DEPARTMENT   EMERGENCY MEDICAL SPECIA…           221              39430.
- 3 FIRE DEPARTMENT   EMERGENCY MEDICAL SPECIA…            91              36330 
- 4 FIRE DEPARTMENT   AGENCY ATTORNEY                       2             112938.
- 5 FIRE DEPARTMENT   EXECUTIVE AGENCY COUNSEL              2             140187 
- 6 FIRE DEPARTMENT   PROGRAM PRODUCER                      2              23511.
- 7 FIRE DEPARTMENT   STAFF ANALYST                         2              74698 
- 8 FIRE DEPARTMENT   ASSISTANT COMMISSIONER                1             202592 
- 9 FIRE DEPARTMENT   AUTO MECHANIC                         1                391.
-10 FIRE DEPARTMENT   CASE - MANAGEMENT NURSE               1             100750 
+# Groups:   agency_name [2]
+   agency_name     title_description           Total_records `mean(base_salary)`
+   &lt;chr&gt;           &lt;chr&gt;                               &lt;int&gt;               &lt;dbl&gt;
+ 1 FIRE DEPARTMENT FIREFIGHTER                           266              54122 
+ 2 FIRE DEPARTMENT EMERGENCY MEDICAL SPECIALI…           221              39430.
+ 3 FIRE DEPARTMENT EMERGENCY MEDICAL SPECIALI…            91              36330 
+ 4 FIRE DEPARTMENT AGENCY ATTORNEY                         2             112938.
+ 5 FIRE DEPARTMENT EXECUTIVE AGENCY COUNSEL                2             140187 
+ 6 FIRE DEPARTMENT PROGRAM PRODUCER                        2              23511.
+ 7 FIRE DEPARTMENT STAFF ANALYST                           2              74698 
+ 8 FIRE DEPARTMENT ASSISTANT COMMISSIONER                  1             202592 
+ 9 FIRE DEPARTMENT AUTO MECHANIC                           1                391.
+10 FIRE DEPARTMENT CASE - MANAGEMENT NURSE                 1             100750 
 # ℹ 36 more rows</code></pre>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(year_agency_start_date_clean = year(agency_start_date_clean)) |&gt; </span></span>
-<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2018") |&gt;</span></span>
-<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(title_description <span class="sc">%in%</span>  <span class="fu">c</span>(<span class="st">"FIREFIGHTER"</span>,<span class="st">"POLICE OFFICER"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean,pay_basis,fiscal_year,title_description) <span class="sc">|&gt;</span> </span>
-<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>    ,<span class="fu">mean</span>(base_salary)</span>
-<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>    ,<span class="fu">mean</span>(total_pay)</span>
-<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name_clean,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(year_agency_start_date_clean = year(agency_start_date_clean)) |&gt; </span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2018") |&gt;</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(title_description <span class="sc">%in%</span>  <span class="fu">c</span>(<span class="st">"FIREFIGHTER"</span>,<span class="st">"POLICE OFFICER"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name,pay_basis,fiscal_year,title_description) <span class="sc">|&gt;</span> </span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>    ,<span class="fu">mean</span>(base_salary)</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>    ,<span class="fu">mean</span>(total_pay)</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name,<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'agency_name_clean', 'pay_basis',
-'fiscal_year'. You can override using the `.groups` argument.</code></pre>
+<pre><code>`summarise()` has grouped output by 'agency_name', 'pay_basis', 'fiscal_year'.
+You can override using the `.groups` argument.</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 21 × 7
-# Groups:   agency_name_clean, pay_basis, fiscal_year [21]
-   agency_name_clean pay_basis fiscal_year title_description Total_records
+<pre><code># A tibble: 20 × 7
+# Groups:   agency_name, pay_basis, fiscal_year [20]
+   agency_name       pay_basis fiscal_year title_description Total_records
    &lt;chr&gt;             &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;                     &lt;int&gt;
  1 FIRE DEPARTMENT   per Annum        2016 FIREFIGHTER               10484
  2 FIRE DEPARTMENT   per Annum        2024 FIREFIGHTER                9804
@@ -1258,257 +1016,399 @@ the `.groups` argument.</code></pre>
  8 FIRE DEPARTMENT   per Annum        2017 FIREFIGHTER                8739
  9 FIRE DEPARTMENT   per Annum        2021 FIREFIGHTER                8479
 10 FIRE DEPARTMENT   per Annum        2015 FIREFIGHTER                8049
-# ℹ 11 more rows
+11 POLICE DEPARTMENT per Annum        2024 POLICE OFFICER            31439
+12 POLICE DEPARTMENT per Annum        2016 POLICE OFFICER            29439
+13 POLICE DEPARTMENT per Annum        2017 POLICE OFFICER            28644
+14 POLICE DEPARTMENT per Annum        2022 POLICE OFFICER            25428
+15 POLICE DEPARTMENT per Annum        2018 POLICE OFFICER            25425
+16 POLICE DEPARTMENT per Annum        2021 POLICE OFFICER            25143
+17 POLICE DEPARTMENT per Annum        2019 POLICE OFFICER            25081
+18 POLICE DEPARTMENT per Annum        2020 POLICE OFFICER            24835
+19 POLICE DEPARTMENT per Annum        2023 POLICE OFFICER            24711
+20 POLICE DEPARTMENT per Annum        2015 POLICE OFFICER            23595
 # ℹ 2 more variables: `mean(base_salary)` &lt;dbl&gt;, `mean(total_pay)` &lt;dbl&gt;</code></pre>
 </div>
 </div>
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   filter(fiscal_year == "2024") |> -->
-<!--   filter(leave_status_as_of_june_30=="ACTIVE") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER","DEPT OF ED HRLY SUPPORT STAFF","DEPT OF ED PARA PROFESSIONALS", -->
-<!-- "DEPT OF ED PEDAGOGICAL", -->
-<!-- "DEPT OF ED PER DIEM TEACHERS", -->
-<!-- "DEPT OF ED PER SESSION TEACHER"   )) |> -->
-<!--   group_by(agency_name,title_description) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(regular_gross_paid), -->
-<!--     base_salary_sum2 = sum(regular_gross_paid), -->
-<!--     # total_ot_sum = round(sum(total_ot_pay),0), -->
-<!--     total_other_sum = round(sum(total_other_pay),0), -->
-<!--     total_paid_sum = round(sum(total_paid),0), -->
-<!--     total_paid_avg = mean(total_paid), -->
-<!--   ) |> -->
-<!--   arrange(desc(Total_records)) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   filter(fiscal_year == "2024") |> -->
-<!--   filter(leave_status_as_of_june_30=="ACTIVE") |> -->
-<!--   filter(agency_name %in%  c("POLICE DEPARTMENT"   )) |> -->
-<!--   group_by(agency_name,work_location_borough,title_description) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(regular_gross_paid), -->
-<!--     base_salary_sum2 = sum(regular_gross_paid), -->
-<!--     # total_ot_sum = round(sum(total_ot_pay),0), -->
-<!--     total_other_sum = round(sum(total_other_pay),0), -->
-<!--     total_paid_sum = round(sum(total_paid),0), -->
-<!--     total_paid_avg = mean(total_paid), -->
-<!--   ) |> -->
-<!--   arrange(agency_name,title_description,work_location_borough) -->
-<!--   # arrange(desc(Total_records)) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   # filter(fiscal_year == "2024") |> -->
-<!--   filter(leave_status_as_of_june_30=="ACTIVE") |> -->
-<!--   filter(agency_name %in%  c("POLICE DEPARTMENT"   )) |> -->
-<!--   group_by(title_description) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(regular_gross_paid), -->
-<!--     base_salary_sum2 = sum(regular_gross_paid), -->
-<!--     # total_ot_sum = round(sum(total_ot_pay),0), -->
-<!--     total_other_sum = round(sum(total_other_pay),0), -->
-<!--     total_paid_sum = round(sum(total_paid),0), -->
-<!--     total_paid_avg = mean(total_paid), -->
-<!--   ) |> -->
-<!--   # arrange(title_description) -->
-<!--   arrange(desc(Total_records)) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   mutate(agency_name_clean = trimws(gsub("#\\d+$", "", Agency.Name))) |> -->
-<!--   filter(grepl("DA\\s*$", agency_name_clean, ignore.case = TRUE)) |> -->
-<!--   group_by(agency_name_clean,Work.Location.Borough) |> -->
-<!--   summarise( -->
-<!--     Total_records = n() -->
-<!--   ) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   group_by(Work.Location.Borough) |> -->
-<!--   summarise( -->
-<!--     Total_records = n() -->
-<!--   ) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data <- payroll_data |> -->
-<!--   mutate(work_location_borough = toupper(work_location_borough)) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   group_by(work_location_borough,fiscal_year) |> -->
-<!--   summarise( -->
-<!--     Total_records = n() -->
-<!--   ) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   group_by(title_description) |> -->
-<!--   summarise( -->
-<!--     Total_records = n() -->
-<!--   ) |> -->
-<!--   arrange(desc(Total_records)) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   filter(title_description== "TEACHER") |> -->
-<!--   group_by(title_description) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(base_salary) -->
-<!--   ) |> -->
-<!--   arrange(desc(Total_records)) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   # filter(fiscal_year == "2024") |> -->
-<!--   group_by(agency_name,title_description,work_location_borough) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(base_salary) -->
-<!--   ) |> -->
-<!--   arrange(desc(Total_records)) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   filter(title_description== "TEACHER") -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   filter(title_description== "TEACHER- PER SESSION") -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   # filter(fiscal_year == "2024") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
-<!--   group_by(agency_name,work_location_borough) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(base_salary) -->
-<!--   ) |> -->
-<!--   arrange(desc(Total_records)) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   # filter(fiscal_year == "2024") |> -->
-<!--   # filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
-<!--   group_by(agency_name,work_location_borough) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(base_salary) -->
-<!--   ) |> -->
-<!--   arrange(desc(agency_name)) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   filter(fiscal_year == "2024") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
-<!--   group_by(agency_name,work_location_borough,pay_basis) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(base_salary) -->
-<!--   ) |> -->
-<!--   arrange(desc(agency_name)) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   # filter(fiscal_year == "2024") |> -->
-<!--   filter(pay_basis == "per Annum") |> -->
-<!--   # filter(leave_status_as_of_june_30=="ACTIVE") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
-<!--   group_by(agency_name,fiscal_year,pay_basis,leave_status_as_of_june_30) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(base_salary) -->
-<!--   ) |> -->
-<!--   arrange(desc(agency_name)) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   filter(fiscal_year == "2024") |> -->
-<!--   filter(leave_status_as_of_june_30=="CEASED") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data <- payroll_data |> -->
-<!--   # mutate(base_salary_std = if_else(pay_basis == "per Day", base_salary * 260, base_salary) |> -->
-<!--   mutate( -->
-<!--     regular_gross_paid = as.numeric(regular_gross_paid), -->
-<!--     total_ot_paid = as.numeric(total_ot_paid), -->
-<!--     total_other_pay = as.numeric(total_other_pay) -->
-<!--   ) |> -->
-<!--   mutate(total_paid = regular_gross_paid +total_ot_paid + total_other_pay) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- head(payroll_data) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--     filter(fiscal_year == "2024") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
-<!-- ggplot() + -->
-<!--     geom_point(mapping = aes(x=base_salary, -->
-<!--                              y=regular_gross_paid, -->
-<!--                              color = pay_basis -->
-<!--                              ), -->
-<!--       size = 0.5, -->
-<!--       alpha = 0.5, -->
-<!--       ) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--     filter(fiscal_year == "2024") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
-<!-- ggplot() + -->
-<!--     geom_point(mapping = aes(x=total_paid, -->
-<!--                              y=regular_gross_paid, -->
-<!--                              color = leave_status_as_of_june_30 -->
-<!--                              ), -->
-<!--       size = 0.5, -->
-<!--       alpha = 0.5, -->
-<!--       )+ -->
-<!--    scale_x_continuous(labels = scales::label_comma()) + -->
-<!--   scale_y_continuous(labels = scales::label_comma()) + -->
-<!--   coord_fixed() -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   filter(fiscal_year == "2024") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
-<!-- ggplot() + -->
-<!--     geom_point(mapping = aes(x=regular_gross_paid, -->
-<!--                              y=total_other_pay, -->
-<!--                              color = leave_status_as_of_june_30 -->
-<!--                              ), -->
-<!--       size = 0.5, -->
-<!--       alpha = 0.5, -->
-<!--       )+ -->
-<!--    scale_x_continuous(labels = scales::label_comma()) + -->
-<!--   scale_y_continuous(labels = scales::label_comma()) + -->
-<!--   coord_fixed() -->
-<!-- ``` -->
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(title_description== "TEACHER- PER SESSION") |&gt;</span></span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(leave_status_as_of_june_30<span class="sc">==</span><span class="st">"ACTIVE"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name <span class="sc">%in%</span>  <span class="fu">c</span>(<span class="st">"DEPT OF ED PEDAGOGICAL"</span>,<span class="st">"DEPT OF ED PER SESSION TEACHER"</span>,<span class="st">"DEPT OF ED HRLY SUPPORT STAFF"</span>,<span class="st">"DEPT OF ED PARA PROFESSIONALS"</span>,</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a><span class="st">"DEPT OF ED PEDAGOGICAL"</span>,</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a><span class="st">"DEPT OF ED PER DIEM TEACHERS"</span>,</span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a><span class="st">"DEPT OF ED PER SESSION TEACHER"</span>    )) <span class="sc">|&gt;</span></span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name,title_description) <span class="sc">|&gt;</span></span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
+<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_salary_sum =</span> <span class="fu">sum</span>(base_salary),</span>
+<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_salary_avg =</span> <span class="fu">mean</span>(regular_gross_paid),</span>
+<span id="cb63-14"><a href="#cb63-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_salary_sum2 =</span> <span class="fu">sum</span>(regular_gross_paid),</span>
+<span id="cb63-15"><a href="#cb63-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># total_ot_sum = round(sum(total_ot_pay),0),</span></span>
+<span id="cb63-16"><a href="#cb63-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_other_sum =</span> <span class="fu">round</span>(<span class="fu">sum</span>(total_other_pay),<span class="dv">0</span>),</span>
+<span id="cb63-17"><a href="#cb63-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_paid_sum =</span> <span class="fu">round</span>(<span class="fu">sum</span>(total_pay),<span class="dv">0</span>),</span>
+<span id="cb63-18"><a href="#cb63-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_paid_avg =</span> <span class="fu">mean</span>(total_pay),</span>
+<span id="cb63-19"><a href="#cb63-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-20"><a href="#cb63-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb63-21"><a href="#cb63-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'agency_name'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 9
+# Groups:   agency_name [0]
+# ℹ 9 variables: agency_name &lt;chr&gt;, title_description &lt;chr&gt;,
+#   Total_records &lt;int&gt;, base_salary_sum &lt;dbl&gt;, base_salary_avg &lt;dbl&gt;,
+#   base_salary_sum2 &lt;dbl&gt;, total_other_sum &lt;dbl&gt;, total_paid_sum &lt;dbl&gt;,
+#   total_paid_avg &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(title_description== "TEACHER- PER SESSION") |&gt;</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(leave_status_as_of_june_30<span class="sc">==</span><span class="st">"ACTIVE"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name <span class="sc">%in%</span>  <span class="fu">c</span>(<span class="st">"POLICE DEPARTMENT"</span>    )) <span class="sc">|&gt;</span></span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name,work_location_borough,title_description) <span class="sc">|&gt;</span></span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_salary_sum =</span> <span class="fu">sum</span>(base_salary),</span>
+<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_salary_avg =</span> <span class="fu">mean</span>(regular_gross_paid),</span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_salary_sum2 =</span> <span class="fu">sum</span>(regular_gross_paid),</span>
+<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># total_ot_sum = round(sum(total_ot_pay),0),</span></span>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_other_sum =</span> <span class="fu">round</span>(<span class="fu">sum</span>(total_other_pay),<span class="dv">0</span>),</span>
+<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_paid_sum =</span> <span class="fu">round</span>(<span class="fu">sum</span>(total_pay),<span class="dv">0</span>),</span>
+<span id="cb66-15"><a href="#cb66-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_paid_avg =</span> <span class="fu">mean</span>(total_pay),</span>
+<span id="cb66-16"><a href="#cb66-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-17"><a href="#cb66-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb66-18"><a href="#cb66-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name,title_description,work_location_borough)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'agency_name', 'work_location_borough'. You
+can override using the `.groups` argument.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 467 × 10
+# Groups:   agency_name, work_location_borough [5]
+   agency_name       work_location_borough title_description      Total_records
+   &lt;chr&gt;             &lt;chr&gt;                 &lt;chr&gt;                          &lt;int&gt;
+ 1 POLICE DEPARTMENT MANHATTAN             *AGENCY ATTORNEY                   2
+ 2 POLICE DEPARTMENT MANHATTAN             *ASSISTANT ADVOCATE-PD             1
+ 3 POLICE DEPARTMENT MANHATTAN             *ATTORNEY AT LAW                   1
+ 4 POLICE DEPARTMENT MANHATTAN             *CUSTODIAL ASSISTANT               1
+ 5 POLICE DEPARTMENT BRONX                 ACCOUNTANT                         1
+ 6 POLICE DEPARTMENT BROOKLYN              ACCOUNTANT                         3
+ 7 POLICE DEPARTMENT MANHATTAN             ACCOUNTANT                         9
+ 8 POLICE DEPARTMENT QUEENS                ACCOUNTANT                         2
+ 9 POLICE DEPARTMENT RICHMOND              ACCOUNTANT                         2
+10 POLICE DEPARTMENT BRONX                 ADM MANAGER-NON-MGRL               1
+# ℹ 457 more rows
+# ℹ 6 more variables: base_salary_sum &lt;dbl&gt;, base_salary_avg &lt;dbl&gt;,
+#   base_salary_sum2 &lt;dbl&gt;, total_other_sum &lt;dbl&gt;, total_paid_sum &lt;dbl&gt;,
+#   total_paid_avg &lt;dbl&gt;</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(desc(Total_records))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(title_description== "TEACHER- PER SESSION") |&gt;</span></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2024") |&gt;</span></span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(leave_status_as_of_june_30<span class="sc">==</span><span class="st">"ACTIVE"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name <span class="sc">%in%</span>  <span class="fu">c</span>(<span class="st">"POLICE DEPARTMENT"</span>    )) <span class="sc">|&gt;</span></span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(title_description) <span class="sc">|&gt;</span></span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
+<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_salary_sum =</span> <span class="fu">sum</span>(base_salary),</span>
+<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_salary_avg =</span> <span class="fu">mean</span>(regular_gross_paid),</span>
+<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_salary_sum2 =</span> <span class="fu">sum</span>(regular_gross_paid),</span>
+<span id="cb70-12"><a href="#cb70-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># total_ot_sum = round(sum(total_ot_pay),0),</span></span>
+<span id="cb70-13"><a href="#cb70-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_other_sum =</span> <span class="fu">round</span>(<span class="fu">sum</span>(total_other_pay),<span class="dv">0</span>),</span>
+<span id="cb70-14"><a href="#cb70-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_paid_sum =</span> <span class="fu">round</span>(<span class="fu">sum</span>(total_pay),<span class="dv">0</span>),</span>
+<span id="cb70-15"><a href="#cb70-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_paid_avg =</span> <span class="fu">mean</span>(total_pay),</span>
+<span id="cb70-16"><a href="#cb70-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-17"><a href="#cb70-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb70-18"><a href="#cb70-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(title_description)</span></span>
+<span id="cb70-19"><a href="#cb70-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 327 × 8
+   title_description               Total_records base_salary_sum base_salary_avg
+   &lt;chr&gt;                                   &lt;int&gt;           &lt;dbl&gt;           &lt;dbl&gt;
+ 1 POLICE OFFICER                         226300    16243575854           71446.
+ 2 SCHOOL SAFETY AGENT                     45169     1952776948           41400.
+ 3 P.O. DA DET GR3                         31391     3082214165           99498.
+ 4 SERGEANT-                               26698     2831977743          108291.
+ 5 SCHOOL CROSSING GUARD                   20629       17793767.          15649.
+ 6 TRAFFIC ENFORCEMENT AGENT               19505      815475464           38654.
+ 7 LIEUTENANT                              13793     1722631027          123546.
+ 8 POLICE COMMUNICATIONS TECHNICI…         12786      615427901           41371.
+ 9 POLICE ADMINISTRATIVE AIDE              12381      508306876           38490.
+10 SERGEANT                                12167     1180616023           97877.
+# ℹ 317 more rows
+# ℹ 4 more variables: base_salary_sum2 &lt;dbl&gt;, total_other_sum &lt;dbl&gt;,
+#   total_paid_sum &lt;dbl&gt;, total_paid_avg &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(work_location_borough) <span class="sc">|&gt;</span></span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 2
+  work_location_borough Total_records
+  &lt;chr&gt;                         &lt;int&gt;
+1 BRONX                        101915
+2 BROOKLYN                     208720
+3 MANHATTAN                    310236
+4 QUEENS                       155565
+5 RICHMOND                      28194</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(work_location_borough,fiscal_year) <span class="sc">|&gt;</span></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'work_location_borough'. You can override
+using the `.groups` argument.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 50 × 3
+# Groups:   work_location_borough [5]
+   work_location_borough fiscal_year Total_records
+   &lt;chr&gt;                       &lt;int&gt;         &lt;int&gt;
+ 1 BRONX                        2015          9663
+ 2 BRONX                        2016         10011
+ 3 BRONX                        2017         10320
+ 4 BRONX                        2018         10433
+ 5 BRONX                        2019         10398
+ 6 BRONX                        2020         10586
+ 7 BRONX                        2021         10495
+ 8 BRONX                        2022         10215
+ 9 BRONX                        2023          9907
+10 BRONX                        2024          9887
+# ℹ 40 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(title_description) <span class="sc">|&gt;</span></span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Total_records))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 436 × 2
+   title_description                Total_records
+   &lt;chr&gt;                                    &lt;int&gt;
+ 1 POLICE OFFICER                          263740
+ 2 FIREFIGHTER                              90904
+ 3 SCHOOL SAFETY AGENT                      54806
+ 4 P.O. DA DET GR3                          35911
+ 5 LIEUTENANT                               32742
+ 6 EMERGENCY MEDICAL SPECIALIST-EMT         31774
+ 7 SERGEANT-                                29848
+ 8 SCHOOL CROSSING GUARD                    27381
+ 9 TRAFFIC ENFORCEMENT AGENT                24466
+10 POLICE COMMUNICATIONS TECHNICIAN         16748
+# ℹ 426 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(title_description== "TEACHER- PER SESSION") |&gt;</span></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2024") |&gt;</span></span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |&gt;</span></span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name,work_location_borough) <span class="sc">|&gt;</span></span>
+<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
+<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_salary_sum =</span> <span class="fu">sum</span>(base_salary),</span>
+<span id="cb79-9"><a href="#cb79-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_salary_avg =</span> <span class="fu">mean</span>(base_salary)</span>
+<span id="cb79-10"><a href="#cb79-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb79-11"><a href="#cb79-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(agency_name))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'agency_name'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 5
+# Groups:   agency_name [2]
+   agency_name       work_location_borough Total_records base_salary_sum
+   &lt;chr&gt;             &lt;chr&gt;                         &lt;int&gt;           &lt;dbl&gt;
+ 1 POLICE DEPARTMENT BRONX                         72253     4957559800.
+ 2 POLICE DEPARTMENT BROOKLYN                     134890     8804875794.
+ 3 POLICE DEPARTMENT MANHATTAN                    274486    20869898460.
+ 4 POLICE DEPARTMENT QUEENS                       112008     7288661627.
+ 5 POLICE DEPARTMENT RICHMOND                      18355     1258343020.
+ 6 FIRE DEPARTMENT   BRONX                         29662     2183298705.
+ 7 FIRE DEPARTMENT   BROOKLYN                      73830     5832605787.
+ 8 FIRE DEPARTMENT   MANHATTAN                     35750     2832927173.
+ 9 FIRE DEPARTMENT   QUEENS                        43557     2986285004.
+10 FIRE DEPARTMENT   RICHMOND                       9839      828760664.
+# ℹ 1 more variable: base_salary_avg &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="ot">&lt;-</span> payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(base_salary_std = if_else(pay_basis == "per Day", base_salary * 260, base_salary) |&gt;</span></span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">regular_gross_paid =</span> <span class="fu">as.numeric</span>(regular_gross_paid),</span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_ot_paid =</span> <span class="fu">as.numeric</span>(total_ot_paid),</span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_other_pay =</span> <span class="fu">as.numeric</span>(total_other_pay)</span>
+<span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb82-8"><a href="#cb82-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_paid =</span> regular_gross_paid <span class="sc">+</span>total_ot_paid <span class="sc">+</span> total_other_pay)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(payroll_data_fire_police)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  fiscal_year payroll_number       agency_name last_name first_name mid_init
+1        2020             56 POLICE DEPARTMENT   MORALES       JOSE         
+2        2020             56 POLICE DEPARTMENT     BOYNE     DANIEL        G
+3        2020             56 POLICE DEPARTMENT    MURTHA      KEVIN         
+4        2020             56 POLICE DEPARTMENT MASTRANDE      JAMES        J
+5        2020             56 POLICE DEPARTMENT     AROCA       ALMA        P
+6        2020             56 POLICE DEPARTMENT     TABBS     RONALD        G
+  agency_start_date work_location_borough                 title_description
+1        1998-12-20             MANHATTAN     SUPERVISOR OF SCHOOL SECURITY
+2        2016-04-25             MANHATTAN               STATIONARY ENGINEER
+3        1995-04-30             MANHATTAN LIEUTENANT D/A SPECIAL ASSIGNMENT
+4        2013-12-16             MANHATTAN               STATIONARY ENGINEER
+5        2012-07-11             MANHATTAN                    POLICE OFFICER
+6        2014-07-09             MANHATTAN                    POLICE OFFICER
+  leave_status_as_of_june_30 base_salary pay_basis regular_hours
+1                     CEASED     57813.0 per Annum          0.00
+2                     ACTIVE       508.8   per Day       2080.00
+3                     CEASED    141196.0 per Annum        665.18
+4                     ACTIVE       508.8   per Day       2080.00
+5                     CEASED     85292.0 per Annum         22.87
+6                   ON LEAVE     85292.0 per Annum       1822.85
+  regular_gross_paid ot_hours total_ot_paid total_other_pay
+1               0.00     0.00          0.00       650000.00
+2          140146.17  1125.25     117728.07        40696.41
+3           48008.86  2451.57     162000.47        78132.88
+4          140146.17  1007.00     103226.97        27980.42
+5          227914.67     0.00          0.00        30289.83
+6          230597.55    55.27       3071.28        22856.71
+  agency_start_date_year total_pay total_paid
+1                   1998  650000.0   650000.0
+2                   2016  298570.7   298570.7
+3                   1995  288142.2   288142.2
+4                   2013  271353.6   271353.6
+5                   2012  258204.5   258204.5
+6                   2014  256525.5   256525.5</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |&gt;</span></span>
+<span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-5"><a href="#cb85-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb85-6"><a href="#cb85-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>base_salary,</span>
+<span id="cb85-7"><a href="#cb85-7" aria-hidden="true" tabindex="-1"></a>                             <span class="at">y=</span>regular_gross_paid,</span>
+<span id="cb85-8"><a href="#cb85-8" aria-hidden="true" tabindex="-1"></a>                             <span class="at">color =</span> pay_basis</span>
+<span id="cb85-9"><a href="#cb85-9" aria-hidden="true" tabindex="-1"></a>                             ),</span>
+<span id="cb85-10"><a href="#cb85-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="fl">0.5</span>,</span>
+<span id="cb85-11"><a href="#cb85-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.5</span>,</span>
+<span id="cb85-12"><a href="#cb85-12" aria-hidden="true" tabindex="-1"></a>      )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="results_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |&gt;</span></span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb86-6"><a href="#cb86-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>total_paid,</span>
+<span id="cb86-7"><a href="#cb86-7" aria-hidden="true" tabindex="-1"></a>                             <span class="at">y=</span>regular_gross_paid,</span>
+<span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>                             <span class="at">color =</span> leave_status_as_of_june_30</span>
+<span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>                             ),</span>
+<span id="cb86-10"><a href="#cb86-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="fl">0.5</span>,</span>
+<span id="cb86-11"><a href="#cb86-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.5</span>,</span>
+<span id="cb86-12"><a href="#cb86-12" aria-hidden="true" tabindex="-1"></a>      )<span class="sc">+</span></span>
+<span id="cb86-13"><a href="#cb86-13" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_comma</span>()) <span class="sc">+</span></span>
+<span id="cb86-14"><a href="#cb86-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_comma</span>()) <span class="sc">+</span></span>
+<span id="cb86-15"><a href="#cb86-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="results_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">==</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |&gt;</span></span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>regular_gross_paid,</span>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>                             <span class="at">y=</span>total_other_pay,</span>
+<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a>                             <span class="at">color =</span> leave_status_as_of_june_30</span>
+<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a>                             ),</span>
+<span id="cb87-10"><a href="#cb87-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="fl">0.5</span>,</span>
+<span id="cb87-11"><a href="#cb87-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.5</span>,</span>
+<span id="cb87-12"><a href="#cb87-12" aria-hidden="true" tabindex="-1"></a>      )<span class="sc">+</span></span>
+<span id="cb87-13"><a href="#cb87-13" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_comma</span>()) <span class="sc">+</span></span>
+<span id="cb87-14"><a href="#cb87-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_comma</span>()) <span class="sc">+</span></span>
+<span id="cb87-15"><a href="#cb87-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="results_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 

@@ -22,54 +22,103 @@ alluvium
 <!-- https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data -->
 
 
+```{r}
+#| echo: false
 
-
+rm(list = ls())
+```
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+# Import Libraries
+library(tibble)
+library(knitr)
+library(kableExtra)
 library(tidyverse)
 library(ggplot2)
+library(dplyr)
+library(visdat)
+# library(HH)
+library(lubridate)
+```
+
+
+
+```{r}
+# Read the data RDS
+payroll_data_fire_police <- readRDS("data_source/payroll_data_fire_police.rds")
 ```
 
 
 
 
 ```{r}
-payroll_data_source <- read.csv("./data_source/Citywide_Payroll_Data__Fiscal_Year__20241111.csv") 
-payroll_data <- payroll_data_source
-```
-
-
-```{r}
-names(payroll_data)
+head(payroll_data_fire_police,5)
 ```
 
 ```{r}
-payroll_data <- data.frame(payroll_data_source)
-```
 
 
-```{r}
-head(payroll_data,5)
+colnames(payroll_data_fire_police)
 ```
+
 
 ```{r}
 print(names(payroll_data))
 
-names(payroll_data) <- gsub("[\\.]+", "_", tolower(names(payroll_data_source)))
+str(names(payroll_data))
+```
 
-print(names(payroll_data))
 
+```{r}
+payroll_data_fire_police <- payroll_data_fire_police |>
+  mutate(start_year = lubridate::year(agency_start_date)) |> 
+  filter(start_year > 2014)
+
+# Create the bar chart
+ggplot(payroll_data_fire_police, aes(x = start_year, fill = agency_name)) +
+  geom_bar() +
+  labs(
+    title = "Count of Records by Agency Start Year",
+    x = "Agency Start Year",
+    y = "Number of Records",
+    fill = "Agency Name"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(hjust = 0.5)
+  )
 ```
 
 
 
+
 ```{r}
-payroll_data |> 
+payroll_data_fire_police |> 
   group_by(agency_name, work_location_borough) |> 
   summarise(
     Total_records = n()
   )
 ```
+
+
+```{r}
+payroll_data |>
+
+  group_by(work_location_borough, agency_name) |> 
+  summarise(count = n(), .groups = 'drop') |> 
+  pivot_wider(
+    names_from = agency_name,  
+    values_from = count,  
+    values_fill = list(count = 0) 
+  )
+```
+
+
 
 
 ```{r}
@@ -245,7 +294,8 @@ library(lubridate)
 
 payroll_data_fire_police <- 
   payroll_data_fire_police |> 
-  mutate(agency_start_date_clean = mdy(agency_start_date))
+  # mutate(agency_start_date_clean = mdy(agency_start_date))
+  mutate(agency_start_date_clean = agency_start_date)
 
 ```
 
@@ -492,307 +542,307 @@ payroll_data_fire_police |>
 
 
 
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   filter(fiscal_year == "2024") |> -->
-<!--   filter(leave_status_as_of_june_30=="ACTIVE") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER","DEPT OF ED HRLY SUPPORT STAFF","DEPT OF ED PARA PROFESSIONALS", -->
-<!-- "DEPT OF ED PEDAGOGICAL", -->
-<!-- "DEPT OF ED PER DIEM TEACHERS", -->
-<!-- "DEPT OF ED PER SESSION TEACHER"	)) |> -->
-<!--   group_by(agency_name,title_description) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(regular_gross_paid), -->
-<!--     base_salary_sum2 = sum(regular_gross_paid), -->
-<!--     # total_ot_sum = round(sum(total_ot_pay),0), -->
-<!--     total_other_sum = round(sum(total_other_pay),0), -->
-<!--     total_paid_sum = round(sum(total_paid),0), -->
-<!--     total_paid_avg = mean(total_paid), -->
+```{r}
+payroll_data_fire_police |>
+  # filter(title_description== "TEACHER- PER SESSION") |>
+  filter(fiscal_year == "2024") |>
+  filter(leave_status_as_of_june_30=="ACTIVE") |>
+  filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER","DEPT OF ED HRLY SUPPORT STAFF","DEPT OF ED PARA PROFESSIONALS",
+"DEPT OF ED PEDAGOGICAL",
+"DEPT OF ED PER DIEM TEACHERS",
+"DEPT OF ED PER SESSION TEACHER"	)) |>
+  group_by(agency_name,title_description) |>
+  summarise(
+    Total_records = n(),
+    base_salary_sum = sum(base_salary),
+    base_salary_avg = mean(regular_gross_paid),
+    base_salary_sum2 = sum(regular_gross_paid),
+    # total_ot_sum = round(sum(total_ot_pay),0),
+    total_other_sum = round(sum(total_other_pay),0),
+    total_paid_sum = round(sum(total_paid),0),
+    total_paid_avg = mean(total_paid),
 
-<!--   ) |> -->
-<!--   arrange(desc(Total_records)) -->
-<!-- ``` -->
-
-
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   filter(fiscal_year == "2024") |> -->
-<!--   filter(leave_status_as_of_june_30=="ACTIVE") |> -->
-<!--   filter(agency_name %in%  c("POLICE DEPARTMENT"	)) |> -->
-<!--   group_by(agency_name,work_location_borough,title_description) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(regular_gross_paid), -->
-<!--     base_salary_sum2 = sum(regular_gross_paid), -->
-<!--     # total_ot_sum = round(sum(total_ot_pay),0), -->
-<!--     total_other_sum = round(sum(total_other_pay),0), -->
-<!--     total_paid_sum = round(sum(total_paid),0), -->
-<!--     total_paid_avg = mean(total_paid), -->
-
-<!--   ) |> -->
-<!--   arrange(agency_name,title_description,work_location_borough) -->
-<!--   # arrange(desc(Total_records)) -->
-<!-- ``` -->
+  ) |>
+  arrange(desc(Total_records))
+```
 
 
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   # filter(fiscal_year == "2024") |> -->
-<!--   filter(leave_status_as_of_june_30=="ACTIVE") |> -->
-<!--   filter(agency_name %in%  c("POLICE DEPARTMENT"	)) |> -->
-<!--   group_by(title_description) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(regular_gross_paid), -->
-<!--     base_salary_sum2 = sum(regular_gross_paid), -->
-<!--     # total_ot_sum = round(sum(total_ot_pay),0), -->
-<!--     total_other_sum = round(sum(total_other_pay),0), -->
-<!--     total_paid_sum = round(sum(total_paid),0), -->
-<!--     total_paid_avg = mean(total_paid), -->
+```{r}
+payroll_data |>
+  # filter(title_description== "TEACHER- PER SESSION") |>
+  filter(fiscal_year == "2024") |>
+  filter(leave_status_as_of_june_30=="ACTIVE") |>
+  filter(agency_name %in%  c("POLICE DEPARTMENT"	)) |>
+  group_by(agency_name,work_location_borough,title_description) |>
+  summarise(
+    Total_records = n(),
+    base_salary_sum = sum(base_salary),
+    base_salary_avg = mean(regular_gross_paid),
+    base_salary_sum2 = sum(regular_gross_paid),
+    # total_ot_sum = round(sum(total_ot_pay),0),
+    total_other_sum = round(sum(total_other_pay),0),
+    total_paid_sum = round(sum(total_paid),0),
+    total_paid_avg = mean(total_paid),
 
-<!--   ) |> -->
-<!--   # arrange(title_description) -->
-<!--   arrange(desc(Total_records)) -->
-<!-- ``` -->
-
-
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   mutate(agency_name_clean = trimws(gsub("#\\d+$", "", Agency.Name))) |> -->
-<!--   filter(grepl("DA\\s*$", agency_name_clean, ignore.case = TRUE)) |> -->
-<!--   group_by(agency_name_clean,Work.Location.Borough) |> -->
-<!--   summarise( -->
-<!--     Total_records = n() -->
-<!--   ) -->
-
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   group_by(Work.Location.Borough) |> -->
-<!--   summarise( -->
-<!--     Total_records = n() -->
-<!--   ) -->
-
-<!-- ``` -->
+  ) |>
+  arrange(agency_name,title_description,work_location_borough)
+  # arrange(desc(Total_records))
+```
 
 
+```{r}
+payroll_data |>
+  # filter(title_description== "TEACHER- PER SESSION") |>
+  # filter(fiscal_year == "2024") |>
+  filter(leave_status_as_of_june_30=="ACTIVE") |>
+  filter(agency_name %in%  c("POLICE DEPARTMENT"	)) |>
+  group_by(title_description) |>
+  summarise(
+    Total_records = n(),
+    base_salary_sum = sum(base_salary),
+    base_salary_avg = mean(regular_gross_paid),
+    base_salary_sum2 = sum(regular_gross_paid),
+    # total_ot_sum = round(sum(total_ot_pay),0),
+    total_other_sum = round(sum(total_other_pay),0),
+    total_paid_sum = round(sum(total_paid),0),
+    total_paid_avg = mean(total_paid),
+
+  ) |>
+  # arrange(title_description)
+  arrange(desc(Total_records))
+```
 
 
-<!-- ```{r} -->
-<!-- payroll_data <- payroll_data |> -->
-<!--   mutate(work_location_borough = toupper(work_location_borough)) -->
-<!-- ``` -->
+```{r}
+payroll_data |>
+  mutate(agency_name_clean = trimws(gsub("#\\d+$", "", Agency.Name))) |>
+  filter(grepl("DA\\s*$", agency_name_clean, ignore.case = TRUE)) |>
+  group_by(agency_name_clean,Work.Location.Borough) |>
+  summarise(
+    Total_records = n()
+  )
 
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   group_by(work_location_borough,fiscal_year) |> -->
-<!--   summarise( -->
-<!--     Total_records = n() -->
-<!--   ) -->
+```
 
-<!-- ``` -->
+```{r}
+payroll_data |>
+  group_by(Work.Location.Borough) |>
+  summarise(
+    Total_records = n()
+  )
 
-
-
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   group_by(title_description) |> -->
-<!--   summarise( -->
-<!--     Total_records = n() -->
-<!--   ) |> -->
-<!--   arrange(desc(Total_records)) -->
-
-<!-- ``` -->
+```
 
 
 
 
+```{r}
+payroll_data <- payroll_data |>
+  mutate(work_location_borough = toupper(work_location_borough))
+```
 
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   filter(title_description== "TEACHER") |> -->
-<!--   group_by(title_description) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(base_salary) -->
-<!--   ) |> -->
-<!--   arrange(desc(Total_records)) -->
-<!-- ``` -->
+```{r}
+payroll_data |>
+  group_by(work_location_borough,fiscal_year) |>
+  summarise(
+    Total_records = n()
+  )
 
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   # filter(fiscal_year == "2024") |> -->
-<!--   group_by(agency_name,title_description,work_location_borough) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(base_salary) -->
-<!--   ) |> -->
-<!--   arrange(desc(Total_records)) -->
-<!-- ``` -->
+```
 
 
 
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   filter(title_description== "TEACHER") -->
-<!-- ``` -->
+```{r}
+payroll_data |>
+  group_by(title_description) |>
+  summarise(
+    Total_records = n()
+  ) |>
+  arrange(desc(Total_records))
 
-
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   filter(title_description== "TEACHER- PER SESSION") -->
-<!-- ``` -->
-
-
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   # filter(fiscal_year == "2024") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
-<!--   group_by(agency_name,work_location_borough) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(base_salary) -->
-<!--   ) |> -->
-<!--   arrange(desc(Total_records)) -->
-<!-- ``` -->
+```
 
 
 
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   # filter(fiscal_year == "2024") |> -->
-<!--   # filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
-<!--   group_by(agency_name,work_location_borough) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(base_salary) -->
-<!--   ) |> -->
-<!--   arrange(desc(agency_name)) -->
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   filter(fiscal_year == "2024") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
-<!--   group_by(agency_name,work_location_borough,pay_basis) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(base_salary) -->
-<!--   ) |> -->
-<!--   arrange(desc(agency_name)) -->
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   # filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   # filter(fiscal_year == "2024") |> -->
-<!--   filter(pay_basis == "per Annum") |> -->
-<!--   # filter(leave_status_as_of_june_30=="ACTIVE") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
-<!--   group_by(agency_name,fiscal_year,pay_basis,leave_status_as_of_june_30) |> -->
-<!--   summarise( -->
-<!--     Total_records = n(), -->
-<!--     base_salary_sum = sum(base_salary), -->
-<!--     base_salary_avg = mean(base_salary) -->
-<!--   ) |> -->
-<!--   arrange(desc(agency_name)) -->
-<!-- ``` -->
 
 
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   filter(title_description== "TEACHER- PER SESSION") |> -->
-<!--   filter(fiscal_year == "2024") |> -->
-<!--   filter(leave_status_as_of_june_30=="CEASED") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) -->
-<!-- ``` -->
+```{r}
+payroll_data |>
+  filter(title_description== "TEACHER") |>
+  group_by(title_description) |>
+  summarise(
+    Total_records = n(),
+    base_salary_sum = sum(base_salary),
+    base_salary_avg = mean(base_salary)
+  ) |>
+  arrange(desc(Total_records))
+```
+
+```{r}
+payroll_data |>
+  filter(title_description== "TEACHER- PER SESSION") |>
+  # filter(fiscal_year == "2024") |>
+  group_by(agency_name,title_description,work_location_borough) |>
+  summarise(
+    Total_records = n(),
+    base_salary_sum = sum(base_salary),
+    base_salary_avg = mean(base_salary)
+  ) |>
+  arrange(desc(Total_records))
+```
 
 
 
-<!-- ```{r} -->
-<!-- payroll_data <- payroll_data |> -->
-<!--   # mutate(base_salary_std = if_else(pay_basis == "per Day", base_salary * 260, base_salary) |> -->
-<!--   mutate( -->
-<!--     regular_gross_paid = as.numeric(regular_gross_paid), -->
-<!--     total_ot_paid = as.numeric(total_ot_paid), -->
-<!--     total_other_pay = as.numeric(total_other_pay) -->
-<!--   ) |> -->
-<!--   mutate(total_paid = regular_gross_paid +total_ot_paid + total_other_pay) -->
-<!-- ``` -->
+```{r}
+payroll_data |>
+  filter(title_description== "TEACHER")
+```
 
 
-<!-- ```{r} -->
-<!-- head(payroll_data) -->
-<!-- ``` -->
+```{r}
+payroll_data |>
+  filter(title_description== "TEACHER- PER SESSION")
+```
 
 
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--     filter(fiscal_year == "2024") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
+```{r}
+payroll_data |>
+  # filter(title_description== "TEACHER- PER SESSION") |>
+  # filter(fiscal_year == "2024") |>
+  filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |>
+  group_by(agency_name,work_location_borough) |>
+  summarise(
+    Total_records = n(),
+    base_salary_sum = sum(base_salary),
+    base_salary_avg = mean(base_salary)
+  ) |>
+  arrange(desc(Total_records))
+```
 
-<!-- ggplot() + -->
-<!--     geom_point(mapping = aes(x=base_salary, -->
-<!--                              y=regular_gross_paid, -->
-<!--                              color = pay_basis -->
-<!--                              ), -->
-<!--       size = 0.5, -->
-<!--       alpha = 0.5, -->
-<!--       ) -->
-<!-- ``` -->
 
 
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--     filter(fiscal_year == "2024") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
+```{r}
+payroll_data |>
+  # filter(title_description== "TEACHER- PER SESSION") |>
+  # filter(fiscal_year == "2024") |>
+  # filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |>
+  group_by(agency_name,work_location_borough) |>
+  summarise(
+    Total_records = n(),
+    base_salary_sum = sum(base_salary),
+    base_salary_avg = mean(base_salary)
+  ) |>
+  arrange(desc(agency_name))
+```
 
-<!-- ggplot() + -->
-<!--     geom_point(mapping = aes(x=total_paid, -->
-<!--                              y=regular_gross_paid, -->
-<!--                              color = leave_status_as_of_june_30 -->
-<!--                              ), -->
-<!--       size = 0.5, -->
-<!--       alpha = 0.5, -->
-<!--       )+ -->
-<!--    scale_x_continuous(labels = scales::label_comma()) + -->
-<!--   scale_y_continuous(labels = scales::label_comma()) + -->
-<!--   coord_fixed() -->
-<!-- ``` -->
+```{r}
+payroll_data |>
+  # filter(title_description== "TEACHER- PER SESSION") |>
+  filter(fiscal_year == "2024") |>
+  filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |>
+  group_by(agency_name,work_location_borough,pay_basis) |>
+  summarise(
+    Total_records = n(),
+    base_salary_sum = sum(base_salary),
+    base_salary_avg = mean(base_salary)
+  ) |>
+  arrange(desc(agency_name))
+```
 
-<!-- ```{r} -->
-<!-- payroll_data |> -->
-<!--   filter(fiscal_year == "2024") |> -->
-<!--   filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |> -->
+```{r}
+payroll_data |>
+  # filter(title_description== "TEACHER- PER SESSION") |>
+  # filter(fiscal_year == "2024") |>
+  filter(pay_basis == "per Annum") |>
+  # filter(leave_status_as_of_june_30=="ACTIVE") |>
+  filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |>
+  group_by(agency_name,fiscal_year,pay_basis,leave_status_as_of_june_30) |>
+  summarise(
+    Total_records = n(),
+    base_salary_sum = sum(base_salary),
+    base_salary_avg = mean(base_salary)
+  ) |>
+  arrange(desc(agency_name))
+```
 
-<!-- ggplot() + -->
-<!--     geom_point(mapping = aes(x=regular_gross_paid, -->
-<!--                              y=total_other_pay, -->
-<!--                              color = leave_status_as_of_june_30 -->
-<!--                              ), -->
-<!--       size = 0.5, -->
-<!--       alpha = 0.5, -->
-<!--       )+ -->
-<!--    scale_x_continuous(labels = scales::label_comma()) + -->
-<!--   scale_y_continuous(labels = scales::label_comma()) + -->
-<!--   coord_fixed() -->
-<!-- ``` -->
+
+```{r}
+payroll_data |>
+  filter(title_description== "TEACHER- PER SESSION") |>
+  filter(fiscal_year == "2024") |>
+  filter(leave_status_as_of_june_30=="CEASED") |>
+  filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER"))
+```
+
+
+
+```{r}
+payroll_data <- payroll_data |>
+  # mutate(base_salary_std = if_else(pay_basis == "per Day", base_salary * 260, base_salary) |>
+  mutate(
+    regular_gross_paid = as.numeric(regular_gross_paid),
+    total_ot_paid = as.numeric(total_ot_paid),
+    total_other_pay = as.numeric(total_other_pay)
+  ) |>
+  mutate(total_paid = regular_gross_paid +total_ot_paid + total_other_pay)
+```
+
+
+```{r}
+head(payroll_data)
+```
+
+
+```{r}
+payroll_data |>
+    filter(fiscal_year == "2024") |>
+  filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |>
+
+ggplot() +
+    geom_point(mapping = aes(x=base_salary,
+                             y=regular_gross_paid,
+                             color = pay_basis
+                             ),
+      size = 0.5,
+      alpha = 0.5,
+      )
+```
+
+
+```{r}
+payroll_data |>
+    filter(fiscal_year == "2024") |>
+  filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |>
+
+ggplot() +
+    geom_point(mapping = aes(x=total_paid,
+                             y=regular_gross_paid,
+                             color = leave_status_as_of_june_30
+                             ),
+      size = 0.5,
+      alpha = 0.5,
+      )+
+   scale_x_continuous(labels = scales::label_comma()) +
+  scale_y_continuous(labels = scales::label_comma()) +
+  coord_fixed()
+```
+
+```{r}
+payroll_data |>
+  filter(fiscal_year == "2024") |>
+  filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |>
+
+ggplot() +
+    geom_point(mapping = aes(x=regular_gross_paid,
+                             y=total_other_pay,
+                             color = leave_status_as_of_june_30
+                             ),
+      size = 0.5,
+      alpha = 0.5,
+      )+
+   scale_x_continuous(labels = scales::label_comma()) +
+  scale_y_continuous(labels = scales::label_comma()) +
+  coord_fixed()
+```
 
 

@@ -39,6 +39,7 @@ library(knitr)
 library(kableExtra)
 library(tidyverse)
 library(ggplot2)
+library(ggridges)
 library(dplyr)
 library(visdat)
 # library(HH)
@@ -77,6 +78,351 @@ colnames(payroll_data_fire_police)
 
 
 
+
+
+
+
+
+
+
+
+
+## hitogram / facets (ps1)
+
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+
+
+ggplot(payroll_data_fire_police) +
+  geom_histogram(mapping = aes(x = total_paid, 
+                               y = after_stat(density), 
+                               fill = "Density Histogram"),
+                 binwidth = 10000,
+                 color = "blue",
+                 linetype = "solid",
+                 # center = 100000,
+                 # boundary = c(-50000,10000),
+                 # bo==
+                 )+
+  geom_density(mapping = aes(x = total_paid, 
+                             color = "Density Curve"),
+               lwd = 1.2,
+               key_glyph = draw_key_path
+               ) +
+  geom_function(fun = dnorm,
+                aes(x = total_paid, 
+                    color = "Normal Curve"), 
+                lwd= 1.2,
+                args = list(mean = mean(payroll_data_fire_police$total_paid, na.rm = TRUE),
+                            sd = sd(payroll_data_fire_police$total_paid, na.rm = TRUE)),
+                ) +
+  scale_color_manual(values = c("Density Curve" = "red", "Normal Curve" = "limegreen")) +
+  scale_fill_manual(values = c("Density Histogram" = "lightblue")) +
+  scale_x_continuous(
+    limits = c(-25000, 300000),
+    breaks = seq(-50000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 25000),
+    labels = scales::label_number(scale = 1/1000, suffix = "k")
+  ) +
+  labs(title = "Density Histogram of Room and Board Expenses",
+       x = "Room and Board Expenses",
+       y = "Density",
+       color = "Curves",
+       fill = "Bars", 
+       caption = "Blue: Histogram, Red: Data Density Curve, Green: Normal Curve") +
+  theme(legend.position = "top")
+```
+
+
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+
+
+ggplot(payroll_data_fire_police) +
+  geom_histogram(mapping = aes(x = total_paid, 
+                               y = after_stat(density), 
+                               fill = "Density Histogram"),
+                 binwidth = 10000,
+                 color = "blue",
+                 linetype = "solid"
+                 )+
+  geom_density(mapping = aes(x = total_paid, 
+                             color = "Density Curve"),
+               lwd = 1.2,
+               key_glyph = draw_key_path
+               ) +
+  geom_function(fun = dnorm,
+                aes(x = total_paid, 
+                    color = "Normal Curve"), 
+                lwd= 1.2,
+                args = list(mean = mean(payroll_data_fire_police$total_paid, na.rm = TRUE),
+                            sd = sd(payroll_data_fire_police$total_paid, na.rm = TRUE)),
+                ) +
+  facet_wrap(~ agency_name) +
+  scale_color_manual(values = c("Density Curve" = "red", "Normal Curve" = "limegreen")) +
+  scale_fill_manual(values = c("Density Histogram" = "lightblue")) +
+  scale_x_continuous(
+    limits = c(-25000, 300000),
+    breaks = seq(-50000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 50000),
+    labels = scales::label_number(scale = 1/1000, suffix = "k")
+  ) +
+  labs(title = "Density Histogram of Room and Board Expenses",
+       x = "Room and Board Expenses",
+       y = "Density",
+       color = "Curves",
+       fill = "Bars", 
+       caption = "Blue: Histogram, Red: Data Density Curve, Green: Normal Curve")+
+  theme(legend.position = "bottom")
+```
+
+
+
+
+## boxplot jitter (ps1)
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+
+ggplot(payroll_data_fire_police) +
+  geom_boxplot(mapping = aes(x = total_paid, y = agency_name)) +
+  geom_jitter(mapping = aes(x = total_paid, 
+                            y = agency_name, 
+                            color=agency_name,
+                            # alpha = ifelse(agency_name == "POLICE DEPARTMENT", 0.0008, 0.01)
+                            ),
+              width = 0.25,
+              height = 0.25,
+              size = 0.001,
+              # alpha = 0.008,
+              alpha = ifelse(payroll_data_fire_police$agency_name == "POLICE DEPARTMENT", 0.006, 0.02),
+              #color='deepskyblue4',
+              ) +
+  scale_alpha_identity() +
+  scale_color_manual(
+    values = c("POLICE DEPARTMENT" = "deepskyblue3", "FIRE DEPARTMENT" = "#f94144")
+  ) +
+  scale_x_continuous(
+    # limits = c(-25000, 300000),
+    breaks = seq(-200000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 100000),
+    labels = scales::label_number(scale = 1/1000, suffix = "k")
+  ) +
+  labs(title = "Boxplot with jitter of Tuition fees by Tuition type",
+       x = "Tuition Fees (FT)",
+       y = "Tuition Type")
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+
+ggplot(payroll_data_fire_police) +
+  geom_boxplot(mapping = aes(x = total_paid, y = agency_name)) +
+  geom_jitter(mapping = aes(x = total_paid, y = agency_name, color=agency_name),
+              width = 0.25,
+              height = 0.25,
+              size = 0.001,
+              alpha = 0.01,
+              #color='deepskyblue4',
+              ) +
+  facet_wrap(~ work_location_borough) +
+  labs(title = "Boxplot with jitter of Tuition fees by Tuition type",
+       x = "Tuition Fees (FT)",
+       y = "Tuition Type")
+```
+
+
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+
+ggplot(payroll_data_fire_police) +
+  geom_boxplot(mapping = aes(x = total_paid, y = work_location_borough)) +
+  geom_jitter(mapping = aes(x = total_paid, y = work_location_borough),
+              width = 0.25,
+              height = 0.25,
+              alpha = 0.02,
+              color='deepskyblue4') +
+  labs(title = "Boxplot with jitter of Tuition fees by Tuition type",
+       x = "Tuition Fees (FT)",
+       y = "Tuition Type")
+```
+
+
+
+
+## with ridgeline (ps1)
+
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+
+ggplot(data = payroll_data_fire_police) +
+  geom_density_ridges(mapping= aes(x = total_paid, 
+                                   y = agency_name, 
+                                   fill = agency_name,
+                                   ), 
+                      alpha=0.5,
+                      bandwidth = 10000,
+                      jittered_points = TRUE,
+                      # position = position_raincloud(adjust_vlines = TRUE),
+                      position = "raincloud",
+                      quantiles = 4, quantile_lines = TRUE,
+                      vline_width = 1, vline_color = "red",
+                      point_alpha = 0.01,
+                      point_size = 0.001,
+                      color='deepskyblue4',
+                      rel_min_height = 0.002,
+                      ) +
+  # facet_wrap(~ work_location_borough) +
+  labs(title = "Ridgeline density plot of Tuition fees by Tuition type",
+       x = "Tuition Fees (FT)",
+       y = "Tuition Type",
+       fill = "Tuition Type",
+       caption = "Red Vertical Lines: Quantiles (Q1,Median,Q3), Blue Dots: Jittered datapoint")
+```
+
+
+
+```{r}
+#| fig-width: 10
+#| fig-height: 10
+
+ggplot(data = payroll_data_fire_police) +
+  geom_density_ridges(mapping= aes(x = total_paid, 
+                                   y = agency_name, 
+                                   fill = agency_name,
+                                   ), 
+                      alpha=0.5,
+                      bandwidth = 10000,
+                      jittered_points = TRUE, 
+                      # position = position_raincloud(adjust_vlines = TRUE),
+                      position = "raincloud",
+                      quantiles = 4, quantile_lines = TRUE,
+                      vline_width = 1, vline_color = "red",
+                      point_alpha = 0.01,
+                      point_size = 0.01,
+                      color='deepskyblue4',
+                      rel_min_height = 0.002,
+                      ) +
+  facet_wrap(~ work_location_borough) +
+  labs(title = "Ridgeline density plot of Tuition fees by Tuition type",
+       x = "Tuition Fees (FT)",
+       y = "Tuition Type",
+       fill = "Tuition Type",
+       caption = "Red Vertical Lines: Quantiles (Q1,Median,Q3), Blue Dots: Jittered datapoint")
+```
+
+
+
+
+
+
+##
+
+
+##density lines
+
+```{r}
+#| fig-width: 10
+#| fig-height: 10
+#| 
+ggplot(payroll_data_fire_police) +
+  geom_density(mapping = aes(x = total_paid, fill = agency_name), 
+               alpha = 0.5, 
+               na.rm = TRUE,
+               # trim =TRUE,
+               bounds = c(-50000,300000)
+               ) +
+  # scale_fill_manual(values = c("In state" = "yellow", 
+  #                              "Out of state" = "red", 
+  #                              "In district" = "cyan")) +
+  facet_grid(work_location_borough ~ agency_name)+
+  labs(title = "Separate Density Plots of Tuition Fees by Tuition Type and Level of Study",
+       x = "Tuition Fees (FT)",
+       y = "Density",
+       fill = "Tuition Type") 
+```
+
+
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+#| 
+ggplot(payroll_data_fire_police) +
+  geom_density(mapping = aes(x = total_paid, fill = agency_name), 
+               alpha = 0.5, 
+               na.rm = TRUE,
+               # trim =TRUE,
+               bounds = c(-50000,300000)
+               ) +
+  # scale_fill_manual(values = c("In state" = "yellow", 
+  #                              "Out of state" = "red", 
+  #                              "In district" = "cyan")) +
+  facet_grid(pay_basis ~ agency_name)+
+  labs(title = "Separate Density Plots of Tuition Fees by Tuition Type and Level of Study",
+       x = "Tuition Fees (FT)",
+       y = "Density",
+       fill = "Tuition Type") 
+```
+
+
+
+
+```{r}
+#| fig-width: 10
+#| fig-height: 9
+#| 
+ggplot(payroll_data_fire_police) +
+  geom_density(mapping = aes(x = total_paid,fill=agency_name), 
+               alpha = 0.5,
+               # na.rm = TRUE,
+               # trim =TRUE,
+               bounds = c(-50000,300000)
+               ) +
+  # scale_fill_manual(values = c("In state" = "yellow", 
+  #                              "Out of state" = "red", 
+  #                              "In district" = "cyan")) +
+  facet_grid(work_location_borough ~ pay_basis)+
+  labs(title = "Separate Density Plots of Tuition Fees by Tuition Type and Level of Study",
+       x = "Tuition Fees (FT)",
+       y = "Density",
+       # fill = "Tuition Type"
+       ) 
+```
+
+
+
+
+
+bar chart lump facet
+scattter plot
+Density plot
+geom_point with facet 9x9 grid (ps2 california)
+Cleveland dot plot
+ggparcords
+parcoords
+likert
+mosaic
+alluvium
+
+
+
+
+
+
+# other
+
+
+
+
+
+
 ```{r}
 payroll_data_fire_police |>
   mutate(agency_start_date_year = lubridate::year(agency_start_date)) |> 
@@ -109,6 +455,18 @@ payroll_data_fire_police |>
   )
 ```
 
+```{r}
+payroll_data_fire_police |> 
+  group_by(agency_name, work_location_borough) |> 
+  summarise(
+    Total_records = n(),
+    sum(total_paid)
+  )
+```
+
+
+
+
 
 ```{r}
 payroll_data_fire_police |>
@@ -122,7 +480,48 @@ payroll_data_fire_police |>
   )
 ```
 
+```{r}
+payroll_data_fire_police |>
 
+  group_by(work_location_borough, agency_name) |> 
+  summarise(count = sum(total_paid), .groups = 'drop') |> 
+  pivot_wider(
+    names_from = agency_name,  
+    values_from = count,  
+    values_fill = list(count = 0) 
+  )
+```
+
+
+
+```{r}
+payroll_data_fire_police |>
+
+  group_by(work_location_borough, agency_name , fiscal_year) |> 
+  summarise(count = sum(total_paid), .groups = 'drop') |> 
+  pivot_wider(
+    names_from = c(agency_name),  
+    values_from = count,  
+    values_fill = list(count = 0) 
+  )
+```
+
+
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+
+  group_by(work_location_borough, agency_name) |> 
+  summarise(count = sum(total_paid), .groups = 'drop') |> 
+  pivot_wider(
+    names_from = agency_name,  
+    values_from = count,  
+    values_fill = list(count = 0) 
+  )
+```
 
 
 ```{r}

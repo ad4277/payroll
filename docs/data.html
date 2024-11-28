@@ -102,6 +102,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
@@ -263,7 +266,7 @@ The final subset of data for this project will be focused on 2 Agencies:<br>
 </div>
 <p><br>
 </p>
-<p>First, we will examine the metadata of the dataset, followed by an analysis of missing values to identify any potential issues that may impact our analysis. Finally, we will outline the decision-making process for selecting a subset of the data and transforming the original dataset with 6,225,611 rows to our final dataset with 804,630 rows.</p>
+<p>First, we will examine the metadata of the dataset, how to import the data, followed by the decision-making process for selecting a subset of the data and transforming the original dataset with 6,225,611 rows to our final dataset with 804,630 rows. Finally, an analysis of missing values to identify any potential issues that may impact our analysis.</p>
 <p><br>
 <br>
 </p>
@@ -429,9 +432,35 @@ Subset Data: 804,630 rows | 17 columns</td>
 </div>
 <p><br>
 <br>
+<br>
 </p>
-<p><strong>Importing the data</strong><br>
-</p>
+<p><strong>Data Source</strong></p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A[Importing Data] --&gt; B[Understanding and \n cleaning the raw data]
+  B --&gt; C(Transforming columns)
+  B --&gt; D(Filtering Data)
+  B --&gt; E(Backfilling NA)
+  C --&gt; F[Saving Subset Data]
+  D --&gt; F[Saving Subset Data]
+  E --&gt; F[Saving Subset Data]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true"><strong>Importing the data</strong><br>
+</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false"><strong>Cleaning the data</strong><br>
+</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false"><strong>Creating the final subset data</strong><br>
+</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 To access the data, we can go directly to the URL:<br>
 
 <p style="font-size:95%; font-style:italic">
@@ -448,7 +477,7 @@ The file will be downloaded with the name: Citywide_Payroll_Data__Fiscal_Year__<
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import original data</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>payroll_data_source <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"./data_source/Citywide_Payroll_Data__Fiscal_Year__20241111.csv"</span>) </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>payroll_data_source <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"./data_source/Citywide_Payroll_Data__Fiscal_Year__20241111.csv"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># make a copy of original data for transformations</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(payroll_data_source)</span>
@@ -460,64 +489,77 @@ The file will be downloaded with the name: Citywide_Payroll_Data__Fiscal_Year__<
 <p><br>
 <br>
 </p>
-<p><strong>Creating the final subset data</strong><br>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>The decision-making process for selecting a subset of the data and the detailed transformation and clean up of the original dataset with 6,225,611 rows to our final dataset with 804,630 rows can be found in the <code>Appendix</code> section.</p>
+<p><br>
+<br>
 </p>
-<p>The decision-making process for selecting a subset of the data and the detailed transformation the original dataset with 6,225,611 rows to our final dataset with 804,630 rows.</p>
-<p>To generate the final subset use the code below:</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>The data used for this analysis is a subset of the entire raw data. The <strong>final subset data</strong> (focused on the <strong>Fire and Police departments</strong>) contains 804,630 rows out of the 6,225,611 rows from the original dataset.</p>
+<p>To generate the final subset that will be used in the analysis, please run the code below:</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="ot">&lt;-</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># clean agency name: </span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_name_clean =</span> <span class="fu">trimws</span>(<span class="fu">gsub</span>(<span class="st">"#</span><span class="sc">\\</span><span class="st">d+$"</span>, <span class="st">""</span>, agency_name))) <span class="sc">|&gt;</span> </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># clean location name: </span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">work_location_borough_clean =</span> <span class="fu">toupper</span>(work_location_borough)) <span class="sc">|&gt;</span> </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filtering data:</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span>  <span class="fu">c</span>(<span class="st">"POLICE DEPARTMENT"</span>,<span class="st">"FIRE DEPARTMENT"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(work_location_borough_clean <span class="sc">%in%</span>   <span class="fu">c</span>(<span class="st">"BRONX"</span>, <span class="st">"BROOKLYN"</span>, <span class="st">"MANHATTAN"</span>, <span class="st">"QUEENS"</span>, <span class="st">"RICHMOND"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">&gt;=</span> <span class="st">"2015"</span> <span class="sc">&amp;</span> fiscal_year <span class="sc">&lt;=</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pay_basis <span class="sc">%in%</span>   <span class="fu">c</span>(<span class="st">"per Annum"</span>, <span class="st">"per Day"</span>, <span class="st">"per Hour"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># backfill payroll number after filtering</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">payroll_number_clean =</span> <span class="fu">case_when</span>(</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(payroll_number) <span class="sc">&amp;</span> agency_name_clean <span class="sc">==</span> <span class="st">"FIRE DEPARTMENT"</span> <span class="sc">~</span> <span class="dv">57</span>,</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(payroll_number) <span class="sc">&amp;</span> agency_name_clean <span class="sc">==</span> <span class="st">"POLICE DEPARTMENT"</span> <span class="sc">~</span> <span class="dv">56</span>,</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> payroll_number</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span> </span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># converting dates:</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_start_date_clean =</span> <span class="fu">mdy</span>(agency_start_date)) <span class="sc">|&gt;</span> </span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># renaming clean columns to original names:</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">agency_name =</span> agency_name_clean,</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">work_location_borough =</span> work_location_borough_clean,</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">payroll_number =</span> payroll_number_clean,</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">agency_start_date =</span> agency_start_date_clean</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># dropping clean columns</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>agency_name_clean, </span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>                <span class="sc">-</span>work_location_borough_clean, </span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>                <span class="sc">-</span>payroll_number_clean,</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>                <span class="sc">-</span>agency_start_date_clean)</span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Please uncomment the CSV or the RDS method to save the subset data:</span></span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `payroll_data` dataframe comes from the **Importing the data** section.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="ot">&lt;-</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  payroll_data <span class="sc">|&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># clean agency name:</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_name_clean =</span> <span class="fu">trimws</span>(<span class="fu">gsub</span>(<span class="st">"#</span><span class="sc">\\</span><span class="st">d+$"</span>, <span class="st">""</span>, agency_name))) <span class="sc">|&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># clean job titles:</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">title_description =</span> <span class="fu">toupper</span>(title_description)) <span class="sc">|&gt;</span> </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># clean location name:</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">work_location_borough_clean =</span> <span class="fu">toupper</span>(work_location_borough)) <span class="sc">|&gt;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filtering data:</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span>  <span class="fu">c</span>(<span class="st">"POLICE DEPARTMENT"</span>,<span class="st">"FIRE DEPARTMENT"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(work_location_borough_clean <span class="sc">%in%</span>   <span class="fu">c</span>(<span class="st">"BRONX"</span>, <span class="st">"BROOKLYN"</span>, <span class="st">"MANHATTAN"</span>, <span class="st">"QUEENS"</span>, <span class="st">"RICHMOND"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">&gt;=</span> <span class="st">"2015"</span> <span class="sc">&amp;</span> fiscal_year <span class="sc">&lt;=</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pay_basis <span class="sc">%in%</span>   <span class="fu">c</span>(<span class="st">"per Annum"</span>, <span class="st">"per Day"</span>, <span class="st">"per Hour"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># backfill payroll number after filtering</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">payroll_number_clean =</span> <span class="fu">case_when</span>(</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(payroll_number) <span class="sc">&amp;</span> agency_name_clean <span class="sc">==</span> <span class="st">"FIRE DEPARTMENT"</span> <span class="sc">~</span> <span class="dv">57</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(payroll_number) <span class="sc">&amp;</span> agency_name_clean <span class="sc">==</span> <span class="st">"POLICE DEPARTMENT"</span> <span class="sc">~</span> <span class="dv">56</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> payroll_number</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># converting dates:</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_start_date_clean =</span> <span class="fu">mdy</span>(agency_start_date)) <span class="sc">|&gt;</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># renaming clean columns to original names:</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">agency_name =</span> agency_name_clean,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">work_location_borough =</span> work_location_borough_clean,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">payroll_number =</span> payroll_number_clean,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">agency_start_date =</span> agency_start_date_clean</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="co"># dropping clean columns</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>agency_name_clean,</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>                <span class="sc">-</span>work_location_borough_clean,</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>                <span class="sc">-</span>payroll_number_clean,</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                <span class="sc">-</span>agency_start_date_clean)</span>
 <span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the data CSV</span></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co"># write.csv(payroll_data_fire_police, "data_source/payroll_data_fire_police.csv", row.names = FALSE)</span></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the data RDS</span></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(payroll_data_fire_police, "data_source/payroll_data_fire_police.rds")</span></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the data RDS</span></span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="co"># payroll_data_fire_police &lt;- readRDS("data_source/payroll_data_fire_police.rds")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Please uncomment the CSV or the RDS method to save the subset data:</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the data CSV</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="co"># write.csv(payroll_data_fire_police, "data_source/payroll_data_fire_police.csv", row.names = FALSE)</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the data RDS</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(payroll_data_fire_police, "data_source/payroll_data_fire_police.rds")</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the data RDS</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="co"># payroll_data_fire_police &lt;- readRDS("data_source/payroll_data_fire_police.rds")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+</div>
+</div>
+</div>
 </div>
 <p><br>
 <br>
@@ -566,7 +608,7 @@ Using a sample of 1 million records (from 6.22 million rows) we have close to <s
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="data_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="864"></p>
+<p><img src="data_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="864"></p>
 </figure>
 </div>
 </div>
@@ -714,7 +756,7 @@ After transforming our original data to create our final subset data (Fire and P
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="data_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="864"></p>
+<p><img src="data_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="864"></p>
 </figure>
 </div>
 </div>

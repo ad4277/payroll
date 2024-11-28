@@ -175,21 +175,66 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<style>
-  * {
-    font-family: sans-serif;
-  }
-</style>
-<div id="plot">
+<!-- <style> -->
+<!--   * { -->
+<!--     font-family: sans-serif; -->
+<!--   } -->
+<!-- </style> -->
+<!-- <div id="plot"> -->
+<!-- </div> -->
+<!-- <div style="padding-left: 30px;"> -->
+<!--   <p></p> -->
+<!--   <button type="button" onclick="add()">Add bar</button> -->
+<!--   <button type="button" onclick="remove()">Remove bar</button> -->
+<!-- </div> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
+<!-- <script src="scripts/myscript.js"></script> -->
+<meta charset="utf-8">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<title>
+Temporal force-directed graph
+</title>
+<link rel="stylesheet" type="text/css" href="./scripts/inspector.css">
+<script type="module">
+
+import define from "./scripts/force_chart_script_js.js";
+import {Runtime, Library, Inspector} from "./scripts/runtime.js";
+
+const runtime = new Runtime();
+// const main = runtime.module(define, Inspector.into(document.body));
+const main = runtime.module(define, Inspector.into(document.getElementById('chart_force')));
+
+// part modified in inspector: add white to text
+// .observablehq--undefined{color:var(--syntax_atom);color: white}
+
+</script>
+
+<p>hi this is a test2wss</p>
+<h1>
+something to go right below2
+</h1>
+<div id="chart_force">
 
 </div>
-<div style="padding-left: 30px;">
+<p>jan 15 balance october 16 nov 2015 red july 18 red March 2022 blue july 2020 blue</p>
+<div id="chart">
 <p>
+something1
 </p>
 <p><button type="button" onclick="add()">Add bar</button> <button type="button" onclick="remove()">Remove bar</button></p>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-<script src="scripts/myscript.js"></script>
+<div style="padding-left: 30px;">
+<p>
+something2
+</p>
+<p><button type="button" onclick="add()">Add bar</button> <button type="button" onclick="remove()">Remove bar</button></p>
+</div>
+<p>
+something to go right below2
+
+</p><p>another this there</p>
 
 
 

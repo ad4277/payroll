@@ -7,6 +7,8 @@ hi, this is my conclusion
 ```
 
 ```{mermaid}
+%%| echo: false
+
 flowchart LR
   A[Importing Data] --> B[Understanding and \n cleaning the raw data]
   B --> C(Transforming columns)
@@ -87,18 +89,18 @@ The file will be downloaded with the name: Citywide_Payroll_Data\_\_Fiscal_Year\
 
 Once the data was downloaded, it was added to a new folder inside the repository called 'data_source'.
 
-```{r}
+```{r, eval=FALSE}
 #| message: false
 #| warning: false
 
-# # import original data
-# payroll_data_source <- read.csv("./data_source/Citywide_Payroll_Data__Fiscal_Year__20241111.csv") 
-# 
-# # make a copy of original data for transformations
-# payroll_data <- data.frame(payroll_data_source)
-# 
-# # rename columns
-# names(payroll_data) <- gsub("[\\.]+", "_", tolower(names(payroll_data_source)))
+# import original data
+payroll_data_source <- read.csv("./data_source/Citywide_Payroll_Data__Fiscal_Year__20241111.csv")
+
+# make a copy of original data for transformations
+payroll_data <- data.frame(payroll_data_source)
+
+# rename columns
+names(payroll_data) <- gsub("[\\.]+", "_", tolower(names(payroll_data_source)))
 ```
 
 
@@ -113,45 +115,47 @@ The decision-making process for selecting a subset of the data and the detailed 
 
 To generate the final subset use the code below:
 
-```{r}
-# payroll_data_fire_police <-
-#   payroll_data |> 
-#   # clean agency name: 
-#   mutate(agency_name_clean = trimws(gsub("#\\d+$", "", agency_name))) |> 
-#   # clean location name: 
-#   mutate(work_location_borough_clean = toupper(work_location_borough)) |> 
-# 
-#   # filtering data:
-#   filter(agency_name_clean %in%  c("POLICE DEPARTMENT","FIRE DEPARTMENT")) |> 
-#   filter(work_location_borough_clean %in%   c("BRONX", "BROOKLYN", "MANHATTAN", "QUEENS", "RICHMOND")) |> 
-#   filter(fiscal_year >= "2015" & fiscal_year <= "2024") |> 
-#   filter(pay_basis %in%   c("per Annum", "per Day", "per Hour")) |> 
-#   
-#   # backfill payroll number after filtering
-#   mutate(
-#     payroll_number_clean = case_when(
-#       is.na(payroll_number) & agency_name_clean == "FIRE DEPARTMENT" ~ 57,
-#       is.na(payroll_number) & agency_name_clean == "POLICE DEPARTMENT" ~ 56,
-#       TRUE ~ payroll_number
-#     )) |> 
-#   
-#   # converting dates:
-#   mutate(agency_start_date_clean = mdy(agency_start_date)) |> 
-# 
-#   # renaming clean columns to original names:
-#   mutate(
-#     agency_name = agency_name_clean,
-#     work_location_borough = work_location_borough_clean,
-#     payroll_number = payroll_number_clean,
-#     agency_start_date = agency_start_date_clean
-#   ) |>
-#   
-#   # dropping clean columns
-#   dplyr::select(-agency_name_clean, 
-#                 -work_location_borough_clean, 
-#                 -payroll_number_clean,
-#                 -agency_start_date_clean)
-  
+```{r, eval=FALSE}
+payroll_data_fire_police <-
+  payroll_data |>
+  # clean agency name:
+  mutate(agency_name_clean = trimws(gsub("#\\d+$", "", agency_name))) |>
+  # clean job titles:
+  mutate(title_description = toupper(title_description)) |> 
+  # clean location name:
+  mutate(work_location_borough_clean = toupper(work_location_borough)) |>
+
+  # filtering data:
+  filter(agency_name_clean %in%  c("POLICE DEPARTMENT","FIRE DEPARTMENT")) |>
+  filter(work_location_borough_clean %in%   c("BRONX", "BROOKLYN", "MANHATTAN", "QUEENS", "RICHMOND")) |>
+  filter(fiscal_year >= "2015" & fiscal_year <= "2024") |>
+  filter(pay_basis %in%   c("per Annum", "per Day", "per Hour")) |>
+
+  # backfill payroll number after filtering
+  mutate(
+    payroll_number_clean = case_when(
+      is.na(payroll_number) & agency_name_clean == "FIRE DEPARTMENT" ~ 57,
+      is.na(payroll_number) & agency_name_clean == "POLICE DEPARTMENT" ~ 56,
+      TRUE ~ payroll_number
+    )) |>
+
+  # converting dates:
+  mutate(agency_start_date_clean = mdy(agency_start_date)) |>
+
+  # renaming clean columns to original names:
+  mutate(
+    agency_name = agency_name_clean,
+    work_location_borough = work_location_borough_clean,
+    payroll_number = payroll_number_clean,
+    agency_start_date = agency_start_date_clean
+  ) |>
+
+  # dropping clean columns
+  dplyr::select(-agency_name_clean,
+                -work_location_borough_clean,
+                -payroll_number_clean,
+                -agency_start_date_clean)
+
 
 
 # Please uncomment the CSV or the RDS method to save the subset data:

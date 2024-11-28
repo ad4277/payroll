@@ -1,80 +1,1869 @@
-# Interactive graph
-
-<!-- <style> -->
-<!--   * { -->
-<!--     font-family: sans-serif; -->
-<!--   } -->
-<!-- </style> -->
-
-<!-- <div id="plot"> -->
-<!-- </div> -->
-
-<!-- <div style="padding-left: 30px;"> -->
-<!--   <p></p> -->
-<!--   <button type="button" onclick="add()">Add bar</button> -->
-<!--   <button type="button" onclick="remove()">Remove bar</button> -->
-<!-- </div> -->
-
-
-<!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
-<!-- <script src="scripts/myscript.js"></script> -->
+# Generating data for D3 chart
 
 
 
-<meta charset="utf-8">
-
-<meta http-equiv="cache-control" content="no-cache" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="-1" />
-
-<title>Temporal force-directed graph</title>
-<link rel="stylesheet" type="text/css" href="./scripts/inspector.css">
-<script type="module">
-
-import define from "./scripts/force_chart_script_js.js";
-import {Runtime, Library, Inspector} from "./scripts/runtime.js";
-
-const runtime = new Runtime();
-// const main = runtime.module(define, Inspector.into(document.body));
-const main = runtime.module(define, Inspector.into(document.getElementById('chart_force')));
-
-// part modified in inspector: add white to text
-// .observablehq--undefined{color:var(--syntax_atom);color: white}
-
-</script>
-
-<body>
-hi this is a test2wss
 
 
-<h1>something to go right below2</h1>
+<!-- https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data -->
 
-<div id="chart_force"></div>
 
-jan 15 balance
-october 16
-nov 2015 red
-july 18 red
-March 2022 blue
-july 2020 blue
+```{r}
+#| echo: false
+
+rm(list = ls())
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+# Import Libraries
+library(tibble)
+library(knitr)
+library(kableExtra)
+library(tidyverse)
+library(ggplot2)
+library(ggridges)
+library(dplyr)
+library(visdat)
+# library(HH)
+library(lubridate)
+
+library(jsonlite)
+
+```
 
 
 
-<div id="chart">
-
-  <p>something1</p>
-  <button type="button" onclick="add()">Add bar</button>
-  <button type="button" onclick="remove()">Remove bar</button>
-</div>
+```{r}
+# Read the data RDS
+payroll_data_fire_police <- readRDS("data_source/payroll_data_fire_police.rds")
+```
 
 
 
-<div style="padding-left: 30px;">
-  <p>something2</p>
-  <button type="button" onclick="add()">Add bar</button>
-  <button type="button" onclick="remove()">Remove bar</button>
-</div>
-<p>something to go right below2
-</body>
+```{r}
+payroll_data_fire_police <-
+  payroll_data_fire_police |> 
+  # mutate(title_description = toupper(title_description)) |> 
+  mutate(agency_start_date_year = year(agency_start_date)) |> 
+  mutate(total_paid = rowSums(across(c(regular_gross_paid, total_ot_paid, total_other_pay)),na.rm = TRUE))
+```
 
-another this there
+```{r}
+head(payroll_data_fire_police,5)
+```
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(str_detect(title_description, "EMERGENCY MEDICAL")) |>
+  group_by(title_description) |>
+   summarise(
+    Total_records = n()
+  )
+```
+
+
+
+
+
+## Nodes 
+
+### All titles
+
+```{r}
+nodes_all_title <-
+payroll_data_fire_police |>
+  # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2025) |>
+  select(agency_name, title_description, agency_start_date) |>
+  distinct() |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  distinct() |>
+  arrange(agency_name, title_description, agency_start_date) |>
+  group_by(agency_name, title_description) |>
+  mutate(
+    # Detect breaks in the month sequence
+    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
+    group = cumsum(
+      agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
+    )
+  ) |>
+  group_by(agency_name, title_description, group) |>
+  summarise(
+    # id = paste(agency_name, title_description, sep = "_"),
+    id =  title_description,
+    start = min(agency_start_date),
+    end = max(agency_start_date) + months(1),
+    ag = case_when(
+      agency_name == "POLICE DEPARTMENT" ~ "p",
+      agency_name == "FIRE DEPARTMENT" ~ "f",
+      TRUE ~ NA_character_
+    ),
+    .groups = "drop"
+  ) |>
+  filter(!is.na(ag)) |> # Remove rows with invalid agency_name
+  select(id, start, end, ag) |>
+  distinct()
+```
+
+
+```{r}
+# toJSON(list(nodes = nodes_all_title),
+#                       # pretty = TRUE,
+#                       auto_unbox = TRUE)
+
+# Convert to JSON
+json_nodes_all_title <- toJSON(list(nodes = nodes_all_title),
+                      # pretty = TRUE,
+                      auto_unbox = TRUE)
+# Write to file
+# write(json_output, file = "payroll_data_fire_police.json")
+
+# Print JSON preview
+# cat(json_nodes_all_title)
+```
+
+
+
+### Police Officer Related Nodes
+
+
+
+### Firefighter Related Nodes
+
+
+
+### EMS Related Nodes
+
+```{r}
+nodes_ems_jobs <-
+ payroll_data_fire_police |>
+  filter(agency_name == "FIRE DEPARTMENT") |>
+  filter(str_detect(title_description, "EMERGENCY MEDICAL SPECIALIST")) |>
+  # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2025) |>
+  select(agency_name, agency_start_date) |>
+  distinct() |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  distinct()|>
+  arrange(agency_name, agency_start_date) |>
+  group_by(agency_name) |>
+  mutate(
+    # Detect breaks in the month sequence
+    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
+    group = cumsum(agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))),
+    # group = 0
+  ) |>
+  group_by(agency_name, group) |>
+  # group_by(agency_name, title_description) |>
+  summarise(
+    # id = paste(agency_name, title_description, sep = "_"),
+    id = 'EMS related jobs',
+    # target =  title_description,
+    start = min(agency_start_date),
+    end = max(agency_start_date) + months(1),
+    # ag = case_when(
+    #   agency_name == "POLICE DEPARTMENT" ~ "p",
+    #   agency_name == "FIRE DEPARTMENT" ~ "f",
+    #   TRUE ~ NA_character_
+    # ),
+    ag = 'fr',
+    .groups = "drop"
+  ) |>
+  filter(!is.na(ag)) |> # Remove rows with invalid agency_name
+  select(id, start, end,ag) |>
+  distinct()
+```
+
+
+```{r}
+json_nodes_ems_jobs <-
+  toJSON(list(nodes = nodes_ems_jobs),
+                      # pretty = TRUE,
+                      auto_unbox = TRUE)
+
+# write(json_output, file = "payroll_data_fire_police.json")
+
+# cat(json_nodes_all_title)
+```
+
+
+
+
+
+
+## Links
+
+### Police Officer Career Links
+
+
+```{r}
+payroll_data_fire_police |>
+  select(agency_name, title_description) |>
+  filter(agency_name == "POLICE DEPARTMENT") |>
+  filter(str_detect(title_description, "POLICE OFFICER|P\\.O\\.")) |> 
+  distinct() 
+```
+
+```{r}
+link_police_career <-
+  payroll_data_fire_police |>
+  # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2025) |>
+  select(agency_name, title_description, agency_start_date) |>
+  distinct() |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  distinct() |>
+  arrange(agency_name, title_description, agency_start_date) |>
+  group_by(agency_name, title_description) |>
+  mutate(
+    # Detect breaks in the month sequence
+    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
+    group = cumsum(
+      agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
+    )
+  ) |>
+  filter(str_detect(title_description, "POLICE OFFICER|P\\.O\\."))
+```
+
+```{r}
+link_police_career_transformed <-
+link_police_career |>
+  filter(title_description == "POLICE OFFICER") |>  # Only "POLICE OFFICER" rows as source
+  left_join(link_police_career, by = "agency_start_date", suffix = c("_source", "_target")) |>
+  filter(title_description_target != "POLICE OFFICER") |>  # Avoid self-joins
+  mutate(
+    start = agency_start_date,
+    end = start + months(1)
+  ) |>
+  select(source = title_description_source,
+         target = title_description_target,
+         start, end)
+
+```
+
+```{r}
+# json_link_police_career <-
+  toJSON(list(links = link_police_career_transformed),
+                      # pretty = TRUE,
+                      auto_unbox = TRUE)
+# Write to file
+# write(json_output, file = "payroll_data_fire_police.json")
+
+# Print JSON preview
+# cat(json_link_police_career)
+```
+
+
+### Police Officer Related Links 
+
+### Firefighter Related Links
+
+### EMS Related Links
+
+
+
+```{r}
+links_ems_jobs <-
+  payroll_data_fire_police |>
+  filter(agency_name == "FIRE DEPARTMENT") |>
+  filter(str_detect(title_description, "EMERGENCY MEDICAL SPECIALIST")) |>
+  # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2025) |>
+  select(agency_name, title_description, agency_start_date) |>
+  distinct() |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  distinct() |>
+  arrange(agency_name, title_description, agency_start_date) |>
+  group_by(agency_name, title_description) |>
+  mutate(
+    # Detect breaks in the month sequence
+    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
+    group = cumsum(
+      agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
+    )
+  ) |>
+  filter(agency_name == "FIRE DEPARTMENT") |>
+  # filter(str_detect(title_description, "EMERGENCY MEDICAL SPECIALIST")) |>
+  group_by(agency_name, title_description, group) |>
+  summarise(
+    # id = paste(agency_name, title_description, sep = "_"),
+    source = 'EMS related jobs',
+    target =  title_description,
+    start = min(agency_start_date),
+    end = max(agency_start_date) + months(1),
+    ag = case_when(
+      agency_name == "POLICE DEPARTMENT" ~ "p",
+      agency_name == "FIRE DEPARTMENT" ~ "f",
+      TRUE ~ NA_character_
+    ),
+    .groups = "drop"
+  ) |>
+  filter(!is.na(ag)) |> # Remove rows with invalid agency_name
+  select(source,target, start, end) |>
+  distinct()
+```
+
+
+```{r}
+# json_lilinks_ems_jobs <-
+  toJSON(list(links = links_ems_jobs),
+                      # pretty = TRUE,
+                      auto_unbox = TRUE)
+# Write to file
+# write(json_output, file = "payroll_data_fire_police.json")
+
+# Print JSON preview
+# cat(json_link_police_career)
+```
+
+
+```{r}
+list(links = links_ems_jobs)
+```
+
+
+
+
+
+
+
+
+## combining all the links
+
+```{r}
+
+toJSON(list(links = rbind(link_police_career_transformed,
+                          links_ems_jobs)),
+       # pretty = TRUE,
+       auto_unbox = TRUE)
+
+
+# rbind(link_police_career_transformed,links_ems_jobs)
+
+```
+
+
+
+
+
+
+
+
+
+## END
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  # filter(agency_name == "POLICE DEPARTMENT") |>
+  # filter(regular_gross_paid == 0) |>
+  filter(leave_status_as_of_june_30 == 'ACTIVE') |>
+  # mutate(work_location_borough= as.factor(work_location_borough)) |>
+  group_by(agency_name,title_description,pay_basis,work_location_borough) |>
+  group_by(agency_name,work_location_borough) |>
+  summarise(
+    Total_records = n()
+    ,mean_base_salary = mean(base_salary)
+    ,mean_regular_paid = mean(regular_gross_paid)
+    ,mean_total_paid = mean(total_paid)
+    ,.groups = "drop"
+  ) |>
+  arrange(agency_name,desc(Total_records))
+```
+
+```{r}
+title_descriptions_top_fire <-
+payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  filter(leave_status_as_of_june_30 == 'ACTIVE') |>
+  group_by(agency_name, title_description) |>
+  summarise(
+    Total_records = n(),
+    .groups = "drop"
+  ) |>
+  filter(agency_name == 'FIRE DEPARTMENT') |>
+  group_by(agency_name) |>
+  slice_max(order_by = Total_records, n = 25) |>
+  ungroup() |>
+  pull(title_description)
+
+
+
+title_descriptions_top_police <-
+payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  filter(leave_status_as_of_june_30 == 'ACTIVE') |>
+  group_by(agency_name, title_description) |>
+  summarise(
+    Total_records = n(),
+    .groups = "drop"
+  ) |>
+  filter(agency_name == 'POLICE DEPARTMENT') |>
+  group_by(agency_name) |>
+  slice_max(order_by = Total_records, n = 25) |>
+  ungroup() |>
+  pull(title_description)
+```
+
+
+
+```{r}
+title_descriptions_top10 <- payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  filter(leave_status_as_of_june_30 == 'ACTIVE') |>
+  group_by(agency_name, title_description) |>
+  summarise(
+    Total_records = n(),
+    .groups = "drop"
+  ) |>
+  group_by(agency_name) |>
+  slice_max(order_by = Total_records, n = 25) |>
+  ungroup() |>
+  pull(title_description)
+```
+
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  filter(leave_status_as_of_june_30 == 'ACTIVE') |>
+  filter(title_description %in% title_descriptions_top10) |>
+  # group_by(agency_name, title_description) |>
+  group_by(agency_name, title_description, pay_basis, work_location_borough) |>
+  group_by(agency_name, title_description, work_location_borough) |>
+  group_by(agency_name, title_description) |>
+  # group_by(agency_name, work_location_borough) |>
+  summarise(
+    Total_records = n(),
+    mean_base_salary = mean(base_salary, na.rm = TRUE),
+    mean_regular_paid = mean(regular_gross_paid, na.rm = TRUE),
+    mean_total_paid = mean(total_paid, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  arrange(agency_name, desc(Total_records)) |>
+  select('agency_name',
+         'title_description',
+         'mean_regular_paid' ,
+         'mean_total_paid') |>
+  # pivot_wider(names_from = tuition_type_factor, values_from = mean_tuition) |>
+  mutate(perc_diff = abs(mean_total_paid - mean_regular_paid) / mean_regular_paid * 100) |>
+  mutate(perc_diff_band = cut(perc_diff,
+                              breaks = c(seq(0, 1000, by = 25), Inf),
+                              include.lowest = TRUE))
+
+
+```
+
+```{r}
+payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  filter(leave_status_as_of_june_30 == 'ACTIVE') |>
+  filter(title_description %in% title_descriptions_top10) |>
+  # group_by(agency_name, title_description) |>
+  group_by(agency_name, title_description, pay_basis, work_location_borough) |>
+  group_by(agency_name, title_description, work_location_borough) |>
+  group_by(agency_name, title_description) |>
+  # group_by(agency_name, work_location_borough) |>
+  summarise(
+    Total_records = n(),
+    mean_base_salary = mean(base_salary, na.rm = TRUE),
+    mean_regular_paid = mean(regular_gross_paid, na.rm = TRUE),
+    mean_total_paid = mean(total_paid, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  arrange(agency_name, desc(Total_records))
+```
+
+
+
+
+
+
+```{r}
+title_short_fire <- c(
+  "FIREFIGHTER" = "Firefighter",
+    "SUPERVISING EMERGENCY MEDICAL SERVICE SPECIALIST-DPTY CHIEFS" = "Supervising EMS Specialist-Dpty Chiefs",
+  "EMERGENCY MEDICAL SPECIALIST-EMT" = "EMS-EMT",
+  "LIEUTENANT" = "Lieutenant",
+  "EMERGENCY MEDICAL SPECIALIST-PARAMEDIc" = "EMS-Paramedic",
+  "SUPERVISING EMERGENCY MEDICAL SERVICE SPECIALIST" = "Supervising EMS Specialist",
+  "CAPTAIN" = "Captain",
+  "BATTALION CHIEF" = "Battalion Chief",
+  "ASSOCIATE FIRE PROTECTION INSPECTOR" = "Assoc. Fire Protection Inspector",
+  "FIRE PROTECTION INSPECTOR" = "Fire Protection Inspector",
+  "AUTO MECHANIC" = "Auto Mechanic",
+  "SUPERVISING FIRE ALARM DISPATCHER" = "Supervising Fire Alarm Dispatcher",
+  "FIRE ALARM DISPATCHER" = "Fire Alarm Dispatcher",
+  "PRINCIPAL ADMINISTRATIVE ASSOCIATE -  NON SUPVR" = "Principal Admin Assoc-Non Supvr",
+  "FIRE MARSHAL" = "Fire Marshal",
+  "FIRE CADET" = "Fire Cadet",
+  "DEPUTY CHIEF" = "Deputy Chief",
+  "CLERICAL ASSOCIATE" = "Clerical Associate",
+  "ADM MANAGER-NON-MGRL" = "Admin Manager - Non-Mgr",
+  "ADMINISTRATIVE STAFF ANALYST" = "Admin Staff Analyst",
+
+  "COMMUNICATION ELECTRICIAN" = "Communication Electrician",
+  "COMPUTER SPECIALIST" = "Computer Specialist",
+  "SUPERVISING FIRE ALARM DISPATCHER" = "Supervising Fire Alarm Dispatcher",
+  "SUPERVISOR OF MECHANICS" = "Supervisor of Mechanics",
+  "CASE - MANAGEMENT NURSE" = "Case-Mgmt Nurse",
+  "EMERGENCY MEDICAL SPECIALIST TRAINEE" = "EMS-Trainee"
+)
+
+exceptions_proper <- c(
+  "\\bDa\\b" = "DA",
+  "\\bP\\.o\\.\\b" = "P.O.",
+  "P.o.\\s" = "Police Officer ",
+  "Ems\\s" = "EMS ",
+  "Ems\\-" = "EMS-",
+  "Ems-Emt" = "EMS-EMT"
+)
+
+```
+
+
+
+
+```{r}
+title_descriptions_top_fire
+```
+
+
+
+##ggparcords
+##parcoords
+##likert
+##mosaic
+##alluvium
+
+
+
+
+
+
+# other
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
+  filter(agency_start_date_year >= 2015) |>
+  group_by(agency_name,agency_start_date) |>
+  summarise(
+    Total_records = n()
+  )
+
+```
+
+
+
+
+```{r}
+# Prepare the data for monthly and yearly summaries
+payroll_data_fire_police |>
+  filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2016) |>
+  mutate(agency_start_date_month = floor_date(agency_start_date, unit = "month")) |>
+  filter(agency_start_date_month %in% c('2015-01-01','2015-06-01','2015-07-01')) |>
+  slice_sample(prop = 0.1) |>
+  group_by(agency_name, agency_start_date_month) |>
+  summarise(
+    Total_records = n(),
+    .groups = "drop"
+  )
+```
+
+
+```{r}
+# Prepare the data for monthly and yearly summaries
+# data_for_d3 <-
+  payroll_data_fire_police |>
+  filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2016) |>
+  mutate(agency_start_date_month = floor_date(agency_start_date, unit = "month")) |>
+  filter(agency_start_date_month %in% c('2015-01-01','2015-06-01','2015-07-01')) |>
+  mutate(id = row_number()) |>
+  slice_sample(prop = 0.1)
+```
+
+
+
+```{r}
+json_data <- payroll_data_fire_police |>
+  filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2024) |>
+  mutate(id = row_number()) |>
+  slice_sample(prop = 0.01) |>
+  mutate(
+    start = floor_date(agency_start_date, unit = "month"),
+    end = start + months(1),
+    ag = case_when(
+      agency_name == "POLICE DEPARTMENT" ~ "p",
+      agency_name == "FIRE DEPARTMENT" ~ "f",
+      TRUE ~ NA_character_
+    )
+  ) |>
+  select(id, start, end, ag) |> # Select the required fields
+  na.omit() |>                 # Remove rows with missing 'ag' values
+  rename(
+    start = start,
+    end = end,
+    ag = ag
+  )
+
+```
+
+```{r}
+# toJSON(list(nodes = json_data), pretty = FALSE, auto_unbox = FALSE)
+```
+
+```{r}
+json_data <- payroll_data_fire_police |>
+  select(agency_name, title_description, agency_start_date, agency_start_date_year) |>
+  distinct() |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2024) |>
+  mutate(id = row_number()) |>
+  # slice_sample(prop = 0.01) |>
+  mutate(
+    start = floor_date(agency_start_date, unit = "month"),
+    end = start + months(1),
+    ag = case_when(
+      agency_name == "POLICE DEPARTMENT" ~ "p",
+      agency_name == "FIRE DEPARTMENT" ~ "f",
+      TRUE ~ NA_character_
+    )
+  ) |>
+  select(id, start, end, ag) |> # Select the required fields
+  na.omit() |>                 # Remove rows with missing 'ag' values
+  rename(
+    start = start,
+    end = end,
+    ag = ag
+  )
+```
+
+
+
+
+```{r}
+# Convert to JSON
+json_output <- toJSON(list(nodes = json_data),
+                      # pretty = TRUE,
+                      auto_unbox = TRUE)
+
+# Write to file
+# write(json_output, file = "payroll_data_fire_police.json")
+
+# Print JSON preview
+# cat(json_output)
+```
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2016) |>
+  select(agency_name, title_description, agency_start_date) |>
+  distinct() |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  arrange(agency_name, title_description, agency_start_date) |>
+  group_by(agency_name, title_description) |>
+  mutate(
+    # Detect breaks in the month sequence
+    group = cumsum(c(1, diff(agency_start_date) > months(1)))
+  ) |>
+  group_by(agency_name, title_description, group) |>
+  summarise(
+    id = paste(agency_name, title_description, sep = "_"),
+    start = min(agency_start_date),
+    end = max(agency_start_date) + months(1),
+    ag = case_when(
+      agency_name == "POLICE DEPARTMENT" ~ "p",
+      agency_name == "FIRE DEPARTMENT" ~ "f",
+      TRUE ~ NA_character_
+    ),
+    .groups = "drop"
+  ) |>
+  filter(!is.na(ag)) |> # Remove rows with invalid agency_name
+  select(id, start, end, ag)
+```
+
+
+# ```{r}
+# json_data <-
+# payroll_data_fire_police |>
+#   # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
+#   filter(agency_start_date_year >= 2015) |>
+#   filter(agency_start_date_year < 2025) |>
+#   select(agency_name, title_description, agency_start_date) |>
+#   distinct() |>
+#   mutate(
+#     agency_start_date = floor_date(agency_start_date, unit = "month")
+#   ) |>
+#   distinct() |>
+#   arrange(agency_name, title_description, agency_start_date) |>
+#   group_by(agency_name, title_description) |>
+#   mutate(
+#     # Detect breaks in the month sequence
+#     # group = cumsum(c(1, diff(agency_start_date) > months(1)))
+#     group = cumsum(
+#       agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
+#     )
+#   ) |>
+#   group_by(agency_name, title_description, group) |>
+#   summarise(
+#     # id = paste(agency_name, title_description, sep = "_"),
+#     id =  title_description,
+#     start = min(agency_start_date),
+#     end = max(agency_start_date) + months(1),
+#     ag = case_when(
+#       agency_name == "POLICE DEPARTMENT" ~ "p",
+#       agency_name == "FIRE DEPARTMENT" ~ "f",
+#       TRUE ~ NA_character_
+#     ),
+#     .groups = "drop"
+#   ) |>
+#   filter(!is.na(ag)) |> # Remove rows with invalid agency_name
+#   select(id, start, end, ag) |>
+#   distinct()
+# ```
+# 
+# ```{r}
+# toJSON(list(nodes = json_data),
+#                       # pretty = TRUE,
+#                       auto_unbox = TRUE)
+# ```
+
+
+<!-- ```{r} -->
+<!-- # Convert to JSON -->
+<!-- json_output <- toJSON(list(nodes = json_data), -->
+<!--                       # pretty = TRUE, -->
+<!--                       auto_unbox = TRUE) -->
+
+<!-- # Write to file -->
+<!-- # write(json_output, file = "payroll_data_fire_police.json") -->
+
+<!-- # Print JSON preview -->
+<!-- # cat(json_output) -->
+<!-- ``` -->
+
+
+
+<!-- ```{r} -->
+<!-- test_data_link <- -->
+<!--   payroll_data_fire_police |> -->
+<!--   # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |> -->
+<!--   filter(agency_start_date_year >= 2015) |> -->
+<!--   filter(agency_start_date_year < 2025) |> -->
+<!--   select(agency_name, title_description, agency_start_date) |> -->
+<!--   distinct() |> -->
+<!--   mutate( -->
+<!--     agency_start_date = floor_date(agency_start_date, unit = "month") -->
+<!--   ) |> -->
+<!--   distinct() |> -->
+<!--   arrange(agency_name, title_description, agency_start_date) |> -->
+<!--   group_by(agency_name, title_description) |> -->
+<!--   mutate( -->
+<!--     # Detect breaks in the month sequence -->
+<!--     # group = cumsum(c(1, diff(agency_start_date) > months(1))) -->
+<!--     group = cumsum( -->
+<!--       agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date)) -->
+<!--     ) -->
+<!--   ) |> -->
+<!--   filter(str_detect(title_description, "POLICE OFFICER|P\\.O\\.")) -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- # P.O. DA DET GR3 -->
+<!-- # P.O. DET SPEC -->
+<!-- # POLICE OFFICER -->
+<!-- # POLICE OFFICER D/A DETECTIVE 1ST GR -->
+<!-- # POLICE OFFICER D/A DETECTIVE 2ND GR -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- test_data_link_transformed <- -->
+<!-- test_data_link |> -->
+<!--   filter(title_description == "POLICE OFFICER") |>  # Only "POLICE OFFICER" rows as source -->
+<!--   left_join(test_data_link, by = "agency_start_date", suffix = c("_source", "_target")) |> -->
+<!--   filter(title_description_target != "POLICE OFFICER") |>  # Avoid self-joins -->
+<!--   mutate( -->
+<!--     start = agency_start_date, -->
+<!--     end = start + months(1) -->
+<!--   ) |> -->
+<!--   select(source = title_description_source, -->
+<!--          target = title_description_target, -->
+<!--          start, end) -->
+
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- toJSON(list(links = test_data_link_transformed), -->
+<!--                       # pretty = TRUE, -->
+<!--                       auto_unbox = TRUE) -->
+<!-- ``` -->
+
+
+
+
+
+
+
+
+```{r}
+# DEPUTY CHIEF
+# BATTALION CHIEF
+# CAPTAIN
+# LIEUTENANT
+# FIREFIGHTER
+# FIRE CADET
+```
+
+
+
+```{r}
+data_link_fire <-
+  payroll_data_fire_police |>
+  # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2025) |>
+  select(agency_name, title_description, agency_start_date) |>
+  distinct() |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  distinct() |>
+  arrange(agency_name, title_description, agency_start_date) |>
+  group_by(agency_name, title_description) |>
+  mutate(
+    # Detect breaks in the month sequence
+    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
+    group = cumsum(
+      agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
+    )
+  ) |>
+  filter(agency_name == "FIRE DEPARTMENT") |>
+  filter(str_detect(title_description, "DEPUTY CHIEF|BATTALION CHIEF|CAPTAIN|LIEUTENANT|FIREFIGHTER|FIRE CADET"))
+```
+
+
+
+
+
+
+```{r}
+data_link_fire_transformed <-
+data_link_fire |>
+  filter(title_description == "FIREFIGHTER") |>  # Only "POLICE OFFICER" rows as source
+  left_join(data_link_fire, by = "agency_start_date", suffix = c("_source", "_target")) |>
+  filter(title_description_target != "FIREFIGHTER") |>  # Avoid self-joins
+  mutate(
+    start = agency_start_date,
+    end = start + months(1)
+  ) |>
+  select(source = title_description_source,
+         target = title_description_target,
+         start, end)
+
+```
+
+```{r}
+toJSON(list(links = data_link_fire_transformed),
+                      # pretty = TRUE,
+                      auto_unbox = TRUE)
+```
+
+```{r}
+ payroll_data_fire_police |>
+  # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2025) |>
+  select(agency_name, title_description, agency_start_date) |>
+  distinct() |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  distinct() |>
+  arrange(agency_name, title_description, agency_start_date) |>
+  group_by(agency_name, title_description) |>
+  mutate(
+    # Detect breaks in the month sequence
+    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
+    group = cumsum(
+      agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
+    )
+  ) |>
+  filter(agency_name == "FIRE DEPARTMENT") |>
+  filter(str_detect(title_description, "EMERGENCY MEDICAL|EMT")) |>
+  # group_by(title_description) |>
+  # summarise(
+  #   Total_records = n(),
+  #   .groups = "drop"
+  # )
+
+  select(title_description) |> distinct()
+```
+
+
+
+```{r}
+data_link_fire_ems <-
+  payroll_data_fire_police |>
+  # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2025) |>
+  select(agency_name, title_description, agency_start_date) |>
+  distinct() |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  distinct() |>
+  arrange(agency_name, title_description, agency_start_date) |>
+  group_by(agency_name, title_description) |>
+  mutate(
+    # Detect breaks in the month sequence
+    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
+    group = cumsum(
+      agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
+    )
+  ) |>
+  filter(agency_name == "FIRE DEPARTMENT") |>
+  filter(str_detect(title_description, "EMERGENCY MEDICAL|EMT"))
+  # group_by(title_description) |>
+  # summarise(
+  #   Total_records = n(),
+  #   .groups = "drop"
+  # )
+
+  # select(title_description) |> distinct()
+
+
+data_link_fire_ems_transformed <-
+data_link_fire_ems |>
+  filter(title_description == "EMERGENCY MEDICAL SPECIALIST-EMT") |>  # Only "POLICE OFFICER" rows as source
+  left_join(data_link_fire_ems, by = "agency_start_date", suffix = c("_source", "_target")) |>
+  filter(title_description_target != "EMERGENCY MEDICAL SPECIALIST-EMT") |>  # Avoid self-joins
+  mutate(
+    start = agency_start_date,
+    end = start + months(1)
+  ) |>
+  select(source = title_description_source,
+         target = title_description_target,
+         start, end)
+
+toJSON(list(links = data_link_fire_ems_transformed),
+                      # pretty = TRUE,
+                      auto_unbox = TRUE)
+
+```
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(str_detect(title_description, "EMERGENCY MEDICAL SPECIALIST")) |>
+  group_by(title_description) |>
+   summarise(
+    Total_records = n()
+  )
+```
+
+
+
+```{r}
+data_link_fire <-
+  payroll_data_fire_police |>
+  # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2025) |>
+  select(agency_name, title_description, agency_start_date) |>
+  distinct() |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  distinct() |>
+  arrange(agency_name, title_description, agency_start_date) |>
+  group_by(agency_name, title_description) |>
+  mutate(
+    # Detect breaks in the month sequence
+    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
+    group = cumsum(
+      agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
+    )
+  ) |>
+  filter(agency_name == "FIRE DEPARTMENT") |>
+  filter(str_detect(title_description, "DEPUTY CHIEF|BATTALION CHIEF|CAPTAIN|LIEUTENANT|FIREFIGHTER|FIRE CADET")) |>
+  group_by(agency_name, title_description, group) |>
+  summarise(
+    # id = paste(agency_name, title_description, sep = "_"),
+    source = 'FIREFIGHTER related jobs',
+    target =  title_description,
+    start = min(agency_start_date),
+    end = max(agency_start_date) + months(1),
+    ag = case_when(
+      agency_name == "POLICE DEPARTMENT" ~ "p",
+      agency_name == "FIRE DEPARTMENT" ~ "f",
+      TRUE ~ NA_character_
+    ),
+    .groups = "drop"
+  ) |>
+  filter(!is.na(ag)) |> # Remove rows with invalid agency_name
+  select(source,target, start, end) |>
+  distinct()
+```
+
+
+
+
+
+
+
+
+
+```{r}
+# data_link_fire_transformed <-
+# data_link_fire |>
+#   filter(title_description == "FIREFIGHTER") |>  # Only "POLICE OFFICER" rows as source
+#   left_join(data_link_fire, by = "agency_start_date", suffix = c("_source", "_target")) |>
+#   filter(title_description_target != "FIREFIGHTER") |>  # Avoid self-joins
+#   mutate(
+#     start = agency_start_date,
+#     end = start + months(1)
+#   ) |>
+#   select(source = title_description_source,
+#          target = title_description_target,
+#          start, end)
+
+```
+
+```{r}
+toJSON(list(links = data_link_fire),
+                      # pretty = TRUE,
+                      auto_unbox = TRUE)
+```
+
+```{r}
+data_link_fire_node <-
+  payroll_data_fire_police |>
+  # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2025) |>
+  select(agency_name, title_description, agency_start_date) |>
+  distinct() |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  distinct() |>
+  arrange(agency_name, title_description, agency_start_date) |>
+  group_by(agency_name, title_description) |>
+  mutate(
+    # Detect breaks in the month sequence
+    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
+    group = cumsum(
+      agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
+    )
+  ) |>
+  filter(agency_name == "FIRE DEPARTMENT") |>
+  filter(str_detect(title_description, "DEPUTY CHIEF|BATTALION CHIEF|CAPTAIN|LIEUTENANT|FIREFIGHTER|FIRE CADET")) |>
+  group_by(agency_name, title_description, group) |>
+  summarise(
+    # id = paste(agency_name, title_description, sep = "_"),
+    id = 'FIREFIGHTER related jobs',
+    # target =  title_description,
+    start = min(agency_start_date),
+    end = max(agency_start_date) + months(1),
+    # ag = case_when(
+    #   agency_name == "POLICE DEPARTMENT" ~ "p",
+    #   agency_name == "FIRE DEPARTMENT" ~ "f",
+    #   TRUE ~ NA_character_
+    # ),
+    ag = 'fr',
+    .groups = "drop"
+  ) |>
+  filter(!is.na(ag)) |> # Remove rows with invalid agency_name
+  select(id, start, end,ag) |>
+  distinct()
+
+toJSON(list(links = data_link_fire_node),
+                      # pretty = TRUE,
+                      auto_unbox = TRUE)
+```
+
+
+
+```{r}
+data_link_ems_node_test <-
+ payroll_data_fire_police |>
+  filter(agency_name == "FIRE DEPARTMENT") |>
+  filter(str_detect(title_description, "EMERGENCY MEDICAL SPECIALIST")) |>
+  # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2025) |>
+  select(agency_name, agency_start_date) |>
+  distinct() |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  distinct()|>
+  arrange(agency_name, agency_start_date) |>
+  group_by(agency_name) |>
+  mutate(
+    # Detect breaks in the month sequence
+    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
+    group = cumsum(agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))),
+    # group = 0
+  ) |>
+  group_by(agency_name, group) |>
+  # group_by(agency_name, title_description) |>
+  summarise(
+    # id = paste(agency_name, title_description, sep = "_"),
+    id = 'EMS related jobs',
+    # target =  title_description,
+    start = min(agency_start_date),
+    end = max(agency_start_date) + months(1),
+    # ag = case_when(
+    #   agency_name == "POLICE DEPARTMENT" ~ "p",
+    #   agency_name == "FIRE DEPARTMENT" ~ "f",
+    #   TRUE ~ NA_character_
+    # ),
+    ag = 'fr',
+    .groups = "drop"
+  ) |>
+  filter(!is.na(ag)) |> # Remove rows with invalid agency_name
+  select(id, start, end,ag) |>
+  distinct()
+
+toJSON(list(nodes = data_link_ems_node_test),
+                      # pretty = TRUE,
+                      auto_unbox = TRUE)
+```
+
+```{r}
+
+```
+
+
+
+
+```{r}
+data_link_ems_link <-
+  payroll_data_fire_police |>
+  filter(agency_name == "FIRE DEPARTMENT") |>
+  filter(str_detect(title_description, "EMERGENCY MEDICAL SPECIALIST")) |>
+  # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2025) |>
+  select(agency_name, title_description, agency_start_date) |>
+  distinct() |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  distinct() |>
+  arrange(agency_name, title_description, agency_start_date) |>
+  group_by(agency_name, title_description) |>
+  mutate(
+    # Detect breaks in the month sequence
+    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
+    group = cumsum(
+      agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
+    )
+  ) |>
+  filter(agency_name == "FIRE DEPARTMENT") |>
+  # filter(str_detect(title_description, "EMERGENCY MEDICAL SPECIALIST")) |>
+  group_by(agency_name, title_description, group) |>
+  summarise(
+    # id = paste(agency_name, title_description, sep = "_"),
+    source = 'EMS related jobs',
+    target =  title_description,
+    start = min(agency_start_date),
+    end = max(agency_start_date) + months(1),
+    ag = case_when(
+      agency_name == "POLICE DEPARTMENT" ~ "p",
+      agency_name == "FIRE DEPARTMENT" ~ "f",
+      TRUE ~ NA_character_
+    ),
+    .groups = "drop"
+  ) |>
+  filter(!is.na(ag)) |> # Remove rows with invalid agency_name
+  select(source,target, start, end) |>
+  distinct()
+
+toJSON(list(links = data_link_ems_link),
+                      # pretty = TRUE,
+                      auto_unbox = TRUE)
+```
+
+
+
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  mutate(agency_start_date_year = lubridate::year(agency_start_date)) |>
+  filter(agency_start_date_year > 2014) |>
+
+# Create the bar chart
+ggplot(aes(x = agency_start_date_year, fill = agency_name)) +
+  geom_bar() +
+  labs(
+    title = "Count of Records by Agency Start Year",
+    x = "Agency Start Year",
+    y = "Number of Records",
+    fill = "Agency Name"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(hjust = 0.5)
+  )
+```
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  group_by(agency_name, work_location_borough) |>
+  summarise(
+    Total_records = n()
+  )
+```
+
+```{r}
+payroll_data_fire_police |>
+  group_by(agency_name, work_location_borough) |>
+  summarise(
+    Total_records = n(),
+    sum(total_paid)
+  )
+```
+
+
+
+
+
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+
+  group_by(work_location_borough, agency_name) |>
+  summarise(count = n(), .groups = 'drop') |>
+  pivot_wider(
+    names_from = agency_name,
+    values_from = count,
+    values_fill = list(count = 0)
+  )
+```
+
+```{r}
+payroll_data_fire_police |>
+
+  group_by(work_location_borough, agency_name) |>
+  summarise(count = sum(total_paid), .groups = 'drop') |>
+  pivot_wider(
+    names_from = agency_name,
+    values_from = count,
+    values_fill = list(count = 0)
+  )
+```
+
+
+
+```{r}
+payroll_data_fire_police |>
+
+  group_by(work_location_borough, agency_name , fiscal_year) |>
+  summarise(count = sum(total_paid), .groups = 'drop') |>
+  pivot_wider(
+    names_from = c(agency_name),
+    values_from = count,
+    values_fill = list(count = 0)
+  )
+```
+
+
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+
+  group_by(work_location_borough, agency_name) |>
+  summarise(count = sum(total_paid), .groups = 'drop') |>
+  pivot_wider(
+    names_from = agency_name,
+    values_from = count,
+    values_fill = list(count = 0)
+  )
+```
+
+
+```{r}
+payroll_data_fire_police |>
+  group_by(agency_name) |>
+  summarise(
+    Total_records = n_distinct(work_location_borough)
+  )
+```
+
+
+```{r}
+payroll_data_fire_police |>
+  group_by(agency_name) |>
+  summarise(
+    Total_records = n()
+  )
+
+```
+
+
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  filter(agency_name %in%  c(
+    "DEPT OF ED PEDAGOGICAL",
+    "DEPT OF ED PER SESSION TEACHER",
+    "DEPT OF ED HRLY SUPPORT STAFF","DEPT OF ED PARA PROFESSIONALS",
+    "DEPT OF ED PEDAGOGICAL",
+    "DEPT OF ED PER DIEM TEACHERS",
+    "DEPT OF ED PER SESSION TEACHER",
+    "POLICE DEPARTMENT",
+    "FIRE DEPARTMENT"
+    )) |>
+group_by(agency_name) |>
+  summarise(
+    Total_records = n(),
+    n_work_location_borough = n_distinct(work_location_borough)
+  ) |>
+  arrange(desc(Total_records))
+```
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  filter(agency_name %in%  c(
+    "DEPT OF ED PEDAGOGICAL",
+    "DEPT OF ED PER SESSION TEACHER",
+    "DEPT OF ED HRLY SUPPORT STAFF","DEPT OF ED PARA PROFESSIONALS",
+    "DEPT OF ED PEDAGOGICAL",
+    "DEPT OF ED PER DIEM TEACHERS",
+    "DEPT OF ED PER SESSION TEACHER",
+    "POLICE DEPARTMENT",
+    "FIRE DEPARTMENT"
+    )) |>
+group_by(agency_name,work_location_borough) |>
+  summarise(
+    Total_records = n()
+  ) |>
+  arrange(agency_name,work_location_borough)
+```
+
+
+```{r}
+payroll_data_fire_police |>
+  # filter(fiscal_year == "2024") |>
+  filter(agency_name %in%  c(
+    "POLICE DEPARTMENT",
+    "FIRE DEPARTMENT"
+    )) |>
+group_by(agency_name,fiscal_year) |>
+  summarise(
+    Total_records = n()
+  ) |>
+  arrange(agency_name,fiscal_year)
+```
+
+
+
+
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  group_by(agency_name,title_description) |>
+  summarise(
+    Total_records = n()
+          ,mean(base_salary)
+    ,mean(total_paid)
+    ,.groups = "drop"
+  ) |>
+  arrange(agency_name,desc(Total_records))
+```
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  filter(agency_name == "POLICE DEPARTMENT") |>
+  group_by(agency_name,title_description) |>
+  summarise(
+    Total_records = n()
+    ,mean(base_salary)
+    ,mean(total_paid)
+    ,.groups = "drop"
+  ) |>
+  arrange(agency_name,desc(Total_records))
+```
+
+```{r}
+payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  filter(agency_name == "POLICE DEPARTMENT") |>
+  group_by(agency_name,title_description) |>
+  summarise(
+    Total_records = n()
+      ,mean(base_salary)
+    ,mean(total_paid)
+    ,.groups = "drop"
+  ) |>
+  arrange(title_description)
+```
+
+
+```{r}
+head(payroll_data_fire_police)
+```
+
+```{r}
+payroll_data_fire_police |>
+  summarise(across(everything(), ~ sum(is.na(.))))
+```
+
+```{r}
+payroll_data_fire_police |>
+  # filter(fiscal_year == "2024") |>
+  group_by(fiscal_year,payroll_number) |>
+  summarise(
+    Total_records = n()
+  ) |>
+  arrange(fiscal_year,payroll_number)
+
+```
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  # filter(fiscal_year == "2024") |>
+  group_by(agency_name) |>
+  summarise(
+    Total_records = n(),
+    min(agency_start_date),
+    max(agency_start_date)
+  ) |>
+  arrange(agency_name,desc(Total_records))
+```
+
+```{r}
+
+# good for alluvium, year start, year paid
+payroll_data_fire_police |>
+  mutate(agency_start_date_year = year(agency_start_date)) |>
+  group_by(agency_start_date_year) |>
+  summarise(
+    Total_records = n(),
+  ) |>
+  arrange(agency_start_date_year)
+
+```
+
+
+```{r}
+
+# good for alluvium, year start, year paid
+payroll_data_fire_police |>
+  filter(agency_start_date_year == 1960)
+
+```
+
+```{r}
+
+# good for alluvium, year start, year paid
+payroll_data_fire_police |>
+  filter(agency_start_date_year == 2049)
+
+```
+```{r}
+
+# good for alluvium, year start, year paid
+payroll_data_fire_police |>
+  filter(last_name == 'KIRBY' & first_name =='KATHLYN')
+
+```
+
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  group_by(agency_name,pay_basis) |>
+  summarise(
+    Total_records = n(),
+    TOTAL_total_paid = sum(total_paid),
+    TOTAL_regular_gross_paid = sum(regular_gross_paid),
+    TOTAL_total_ot_paid = sum(total_ot_paid),
+    TOTAL_total_other_pay = sum(total_other_pay),
+    PCT_total_paid = sum(total_paid) / sum(total_paid),
+    PCT_regular_gross_paid = sum(regular_gross_paid)/ sum(total_paid),
+    PCT_total_ot_paid = sum(total_ot_paid)/ sum(total_paid),
+    PCT_total_other_pay = sum(total_other_pay)/ sum(total_paid),
+    records_with_1 = sum(is.na(regular_gross_paid)),
+    records_with_2 = sum(is.na(total_ot_paid)),
+    records_with_3 = sum(is.na(total_other_pay)),
+  ) |>
+  arrange(agency_name,pay_basis,desc(Total_records))
+  # format(n=1)
+  # format(scientific=TRUE)
+```
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  filter(title_description == "CHAPLAIN")
+  # filter(pay_basis == "Prorated Annual")
+```
+
+
+remove pro_rated data
+"Prorated Annual"
+
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(fiscal_year > "2014") |>
+  group_by(agency_name,fiscal_year) |>
+  summarise(
+    Total_records = n(),
+    TOTAL_total_paid = sum(total_paid),
+    TOTAL_regular_gross_paid = sum(regular_gross_paid),
+    TOTAL_total_ot_paid = sum(total_ot_paid),
+    TOTAL_total_other_pay = sum(total_other_pay),
+    PCT_total_paid = sum(total_paid) / sum(total_paid),
+    PCT_regular_gross_paid = sum(regular_gross_paid)/ sum(total_paid),
+    PCT_total_ot_paid = sum(total_ot_paid)/ sum(total_paid),
+    PCT_total_other_pay = sum(total_other_pay)/ sum(total_paid),
+    records_with_1 = sum(is.na(regular_gross_paid)),
+    records_with_2 = sum(is.na(total_ot_paid)),
+    records_with_3 = sum(is.na(total_other_pay)),
+  ) |>
+  arrange(agency_name,fiscal_year,desc(Total_records))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  filter(fiscal_year > "2014") |>
+  group_by(agency_name,fiscal_year) |>
+  summarise(
+    Total_records = n(),
+    TOTAL_total_paid = n_distinct(title_description)
+  ) |>
+  arrange(agency_name,fiscal_year,desc(Total_records))
+
+```
+
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  # mutate(year_agency_start_date_clean = year(agency_start_date_clean)) |>
+  filter(agency_start_date_year == "2024") |>
+  filter(fiscal_year > "2014") |>
+  group_by(agency_name,title_description) |>
+  summarise(
+    Total_records = n()
+    ,mean(base_salary)
+  ) |>
+  arrange(agency_name,desc(Total_records))
+
+```
+
+
+
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  # mutate(year_agency_start_date_clean = year(agency_start_date_clean)) |>
+  # filter(fiscal_year == "2018") |>
+  filter(title_description %in%  c("FIREFIGHTER","POLICE OFFICER")) |>
+  group_by(agency_name,pay_basis,fiscal_year,title_description) |>
+  summarise(
+    Total_records = n()
+    ,mean(base_salary)
+    ,mean(total_paid)
+  ) |>
+  arrange(agency_name,desc(Total_records))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  # filter(title_description== "TEACHER- PER SESSION") |>
+  filter(fiscal_year == "2024") |>
+  filter(leave_status_as_of_june_30=="ACTIVE") |>
+  filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER","DEPT OF ED HRLY SUPPORT STAFF","DEPT OF ED PARA PROFESSIONALS",
+"DEPT OF ED PEDAGOGICAL",
+"DEPT OF ED PER DIEM TEACHERS",
+"DEPT OF ED PER SESSION TEACHER"	)) |>
+  group_by(agency_name,title_description) |>
+  summarise(
+    Total_records = n(),
+    base_salary_sum = sum(base_salary),
+    base_salary_avg = mean(regular_gross_paid),
+    base_salary_sum2 = sum(regular_gross_paid),
+    # total_ot_sum = round(sum(total_ot_pay),0),
+    total_other_sum = round(sum(total_other_pay),0),
+    total_paid_sum = round(sum(total_paid),0),
+    total_paid_avg = mean(total_paid),
+
+  ) |>
+  arrange(desc(Total_records))
+```
+
+
+```{r}
+payroll_data_fire_police |>
+  # filter(title_description== "TEACHER- PER SESSION") |>
+  filter(fiscal_year == "2024") |>
+  filter(leave_status_as_of_june_30=="ACTIVE") |>
+  filter(agency_name %in%  c("POLICE DEPARTMENT"	)) |>
+  group_by(agency_name,work_location_borough,title_description) |>
+  summarise(
+    Total_records = n(),
+    base_salary_sum = sum(base_salary),
+    base_salary_avg = mean(regular_gross_paid),
+    base_salary_sum2 = sum(regular_gross_paid),
+    # total_ot_sum = round(sum(total_ot_pay),0),
+    total_other_sum = round(sum(total_other_pay),0),
+    total_paid_sum = round(sum(total_paid),0),
+    total_paid_avg = mean(total_paid),
+
+  ) |>
+  arrange(agency_name,title_description,work_location_borough)
+  # arrange(desc(Total_records))
+```
+
+
+```{r}
+payroll_data_fire_police |>
+  # filter(title_description== "TEACHER- PER SESSION") |>
+  # filter(fiscal_year == "2024") |>
+  filter(leave_status_as_of_june_30=="ACTIVE") |>
+  filter(agency_name %in%  c("POLICE DEPARTMENT"	)) |>
+  group_by(title_description) |>
+  summarise(
+    Total_records = n(),
+    base_salary_sum = sum(base_salary),
+    base_salary_avg = mean(regular_gross_paid),
+    base_salary_sum2 = sum(regular_gross_paid),
+    # total_ot_sum = round(sum(total_ot_pay),0),
+    total_other_sum = round(sum(total_other_pay),0),
+    total_paid_sum = round(sum(total_paid),0),
+    total_paid_avg = mean(total_paid),
+
+  ) |>
+  # arrange(title_description)
+  arrange(desc(Total_records))
+```
+
+```{r}
+payroll_data_fire_police |>
+  group_by(work_location_borough) |>
+  summarise(
+    Total_records = n()
+  )
+
+```
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  group_by(work_location_borough,fiscal_year) |>
+  summarise(
+    Total_records = n()
+  )
+
+```
+
+
+
+```{r}
+payroll_data_fire_police |>
+  group_by(title_description) |>
+  summarise(
+    Total_records = n()
+  ) |>
+  arrange(desc(Total_records))
+
+```
+
+
+
+
+
+```{r}
+payroll_data_fire_police |>
+  # filter(title_description== "TEACHER- PER SESSION") |>
+  # filter(fiscal_year == "2024") |>
+  # filter(agency_name %in%  c("DEPT OF ED PEDAGOGICAL","DEPT OF ED PER SESSION TEACHER")) |>
+  group_by(agency_name,work_location_borough) |>
+  summarise(
+    Total_records = n(),
+    base_salary_sum = sum(base_salary),
+    base_salary_avg = mean(base_salary)
+  ) |>
+  arrange(desc(agency_name))
+```
+
+
+```{r}
+payroll_data_fire_police <- payroll_data_fire_police |>
+  # mutate(base_salary_std = if_else(pay_basis == "per Day", base_salary * 260, base_salary) |>
+  mutate(
+    regular_gross_paid = as.numeric(regular_gross_paid),
+    total_ot_paid = as.numeric(total_ot_paid),
+    total_other_pay = as.numeric(total_other_pay)
+  ) |>
+  mutate(total_paid = regular_gross_paid +total_ot_paid + total_other_pay)
+```
+
+
+```{r}
+head(payroll_data_fire_police)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

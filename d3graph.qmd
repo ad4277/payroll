@@ -1,13 +1,101 @@
 # Interactive graph
 
-<style>
-  * {
-    font-family: sans-serif;
-  }
-</style> 
+<!-- <style> -->
+<!--   * { -->
+<!--     font-family: sans-serif; -->
+<!--   } -->
+<!-- </style> -->
 
-<div id="plot">
+<!-- <div id="plot"> -->
+<!-- </div> -->
+
+<!-- <div style="padding-left: 30px;"> -->
+<!--   <p></p> -->
+<!--   <button type="button" onclick="add()">Add bar</button> -->
+<!--   <button type="button" onclick="remove()">Remove bar</button> -->
+<!-- </div> -->
+
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
+<!-- <script src="scripts/myscript.js"></script> -->
+
+
+
+<meta charset="utf-8">
+
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+
+<title>Temporal force-directed graph</title>
+<link rel="stylesheet" type="text/css" href="./scripts/inspector.css">
+<script type="module">
+
+import define from "./scripts/force_chart_script_js.js";
+import {Runtime, Library, Inspector} from "./scripts/runtime.js";
+
+const runtime = new Runtime();
+// const main = runtime.module(define, Inspector.into(document.body));
+const main = runtime.module(define, Inspector.into(document.getElementById('chart_force')));
+
+// part modified in inspector: add white to text
+// .observablehq--undefined{color:var(--syntax_atom);color: white}
+
+</script>
+
+
+
+
+<body>
+<!-- <h1>something to go right below2</h1> -->
+<!-- <h2>something to go right below2</h2> -->
+<!-- <h3>something to go right below2</h3> -->
+## Who gets the Money?
+
+Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
+
+Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
+
+<div id="chart_force"></div>
+<img src="./jobs_timeline.png" alt="My Image" width="750">
+
+
+
+
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+
+
+
+What is the story? 
+hi this is a test2wss
+
+
+jan 15 balance
+october 16
+nov 2015 red
+july 18 red
+March 2022 blue
+july 2020 blue
+
+
+
+<div id="chart">
+
+  <p>something1</p>
+  <button type="button" onclick="add()">Add bar</button>
+  <button type="button" onclick="remove()">Remove bar</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-<script src="scripts/myscript.js"></script>
+
+
+<div style="padding-left: 30px;">
+  <p>something2</p>
+  <button type="button" onclick="add()">Add bar</button>
+  <button type="button" onclick="remove()">Remove bar</button>
+</div>
+<p>something to go right below2
+</body>
+
+another this there

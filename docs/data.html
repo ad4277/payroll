@@ -102,6 +102,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
@@ -175,6 +178,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Conclusion</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Appendix</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -187,17 +196,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description"><span class="header-section-number">2.1</span> Description</a></li>
   <li><a href="#missing-value-analysis" id="toc-missing-value-analysis" class="nav-link" data-scroll-target="#missing-value-analysis"><span class="header-section-number">2.2</span> Missing value analysis</a></li>
-  <li><a href="#understanding-and-cleaning-the-raw-data" id="toc-understanding-and-cleaning-the-raw-data" class="nav-link" data-scroll-target="#understanding-and-cleaning-the-raw-data"><span class="header-section-number">2.3</span> Understanding and cleaning the raw data</a>
-  <ul class="collapse">
-  <li><a href="#agencies" id="toc-agencies" class="nav-link" data-scroll-target="#agencies"><span class="header-section-number">2.3.1</span> Agencies</a></li>
-  <li><a href="#work-location-borough" id="toc-work-location-borough" class="nav-link" data-scroll-target="#work-location-borough"><span class="header-section-number">2.3.2</span> Work Location Borough</a></li>
-  <li><a href="#fiscal-year" id="toc-fiscal-year" class="nav-link" data-scroll-target="#fiscal-year"><span class="header-section-number">2.3.3</span> Fiscal Year</a></li>
-  <li><a href="#pay-basis" id="toc-pay-basis" class="nav-link" data-scroll-target="#pay-basis"><span class="header-section-number">2.3.4</span> Pay Basis</a></li>
-  <li><a href="#payroll-number" id="toc-payroll-number" class="nav-link" data-scroll-target="#payroll-number"><span class="header-section-number">2.3.5</span> Payroll Number</a></li>
-  <li><a href="#agency-start-date" id="toc-agency-start-date" class="nav-link" data-scroll-target="#agency-start-date"><span class="header-section-number">2.3.6</span> Agency Start Date</a></li>
-  <li><a href="#saving-subset-data" id="toc-saving-subset-data" class="nav-link" data-scroll-target="#saving-subset-data"><span class="header-section-number">2.3.7</span> Saving Subset Data</a></li>
-  </ul></li>
-  <li><a href="#deciding-on-final-data-subset" id="toc-deciding-on-final-data-subset" class="nav-link" data-scroll-target="#deciding-on-final-data-subset"><span class="header-section-number">2.4</span> Deciding on final data subset</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ad4277/payroll/edit/main/data.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ad4277/payroll/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -246,7 +244,7 @@ The final subset of data for this project will be focused on 2 Agencies:<br>
 <tbody>
 <tr class="odd">
 <td style="text-align: left; width: 200px;">Fiscal Year</td>
-<td style="text-align: left;">From 2015 to 2024</td>
+<td style="text-align: left;">From 2015 to 2024 (10 years)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; width: 200px;">Agency Name</td>
@@ -268,7 +266,7 @@ The final subset of data for this project will be focused on 2 Agencies:<br>
 </div>
 <p><br>
 </p>
-<p>First, we will examine the metadata of the entire dataset, followed by an analysis of missing values to identify any potential issues that may impact our analysis. Finally, we will outline the decision-making process for selecting a subset of the data and transforming the original dataset with 6,225,611 rows to our final dataset with 804,630 rows.</p>
+<p>First, we will examine the metadata of the dataset, how to import the data, followed by the decision-making process for selecting a subset of the data and transforming the original dataset with 6,225,611 rows to our final dataset with 804,630 rows. Finally, an analysis of missing values to identify any potential issues that may impact our analysis.</p>
 <p><br>
 <br>
 </p>
@@ -277,46 +275,53 @@ The final subset of data for this project will be focused on 2 Agencies:<br>
 <p><strong>Data Metadata</strong></p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Dataset Name</td>
+<td style="text-align: left; width: 200px;">Dataset Name</td>
 <td style="text-align: left;">Citywide Payroll Data (Fiscal Year)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Provided by</td>
+<td style="text-align: left; width: 200px;">Provided by</td>
 <td style="text-align: left;">Office of Payroll Administration (OPA)</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Data Category</td>
+<td style="text-align: left; width: 200px;">Data Category</td>
 <td style="text-align: left;">City Government</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Frequency of Updates</td>
+<td style="text-align: left; width: 200px;">Frequency of Updates</td>
 <td style="text-align: left;">Annually</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Date Created</td>
+<td style="text-align: left; width: 200px;">Date Created</td>
 <td style="text-align: left;">October 31, 2015</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Data Last Updated</td>
+<td style="text-align: left; width: 200px;">Data Last Updated</td>
 <td style="text-align: left;">October 30, 2024</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Dimensions</td>
-<td style="text-align: left;">6,225,611 rows and 17 columns</td>
+<td style="text-align: left; width: 200px;">Dimensions</td>
+<td style="text-align: left;">Raw Data: 6,225,611 rows | 17 columns<br>
+Subset Data: 804,630 rows | 17 columns</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Each row represents</td>
+<td style="text-align: left; width: 200px;">Each row represents</td>
 <td style="text-align: left;">City Employee Salary per Fiscal Year</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Source URL</td>
+<td style="text-align: left; width: 200px;">Source URL</td>
 <td style="text-align: left;">https://data.cityofnewyork.us/</td>
 </tr>
 </tbody>
 </table>
+
+
 </div>
 </div>
 <p><br>
@@ -427,9 +432,35 @@ The final subset of data for this project will be focused on 2 Agencies:<br>
 </div>
 <p><br>
 <br>
+<br>
 </p>
-<p><strong>Importing the data</strong><br>
-</p>
+<p><strong>Data Source</strong></p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A[Importing Data] --&gt; B[Understanding and \n cleaning the raw data]
+  B --&gt; C(Transforming columns)
+  B --&gt; D(Filtering Data)
+  B --&gt; E(Backfilling NA)
+  C --&gt; F[Saving Subset Data]
+  D --&gt; F[Saving Subset Data]
+  E --&gt; F[Saving Subset Data]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true"><strong>Importing the data</strong><br>
+</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false"><strong>Cleaning the data</strong><br>
+</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false"><strong>Creating the final subset data</strong><br>
+</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 To access the data, we can go directly to the URL:<br>
 
 <p style="font-size:95%; font-style:italic">
@@ -446,7 +477,7 @@ The file will be downloaded with the name: Citywide_Payroll_Data__Fiscal_Year__<
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import original data</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>payroll_data_source <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"./data_source/Citywide_Payroll_Data__Fiscal_Year__20241111.csv"</span>) </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>payroll_data_source <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"./data_source/Citywide_Payroll_Data__Fiscal_Year__20241111.csv"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># make a copy of original data for transformations</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(payroll_data_source)</span>
@@ -454,6 +485,81 @@ The file will be downloaded with the name: Citywide_Payroll_Data__Fiscal_Year__<
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># rename columns</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(payroll_data) <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"[</span><span class="sc">\\</span><span class="st">.]+"</span>, <span class="st">"_"</span>, <span class="fu">tolower</span>(<span class="fu">names</span>(payroll_data_source)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+</div>
+<p><br>
+<br>
+</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>The decision-making process for selecting a subset of the data and the detailed transformation and clean up of the original dataset with 6,225,611 rows to our final dataset with 804,630 rows can be found in the <code>Appendix</code> section.</p>
+<p><br>
+<br>
+</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>The data used for this analysis is a subset of the entire raw data. The <strong>final subset data</strong> (focused on the <strong>Fire and Police departments</strong>) contains 804,630 rows out of the 6,225,611 rows from the original dataset.</p>
+<p>To generate the final subset that will be used in the analysis, please run the code below:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `payroll_data` dataframe comes from the **Importing the data** section.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="ot">&lt;-</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  payroll_data <span class="sc">|&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># clean agency name:</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_name_clean =</span> <span class="fu">trimws</span>(<span class="fu">gsub</span>(<span class="st">"#</span><span class="sc">\\</span><span class="st">d+$"</span>, <span class="st">""</span>, agency_name))) <span class="sc">|&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># clean job titles:</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">title_description =</span> <span class="fu">toupper</span>(title_description)) <span class="sc">|&gt;</span> </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># clean location name:</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">work_location_borough_clean =</span> <span class="fu">toupper</span>(work_location_borough)) <span class="sc">|&gt;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filtering data:</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span>  <span class="fu">c</span>(<span class="st">"POLICE DEPARTMENT"</span>,<span class="st">"FIRE DEPARTMENT"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(work_location_borough_clean <span class="sc">%in%</span>   <span class="fu">c</span>(<span class="st">"BRONX"</span>, <span class="st">"BROOKLYN"</span>, <span class="st">"MANHATTAN"</span>, <span class="st">"QUEENS"</span>, <span class="st">"RICHMOND"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">&gt;=</span> <span class="st">"2015"</span> <span class="sc">&amp;</span> fiscal_year <span class="sc">&lt;=</span> <span class="st">"2024"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pay_basis <span class="sc">%in%</span>   <span class="fu">c</span>(<span class="st">"per Annum"</span>, <span class="st">"per Day"</span>, <span class="st">"per Hour"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># backfill payroll number after filtering</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">payroll_number_clean =</span> <span class="fu">case_when</span>(</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(payroll_number) <span class="sc">&amp;</span> agency_name_clean <span class="sc">==</span> <span class="st">"FIRE DEPARTMENT"</span> <span class="sc">~</span> <span class="dv">57</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(payroll_number) <span class="sc">&amp;</span> agency_name_clean <span class="sc">==</span> <span class="st">"POLICE DEPARTMENT"</span> <span class="sc">~</span> <span class="dv">56</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> payroll_number</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># converting dates:</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_start_date_clean =</span> <span class="fu">mdy</span>(agency_start_date)) <span class="sc">|&gt;</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># renaming clean columns to original names:</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">agency_name =</span> agency_name_clean,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">work_location_borough =</span> work_location_borough_clean,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">payroll_number =</span> payroll_number_clean,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">agency_start_date =</span> agency_start_date_clean</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="co"># dropping clean columns</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>agency_name_clean,</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>                <span class="sc">-</span>work_location_borough_clean,</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>                <span class="sc">-</span>payroll_number_clean,</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                <span class="sc">-</span>agency_start_date_clean)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Please uncomment the CSV or the RDS method to save the subset data:</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the data CSV</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="co"># write.csv(payroll_data_fire_police, "data_source/payroll_data_fire_police.csv", row.names = FALSE)</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the data RDS</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(payroll_data_fire_police, "data_source/payroll_data_fire_police.rds")</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the data RDS</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="co"># payroll_data_fire_police &lt;- readRDS("data_source/payroll_data_fire_police.rds")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+</div>
 </div>
 <p><br>
 <br>
@@ -484,25 +590,25 @@ Using a sample of 1 million records (from 6.22 million rows) we have close to <s
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>payroll_data_missing <span class="ot">&lt;-</span> </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  payroll_data <span class="sc">|&gt;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample_n</span>(<span class="dv">100000</span>) <span class="sc">|&gt;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">if_else</span>(. <span class="sc">==</span> <span class="st">""</span>, <span class="cn">NA</span>, .)))</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>payroll_data_missing <span class="sc">|&gt;</span> </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vis_miss</span>(</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">sort_miss =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># cluster = TRUE,</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_perc_col =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">warn_large_data =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span> </span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Missing Values (NA or Blank) - Original Data Sample"</span>)<span class="sc">+</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="at">r =</span> <span class="dv">50</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>payroll_data_missing <span class="ot">&lt;-</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  payroll_data <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample_n</span>(<span class="dv">100000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">if_else</span>(. <span class="sc">==</span> <span class="st">""</span>, <span class="cn">NA</span>, .)))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>payroll_data_missing <span class="sc">|&gt;</span> </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vis_miss</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">sort_miss =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># cluster = TRUE,</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_perc_col =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">warn_large_data =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span> </span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Missing Values (NA or Blank) - Original Data Sample"</span>)<span class="sc">+</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="at">r =</span> <span class="dv">50</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="data_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="864"></p>
+<p><img src="data_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="864"></p>
 </figure>
 </div>
 </div>
@@ -512,145 +618,145 @@ After transforming our original data to create our final subset data (Fire and P
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Data Transformation</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>payroll_data_total_summary <span class="ot">&lt;-</span> payroll_data <span class="sc">|&gt;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">n</span>())) <span class="sc">|&gt;</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Total Count"</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>payroll_data_na_summary <span class="ot">&lt;-</span> payroll_data <span class="sc">|&gt;</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(.)))) <span class="sc">|&gt;</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"NA"</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>payroll_data_blank_summary <span class="ot">&lt;-</span> payroll_data <span class="sc">|&gt;</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(. <span class="sc">==</span> <span class="st">""</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Blank"</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>payroll_data_zero_summary <span class="ot">&lt;-</span> payroll_data <span class="sc">|&gt;</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(. <span class="sc">==</span> <span class="dv">0</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Zero"</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>payroll_data_combined_summary <span class="ot">&lt;-</span> </span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  payroll_data_total_summary <span class="sc">|&gt;</span> </span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(payroll_data_na_summary, <span class="at">by =</span> <span class="st">"Column"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(payroll_data_blank_summary, <span class="at">by =</span> <span class="st">"Column"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(payroll_data_zero_summary, <span class="at">by =</span> <span class="st">"Column"</span>)</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="co"># payroll_data_combined_summary</span></span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>payroll_data_combined_summary_likert <span class="ot">&lt;-</span></span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>payroll_data_combined_summary <span class="sc">|&gt;</span> </span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Present</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">NA</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">Blank</span><span class="st">`</span> <span class="sc">-</span> Zero) <span class="sc">|&gt;</span> </span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Present</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Present</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">NA</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">NA</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Blank</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Blank</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Zero</span><span class="st">`</span> <span class="ot">=</span> Zero <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">`</span><span class="at">Column</span><span class="st">`</span>,<span class="st">`</span><span class="at">NA</span><span class="st">`</span>,<span class="st">`</span><span class="at">Blank</span><span class="st">`</span>,Zero,<span class="st">`</span><span class="at">Present</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>Column <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'agency_name_clean'</span>,<span class="st">'work_location_borough_clean'</span>))</span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>likert_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"NA"</span> <span class="ot">=</span> <span class="st">"#D7191C"</span>,</span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Blank"</span> <span class="ot">=</span> <span class="st">"#FDAE61"</span>,</span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Zero"</span> <span class="ot">=</span> <span class="st">"#ABD9E9"</span>,</span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Present"</span> <span class="ot">=</span> <span class="st">"#2C7BB6"</span>)</span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data_source/payroll_data_fire_police.rds"</span>)</span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police_total_summary <span class="ot">&lt;-</span> payroll_data_fire_police <span class="sc">|&gt;</span></span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">n</span>())) <span class="sc">|&gt;</span></span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Total Count"</span></span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police_na_summary <span class="ot">&lt;-</span> payroll_data_fire_police <span class="sc">|&gt;</span></span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(.)))) <span class="sc">|&gt;</span></span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"NA"</span></span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police_blank_summary <span class="ot">&lt;-</span> payroll_data_fire_police <span class="sc">|&gt;</span></span>
-<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(. <span class="sc">==</span> <span class="st">""</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
-<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Blank"</span></span>
-<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police_zero_summary <span class="ot">&lt;-</span> payroll_data_fire_police <span class="sc">|&gt;</span></span>
-<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(. <span class="sc">==</span> <span class="dv">0</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
-<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Zero"</span></span>
-<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police_combined_summary <span class="ot">&lt;-</span> </span>
-<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>  payroll_data_fire_police_total_summary <span class="sc">|&gt;</span> </span>
-<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(payroll_data_fire_police_na_summary, <span class="at">by =</span> <span class="st">"Column"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(payroll_data_fire_police_blank_summary, <span class="at">by =</span> <span class="st">"Column"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(payroll_data_fire_police_zero_summary, <span class="at">by =</span> <span class="st">"Column"</span>)</span>
-<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police_combined_summary_likert <span class="ot">&lt;-</span></span>
-<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>  payroll_data_fire_police_combined_summary <span class="sc">|&gt;</span> </span>
-<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Present</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">NA</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">Blank</span><span class="st">`</span> <span class="sc">-</span> Zero) <span class="sc">|&gt;</span> </span>
-<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Present</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Present</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">NA</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">NA</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Blank</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Blank</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Zero</span><span class="st">`</span> <span class="ot">=</span> Zero <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">`</span><span class="at">Column</span><span class="st">`</span>,<span class="st">`</span><span class="at">NA</span><span class="st">`</span>,<span class="st">`</span><span class="at">Blank</span><span class="st">`</span>,Zero,<span class="st">`</span><span class="at">Present</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>Column <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'agency_name_clean'</span>,<span class="st">'work_location_borough_clean'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Data Transformation</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>payroll_data_total_summary <span class="ot">&lt;-</span> payroll_data <span class="sc">|&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">n</span>())) <span class="sc">|&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Total Count"</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>payroll_data_na_summary <span class="ot">&lt;-</span> payroll_data <span class="sc">|&gt;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(.)))) <span class="sc">|&gt;</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"NA"</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>payroll_data_blank_summary <span class="ot">&lt;-</span> payroll_data <span class="sc">|&gt;</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(. <span class="sc">==</span> <span class="st">""</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Blank"</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>payroll_data_zero_summary <span class="ot">&lt;-</span> payroll_data <span class="sc">|&gt;</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(. <span class="sc">==</span> <span class="dv">0</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Zero"</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>payroll_data_combined_summary <span class="ot">&lt;-</span> </span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>  payroll_data_total_summary <span class="sc">|&gt;</span> </span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(payroll_data_na_summary, <span class="at">by =</span> <span class="st">"Column"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(payroll_data_blank_summary, <span class="at">by =</span> <span class="st">"Column"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(payroll_data_zero_summary, <span class="at">by =</span> <span class="st">"Column"</span>)</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="co"># payroll_data_combined_summary</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>payroll_data_combined_summary_likert <span class="ot">&lt;-</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>payroll_data_combined_summary <span class="sc">|&gt;</span> </span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Present</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">NA</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">Blank</span><span class="st">`</span> <span class="sc">-</span> Zero) <span class="sc">|&gt;</span> </span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Present</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Present</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">NA</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">NA</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Blank</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Blank</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Zero</span><span class="st">`</span> <span class="ot">=</span> Zero <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">`</span><span class="at">Column</span><span class="st">`</span>,<span class="st">`</span><span class="at">NA</span><span class="st">`</span>,<span class="st">`</span><span class="at">Blank</span><span class="st">`</span>,Zero,<span class="st">`</span><span class="at">Present</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>Column <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'agency_name_clean'</span>,<span class="st">'work_location_borough_clean'</span>))</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>likert_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"NA"</span> <span class="ot">=</span> <span class="st">"#D7191C"</span>,</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Blank"</span> <span class="ot">=</span> <span class="st">"#FDAE61"</span>,</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Zero"</span> <span class="ot">=</span> <span class="st">"#ABD9E9"</span>,</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Present"</span> <span class="ot">=</span> <span class="st">"#2C7BB6"</span>)</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data_source/payroll_data_fire_police.rds"</span>)</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police_total_summary <span class="ot">&lt;-</span> payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">n</span>())) <span class="sc">|&gt;</span></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Total Count"</span></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police_na_summary <span class="ot">&lt;-</span> payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(.)))) <span class="sc">|&gt;</span></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"NA"</span></span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police_blank_summary <span class="ot">&lt;-</span> payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(. <span class="sc">==</span> <span class="st">""</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Blank"</span></span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police_zero_summary <span class="ot">&lt;-</span> payroll_data_fire_police <span class="sc">|&gt;</span></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(. <span class="sc">==</span> <span class="dv">0</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Zero"</span></span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police_combined_summary <span class="ot">&lt;-</span> </span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>  payroll_data_fire_police_total_summary <span class="sc">|&gt;</span> </span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(payroll_data_fire_police_na_summary, <span class="at">by =</span> <span class="st">"Column"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(payroll_data_fire_police_blank_summary, <span class="at">by =</span> <span class="st">"Column"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(payroll_data_fire_police_zero_summary, <span class="at">by =</span> <span class="st">"Column"</span>)</span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police_combined_summary_likert <span class="ot">&lt;-</span></span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>  payroll_data_fire_police_combined_summary <span class="sc">|&gt;</span> </span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Present</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">NA</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">Blank</span><span class="st">`</span> <span class="sc">-</span> Zero) <span class="sc">|&gt;</span> </span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Present</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Present</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">NA</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">NA</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Blank</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Blank</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Zero</span><span class="st">`</span> <span class="ot">=</span> Zero <span class="sc">/</span> <span class="st">`</span><span class="at">Total Count</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">`</span><span class="at">Column</span><span class="st">`</span>,<span class="st">`</span><span class="at">NA</span><span class="st">`</span>,<span class="st">`</span><span class="at">Blank</span><span class="st">`</span>,Zero,<span class="st">`</span><span class="at">Present</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>Column <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'agency_name_clean'</span>,<span class="st">'work_location_borough_clean'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>payroll_data_missing_group_likert <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  payroll_data_combined_summary_likert <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">group=</span> <span class="st">'Original Data'</span>), </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  payroll_data_fire_police_combined_summary_likert <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">group=</span> <span class="st">'Final Subset Data'</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>HH<span class="sc">::</span><span class="fu">likert</span>(<span class="at">x=</span>Column<span class="sc">~</span>. <span class="sc">|</span> group,payroll_data_missing_group_likert, </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">positive.order=</span><span class="cn">TRUE</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">as.percent =</span> T,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="st">'Missing Value Analysis'</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlab=</span><span class="st">'Percentage'</span>,</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">ylab=</span><span class="st">'Columns'</span>,</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">col =</span> likert_colors,</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>           <span class="at">ReferenceZero=</span><span class="fl">2.5</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>           <span class="at">rightAxis=</span><span class="cn">FALSE</span>,</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>           <span class="co"># xlimEqualLeftRight=TRUE,</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">50</span>,<span class="dv">100</span>),</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>           )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>payroll_data_missing_group_likert <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  payroll_data_combined_summary_likert <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">group=</span> <span class="st">'Original Data'</span>), </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  payroll_data_fire_police_combined_summary_likert <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">group=</span> <span class="st">'Final Subset Data'</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>HH<span class="sc">::</span><span class="fu">likert</span>(<span class="at">x=</span>Column<span class="sc">~</span>. <span class="sc">|</span> group,payroll_data_missing_group_likert, </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">positive.order=</span><span class="cn">TRUE</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">as.percent =</span> T,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="st">'Missing Value Analysis'</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlab=</span><span class="st">'Percentage'</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">ylab=</span><span class="st">'Columns'</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">col =</span> likert_colors,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>           <span class="at">ReferenceZero=</span><span class="fl">2.5</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>           <span class="at">rightAxis=</span><span class="cn">FALSE</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>           <span class="co"># xlimEqualLeftRight=TRUE,</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">50</span>,<span class="dv">100</span>),</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>           )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="data_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="864"></p>
+<p><img src="data_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="864"></p>
 </figure>
 </div>
 </div>
@@ -664,11 +770,11 @@ After transforming our original data to create our final subset data (Fire and P
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(first_name <span class="sc">==</span> <span class="st">""</span> <span class="sc">|</span> last_name <span class="sc">==</span> <span class="st">""</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name) <span class="sc">|&gt;</span> </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">`</span><span class="at">Count of Blank Records</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Agency"</span>, <span class="st">"Count of Blank Records"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(first_name <span class="sc">==</span> <span class="st">""</span> <span class="sc">|</span> last_name <span class="sc">==</span> <span class="st">""</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name) <span class="sc">|&gt;</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">`</span><span class="at">Count of Blank Records</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Agency"</span>, <span class="st">"Count of Blank Records"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -690,1129 +796,461 @@ After transforming our original data to create our final subset data (Fire and P
 <p><br>
 <br>
 </p>
-</section>
-<section id="understanding-and-cleaning-the-raw-data" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="understanding-and-cleaning-the-raw-data"><span class="header-section-number">2.3</span> Understanding and cleaning the raw data</h2>
-<p>Starting with the original data (6.22 million rows). This is quick summary of how many categories we have in each column:</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number of Agencies"</span>     <span class="ot">=</span> <span class="fu">n_distinct</span>(agency_name),</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number of Titles"</span>       <span class="ot">=</span> <span class="fu">n_distinct</span>(title_description),</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number of Locations"</span>    <span class="ot">=</span> <span class="fu">n_distinct</span>(work_location_borough),</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number of Pay Basis"</span>    <span class="ot">=</span> <span class="fu">n_distinct</span>(pay_basis),</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number of Fiscal Years"</span> <span class="ot">=</span> <span class="fu">n_distinct</span>(fiscal_year)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 19%">
-<col style="width: 17%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 23%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">Number of Agencies</th>
-<th style="text-align: right;">Number of Titles</th>
-<th style="text-align: right;">Number of Locations</th>
-<th style="text-align: right;">Number of Pay Basis</th>
-<th style="text-align: right;">Number of Fiscal Years</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">170</td>
-<td style="text-align: right;">1991</td>
-<td style="text-align: right;">23</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">11</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><br>
-<br>
-</p>
-<section id="agencies" class="level3" data-number="2.3.1">
-<h3 data-number="2.3.1" class="anchored" data-anchor-id="agencies"><span class="header-section-number">2.3.1</span> Agencies</h3>
-Many of the agencies in the raw data have the following format: AGENCY_NAME #NUMBER.<br>
-Examples:<br>
-
-<p style="margin-top: -15px; font-size:85%;">
-</p><ul>
-<li>BROOKLYN COMMUNITY BOARD #1</li>
-<li>BROOKLYN COMMUNITY BOARD #2</li>
-<li>BROOKLYN COMMUNITY BOARD #3</li>
-</ul>
-<p></p>
-<p>We will group Agency names by aggregating all agencies that have the same name, but different numbers. This will reduce overall number os agencies.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="ot">&lt;-</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_name_clean =</span> <span class="fu">trimws</span>(<span class="fu">gsub</span>(<span class="st">"#</span><span class="sc">\\</span><span class="st">d+$"</span>, <span class="st">""</span>, agency_name)))</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number of Agencies Before"</span> <span class="ot">=</span> <span class="fu">n_distinct</span>(agency_name),</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number of Agencies After"</span>  <span class="ot">=</span> <span class="fu">n_distinct</span>(agency_name_clean),</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: right;">Number of Agencies Before</th>
-<th style="text-align: right;">Number of Agencies After</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">170</td>
-<td style="text-align: right;">116</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><br>
-Now, let’s take a look at the top 10 Agencies:</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>payroll_data_summary <span class="ot">&lt;-</span> payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean) <span class="sc">|&gt;</span> </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Total_records)) <span class="sc">|&gt;</span> </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>)  </span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>payroll_data_summary <span class="sc">|&gt;</span> </span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Agency"</span>, <span class="st">"Total Records"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="fu">which</span>(payroll_data_summary<span class="sc">$</span>agency_name_clean <span class="sc">==</span> <span class="st">"FIRE DEPARTMENT"</span>),   <span class="at">background =</span> <span class="st">"#f94144"</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="fu">which</span>(payroll_data_summary<span class="sc">$</span>agency_name_clean <span class="sc">==</span> <span class="st">"POLICE DEPARTMENT"</span>), <span class="at">background =</span> <span class="st">"deepskyblue3"</span>, <span class="at">color =</span> <span class="st">"white"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Agency</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Total Records</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">DEPT OF ED PEDAGOGICAL</td>
-<td style="text-align: right;">1207427</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">DEPT OF ED PER SESSION TEACHER</td>
-<td style="text-align: right;">997983</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: white !important; background-color: rgba(0, 154, 205, 255) !important;">POLICE DEPARTMENT</td>
-<td style="text-align: right; color: white !important; background-color: rgba(0, 154, 205, 255) !important;">612076</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">DEPT OF ED PARA PROFESSIONALS</td>
-<td style="text-align: right;">412698</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">BOARD OF ELECTION POLL WORKERS</td>
-<td style="text-align: right;">375001</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">DEPT OF ED HRLY SUPPORT STAFF</td>
-<td style="text-align: right;">255501</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: white !important; background-color: rgba(249, 65, 68, 255) !important;">FIRE DEPARTMENT</td>
-<td style="text-align: right; color: white !important; background-color: rgba(249, 65, 68, 255) !important;">209272</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">DEPARTMENT OF EDUCATION ADMIN</td>
-<td style="text-align: right;">181282</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">DEPT OF PARKS &amp; RECREATION</td>
-<td style="text-align: right;">170200</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">HRA/DEPT OF SOCIAL SERVICES</td>
-<td style="text-align: right;">157963</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-<p><br>
-<br>
-</p>
-</section>
-<section id="work-location-borough" class="level3" data-number="2.3.2">
-<h3 data-number="2.3.2" class="anchored" data-anchor-id="work-location-borough"><span class="header-section-number">2.3.2</span> Work Location Borough</h3>
-<p>When looking at the Work Location Borough, we see many recording with missing data (506,234 rows). We can also observe that the names of the locations are not standardized, some names are Uppercase and some are not (MANHATTAN vs Manhattan).</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(work_location_borough) <span class="sc">|&gt;</span> </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Total_records)) <span class="sc">|&gt;</span> </span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Locations"</span>, <span class="st">"Total Records"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="fu">which</span>(payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">group_by</span>(work_location_borough) <span class="sc">|&gt;</span> </span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">summarise</span>(<span class="at">Total_records =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">arrange</span>(<span class="fu">desc</span>(Total_records)) <span class="sc">|&gt;</span> </span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">pull</span>(work_location_borough) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">""</span>,<span class="st">"Bronx"</span>, <span class="st">"MANHATTAN"</span>, <span class="st">"Manhattan"</span>)),   <span class="at">background =</span> <span class="st">"#fcefb4"</span>, <span class="at">color =</span> <span class="st">"black"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Locations</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Total Records</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(252, 239, 180, 255) !important;">MANHATTAN</td>
-<td style="text-align: right; color: black !important; background-color: rgba(252, 239, 180, 255) !important;">4077947</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">QUEENS</td>
-<td style="text-align: right;">621225</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">BROOKLYN</td>
-<td style="text-align: right;">523572</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(252, 239, 180, 255) !important;"></td>
-<td style="text-align: right; color: black !important; background-color: rgba(252, 239, 180, 255) !important;">506234</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">BRONX</td>
-<td style="text-align: right;">286551</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">OTHER</td>
-<td style="text-align: right;">116918</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RICHMOND</td>
-<td style="text-align: right;">77020</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">WESTCHESTER</td>
-<td style="text-align: right;">5653</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ULSTER</td>
-<td style="text-align: right;">3245</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(252, 239, 180, 255) !important;">Manhattan</td>
-<td style="text-align: right; color: black !important; background-color: rgba(252, 239, 180, 255) !important;">1622</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-<p><br>
-Our first step here is to capitalize all the location names.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="ot">&lt;-</span> payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">work_location_borough_clean =</span> <span class="fu">toupper</span>(work_location_borough))</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number of Locations Before"</span> <span class="ot">=</span> <span class="fu">n_distinct</span>(work_location_borough),</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number of Locations After"</span>  <span class="ot">=</span> <span class="fu">n_distinct</span>(work_location_borough_clean),</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: right;">Number of Locations Before</th>
-<th style="text-align: right;">Number of Locations After</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">23</td>
-<td style="text-align: right;">19</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><br>
-The main 5 locations of this dataset are: BRONX, BROOKLYN, MANHATTAN, QUEENS, RICHMOND<br>
-Using the top 10 agencies that we found previously, we will keep all the agencies that have at least data for all 5 locations:</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>required_boroughs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"BRONX"</span>, <span class="st">"BROOKLYN"</span>, <span class="st">"MANHATTAN"</span>, <span class="st">"QUEENS"</span>, <span class="st">"RICHMOND"</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>agencies_present_in_required_boroughs <span class="ot">&lt;-</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  payroll_data <span class="sc">|&gt;</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(work_location_borough_clean <span class="sc">%in%</span> required_boroughs) <span class="sc">|&gt;</span> </span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean) <span class="sc">|&gt;</span>  </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">borough_count =</span> <span class="fu">n_distinct</span>(work_location_borough_clean)  </span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(borough_count <span class="sc">==</span> <span class="fu">length</span>(required_boroughs)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span> payroll_data_summary<span class="sc">$</span>agency_name_clean) <span class="sc">|&gt;</span> </span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(agency_name_clean)</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>payroll_data_agencies_present_in_required_boroughs <span class="ot">&lt;-</span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span> payroll_data_summary<span class="sc">$</span>agency_name_clean) <span class="sc">|&gt;</span> </span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span> agencies_present_in_required_boroughs) <span class="sc">|&gt;</span> </span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean) <span class="sc">|&gt;</span> </span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number of Locations"</span> <span class="ot">=</span> <span class="fu">n_distinct</span>(work_location_borough_clean)</span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Total_records)) </span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>payroll_data_agencies_present_in_required_boroughs <span class="sc">|&gt;</span> </span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Agency"</span>, <span class="st">"Total Records"</span>, <span class="st">"Number of Locations"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="fu">which</span>(payroll_data_agencies_present_in_required_boroughs<span class="sc">$</span>agency_name_clean <span class="sc">==</span> <span class="st">"FIRE DEPARTMENT"</span>),   <span class="at">background =</span> <span class="st">"#f94144"</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="fu">which</span>(payroll_data_agencies_present_in_required_boroughs<span class="sc">$</span>agency_name_clean <span class="sc">==</span> <span class="st">"POLICE DEPARTMENT"</span>), <span class="at">background =</span> <span class="st">"deepskyblue3"</span>, <span class="at">color =</span> <span class="st">"white"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Agency</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Total Records</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Number of Locations</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; color: white !important; background-color: rgba(0, 154, 205, 255) !important;">POLICE DEPARTMENT</td>
-<td style="text-align: right; color: white !important; background-color: rgba(0, 154, 205, 255) !important;">612076</td>
-<td style="text-align: right; color: white !important; background-color: rgba(0, 154, 205, 255) !important;">5</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: white !important; background-color: rgba(249, 65, 68, 255) !important;">FIRE DEPARTMENT</td>
-<td style="text-align: right; color: white !important; background-color: rgba(249, 65, 68, 255) !important;">209272</td>
-<td style="text-align: right; color: white !important; background-color: rgba(249, 65, 68, 255) !important;">7</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">DEPARTMENT OF EDUCATION ADMIN</td>
-<td style="text-align: right;">181282</td>
-<td style="text-align: right;">12</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">DEPT OF PARKS &amp; RECREATION</td>
-<td style="text-align: right;">170200</td>
-<td style="text-align: right;">7</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">HRA/DEPT OF SOCIAL SERVICES</td>
-<td style="text-align: right;">157963</td>
-<td style="text-align: right;">8</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-<p><br>
-Since we are interested in the POLICE and FIRE departments, let’s take a closer look at the FIRE DEPARTMENT since it contains 7 locations. Based on these results, we have 1 record with location OTHER and 16555 with Blank location.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span>  <span class="fu">c</span>(<span class="st">"POLICE DEPARTMENT"</span>,<span class="st">"FIRE DEPARTMENT"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span> agencies_present_in_required_boroughs) <span class="sc">|&gt;</span> </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean,work_location_borough_clean,fiscal_year) <span class="sc">|&gt;</span> </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">'drop'</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name_clean,work_location_borough_clean,fiscal_year) <span class="sc">|&gt;</span> </span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span> (<span class="sc">!</span>work_location_borough_clean <span class="sc">%in%</span> required_boroughs) <span class="sc">|&gt;</span> </span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Agency"</span>, <span class="st">"Location"</span>, <span class="st">"Fiscal Year"</span>, <span class="st">"Total Records"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Agency</th>
-<th style="text-align: left;">Location</th>
-<th style="text-align: right;">Fiscal Year</th>
-<th style="text-align: right;">Total Records</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: left;"></td>
-<td style="text-align: right;">2014</td>
-<td style="text-align: right;">16555</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: left;">OTHER</td>
-<td style="text-align: right;">2022</td>
-<td style="text-align: right;">1</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><br>
-The final decision for location is to keep only data for the major 5 locations:<br>
-BRONX, BROOKLYN, MANHATTAN, QUEENS, RICHMOND.</p>
-<p><br>
-<br>
-</p>
-</section>
-<section id="fiscal-year" class="level3" data-number="2.3.3">
-<h3 data-number="2.3.3" class="anchored" data-anchor-id="fiscal-year"><span class="header-section-number">2.3.3</span> Fiscal Year</h3>
-<p>Using only the FIRE and POLICE department, we can observe that we have no records for 2014 for the Police department. Please note that the 16555 in the FIRE department for 2014 are the same records with blank location we found before.</p>
-<p>The final decision for Fiscal Year is to drop 2014 and keep only data from 2015 to 2024.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the pivot table</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>pivot_table_fiscal_year <span class="ot">&lt;-</span> payroll_data <span class="sc">|&gt;</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span>  <span class="fu">c</span>(</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"POLICE DEPARTMENT"</span>,</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FIRE DEPARTMENT"</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span> </span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(fiscal_year, agency_name_clean) <span class="sc">|&gt;</span> </span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> agency_name_clean,  </span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> count,  </span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_fill =</span> <span class="fu">list</span>(<span class="at">count =</span> <span class="dv">0</span>) </span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>pivot_table_fiscal_year <span class="sc">|&gt;</span></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Fiscal Year"</span>, <span class="st">"FIRE DEPARTMENT"</span>, <span class="st">"POLICE DEPARTMENT"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>() <span class="sc">|&gt;</span></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">3</span>, <span class="at">background =</span> <span class="fu">ifelse</span>(<span class="fu">as.matrix</span>(pivot_table_fiscal_year[, <span class="dv">3</span>]) <span class="sc">==</span> <span class="dv">0</span>, <span class="st">"#fcefb4"</span>, <span class="st">""</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: right;" data-quarto-table-cell-role="th">Fiscal Year</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">FIRE DEPARTMENT</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">POLICE DEPARTMENT</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">2014</td>
-<td style="text-align: right;">16555</td>
-<td style="text-align: right; background-color: rgba(252, 239, 180, 255) !important;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2015</td>
-<td style="text-align: right;">17380</td>
-<td style="text-align: right; background-color: !important;">59264</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2016</td>
-<td style="text-align: right;">19934</td>
-<td style="text-align: right; background-color: !important;">65868</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2017</td>
-<td style="text-align: right;">18687</td>
-<td style="text-align: right; background-color: !important;">62516</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2018</td>
-<td style="text-align: right;">18391</td>
-<td style="text-align: right; background-color: !important;">59811</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2019</td>
-<td style="text-align: right;">18679</td>
-<td style="text-align: right; background-color: !important;">59970</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2020</td>
-<td style="text-align: right;">19193</td>
-<td style="text-align: right; background-color: !important;">60316</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2021</td>
-<td style="text-align: right;">19049</td>
-<td style="text-align: right; background-color: !important;">59009</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2022</td>
-<td style="text-align: right;">20920</td>
-<td style="text-align: right; background-color: !important;">60804</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2023</td>
-<td style="text-align: right;">19072</td>
-<td style="text-align: right; background-color: !important;">58617</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">21412</td>
-<td style="text-align: right; background-color: !important;">65901</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-<p><br>
-<br>
-</p>
-</section>
-<section id="pay-basis" class="level3" data-number="2.3.4">
-<h3 data-number="2.3.4" class="anchored" data-anchor-id="pay-basis"><span class="header-section-number">2.3.4</span> Pay Basis</h3>
-<p>Based on the different types of pay basis, we will drop the <code>Prorated Annual</code> as it is the category with the lowest amount of records and it only affects 1 job title (Chaplain).</p>
-<p>The final decision for Pay Basis is to keep only data for the categories:<br>
-per Annum, per Day, per Hour.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2024") |&gt;</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span>  <span class="fu">c</span>(</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"POLICE DEPARTMENT"</span>,</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FIRE DEPARTMENT"</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span> </span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean,pay_basis) <span class="sc">|&gt;</span> </span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>(),</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">Count_of_titles =</span> <span class="fu">n_distinct</span>(title_description)</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    , <span class="at">.groups =</span> <span class="st">'drop'</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Total_records)) <span class="sc">|&gt;</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Agency"</span>, <span class="st">"Pay Basis"</span>, <span class="st">"Total Records"</span>, <span class="st">"Count of Titles"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Agency</th>
-<th style="text-align: left;">Pay Basis</th>
-<th style="text-align: right;">Total Records</th>
-<th style="text-align: right;">Count of Titles</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: left;">per Annum</td>
-<td style="text-align: right;">573429</td>
-<td style="text-align: right;">286</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: left;">per Annum</td>
-<td style="text-align: right;">203929</td>
-<td style="text-align: right;">199</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: left;">per Hour</td>
-<td style="text-align: right;">32769</td>
-<td style="text-align: right;">29</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: left;">per Day</td>
-<td style="text-align: right;">5794</td>
-<td style="text-align: right;">39</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: left;">per Day</td>
-<td style="text-align: right;">3934</td>
-<td style="text-align: right;">35</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: left;">per Hour</td>
-<td style="text-align: right;">1324</td>
-<td style="text-align: right;">47</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: left;">Prorated Annual</td>
-<td style="text-align: right;">85</td>
-<td style="text-align: right;">1</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: left;">Prorated Annual</td>
-<td style="text-align: right;">84</td>
-<td style="text-align: right;">1</td>
-</tr>
-</tbody>
-</table>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(fiscal_year == "2024") |&gt;</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span>  <span class="fu">c</span>(</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"POLICE DEPARTMENT"</span>,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FIRE DEPARTMENT"</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span> </span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pay_basis <span class="sc">==</span> <span class="st">"Prorated Annual"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(title_description <span class="sc">==</span> <span class="st">"CHAPLAIN"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean,pay_basis,title_description) <span class="sc">|&gt;</span> </span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    , <span class="at">.groups =</span> <span class="st">'drop'</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name_clean) <span class="sc">|&gt;</span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Agency"</span>, <span class="st">"Pay Basis"</span>, <span class="st">"Title"</span>, <span class="st">"Total Records"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Agency</th>
-<th style="text-align: left;">Pay Basis</th>
-<th style="text-align: left;">Title</th>
-<th style="text-align: right;">Total Records</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: left;">Prorated Annual</td>
-<td style="text-align: left;">CHAPLAIN</td>
-<td style="text-align: right;">85</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: left;">Prorated Annual</td>
-<td style="text-align: left;">CHAPLAIN</td>
-<td style="text-align: right;">84</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><br>
-<br>
-</p>
-</section>
-<section id="payroll-number" class="level3" data-number="2.3.5">
-<h3 data-number="2.3.5" class="anchored" data-anchor-id="payroll-number"><span class="header-section-number">2.3.5</span> Payroll Number</h3>
-First let’s start create a dataset filtered based on the criteria we discussed above:<br>
-
-<p style="margin-top: -15px">
-</p><ul>
-<li>Agency (“POLICE DEPARTMENT”,“FIRE DEPARTMENT”)</li>
-<li>Location (“BRONX”, “BROOKLYN”, “MANHATTAN”, “QUEENS”, “RICHMOND”),</li>
-<li>Fiscal Year (2015-2024)</li>
-<li>Pay Basis (“per Annum”, “per Day”, “per Hour”)</li>
-</ul>
-<p></p>
-<p>From this dataset, we still have 243,601 NA records for the column `Payroll Number’. By doing a group by analysis per fiscal year, we can observe the NA are related to the years 2015, 2016, and 2017. So we will backfill those years with the proper payroll number code based on each agency. This way we will no longer have NA values in the new dataset.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>payroll_data_filtered <span class="ot">&lt;-</span> </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  payroll_data <span class="sc">|&gt;</span> </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agency_name_clean <span class="sc">%in%</span>  <span class="fu">c</span>(<span class="st">"POLICE DEPARTMENT"</span>,<span class="st">"FIRE DEPARTMENT"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(work_location_borough_clean <span class="sc">%in%</span>   <span class="fu">c</span>(<span class="st">"BRONX"</span>, <span class="st">"BROOKLYN"</span>, <span class="st">"MANHATTAN"</span>, <span class="st">"QUEENS"</span>, <span class="st">"RICHMOND"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fiscal_year <span class="sc">&gt;</span> <span class="st">"2014"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pay_basis <span class="sc">%in%</span>   <span class="fu">c</span>(<span class="st">"per Annum"</span>, <span class="st">"per Day"</span>, <span class="st">"per Hour"</span>))</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Count NA values</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>na_summary <span class="ot">&lt;-</span> payroll_data_filtered <span class="sc">|&gt;</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(.)))) <span class="sc">|&gt;</span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"NA Count"</span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Count blank values</span></span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>blank_summary <span class="ot">&lt;-</span> payroll_data_filtered <span class="sc">|&gt;</span></span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(. <span class="sc">==</span> <span class="st">""</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Blank Count"</span></span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Count zero values</span></span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>zero_summary <span class="ot">&lt;-</span> payroll_data_filtered <span class="sc">|&gt;</span></span>
-<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(. <span class="sc">==</span> <span class="dv">0</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Column"</span>,</span>
-<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Zero Count"</span></span>
-<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>combined_summary <span class="ot">&lt;-</span> na_summary <span class="sc">|&gt;</span></span>
-<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(blank_summary, <span class="at">by =</span> <span class="st">"Column"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(zero_summary, <span class="at">by =</span> <span class="st">"Column"</span>)</span>
-<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a><span class="co"># combined_summary |&gt;</span></span>
-<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(`NA Count` &gt; 0 | `Blank Count` &gt; 0 | `Zero Count` &gt; 0) |&gt; </span></span>
-<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a><span class="co">#   kable(col.names = c("Column", "NA Count", "Blank Count", "Zero Count"))</span></span>
-<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>na_summary <span class="sc">|&gt;</span> </span>
-<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">NA Count</span><span class="st">`</span> <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Column"</span>, <span class="st">"NA Count"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Column</th>
-<th style="text-align: right;">NA Count</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">payroll_number</td>
-<td style="text-align: right;">243601</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>payroll_data_filtered_payroll <span class="ot">&lt;-</span> payroll_data_filtered <span class="sc">|&gt;</span> </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name_clean,payroll_number,fiscal_year) <span class="sc">|&gt;</span> </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_records =</span> <span class="fu">n</span>()</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    ,<span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(agency_name_clean,fiscal_year,<span class="fu">desc</span>(Total_records))</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>payroll_data_filtered_payroll <span class="sc">|&gt;</span> </span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Agency"</span>, <span class="st">"Payroll Number"</span>, <span class="st">"Fiscal Year"</span>, <span class="st">"Total Records"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">2</span>, <span class="at">background =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(<span class="fu">as.matrix</span>(payroll_data_filtered_payroll[, <span class="dv">2</span>])), <span class="st">"#fcefb4"</span>, <span class="st">""</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Agency</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Payroll Number</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Fiscal Year</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Total Records</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: right; background-color: rgba(252, 239, 180, 255) !important;">NA</td>
-<td style="text-align: right;">2015</td>
-<td style="text-align: right;">17372</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: right; background-color: rgba(252, 239, 180, 255) !important;">NA</td>
-<td style="text-align: right;">2016</td>
-<td style="text-align: right;">19926</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: right; background-color: rgba(252, 239, 180, 255) !important;">NA</td>
-<td style="text-align: right;">2017</td>
-<td style="text-align: right;">18679</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">57</td>
-<td style="text-align: right;">2018</td>
-<td style="text-align: right;">18383</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">57</td>
-<td style="text-align: right;">2019</td>
-<td style="text-align: right;">18671</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">57</td>
-<td style="text-align: right;">2020</td>
-<td style="text-align: right;">19186</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">57</td>
-<td style="text-align: right;">2021</td>
-<td style="text-align: right;">19042</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">57</td>
-<td style="text-align: right;">2022</td>
-<td style="text-align: right;">20911</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">57</td>
-<td style="text-align: right;">2023</td>
-<td style="text-align: right;">19063</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">FIRE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">57</td>
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">21405</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: right; background-color: rgba(252, 239, 180, 255) !important;">NA</td>
-<td style="text-align: right;">2015</td>
-<td style="text-align: right;">59257</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: right; background-color: rgba(252, 239, 180, 255) !important;">NA</td>
-<td style="text-align: right;">2016</td>
-<td style="text-align: right;">65860</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: right; background-color: rgba(252, 239, 180, 255) !important;">NA</td>
-<td style="text-align: right;">2017</td>
-<td style="text-align: right;">62507</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">56</td>
-<td style="text-align: right;">2018</td>
-<td style="text-align: right;">59802</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">56</td>
-<td style="text-align: right;">2019</td>
-<td style="text-align: right;">59961</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">56</td>
-<td style="text-align: right;">2020</td>
-<td style="text-align: right;">60308</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">56</td>
-<td style="text-align: right;">2021</td>
-<td style="text-align: right;">59001</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">56</td>
-<td style="text-align: right;">2022</td>
-<td style="text-align: right;">60795</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">56</td>
-<td style="text-align: right;">2023</td>
-<td style="text-align: right;">58608</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">POLICE DEPARTMENT</td>
-<td style="text-align: right; background-color: !important;">56</td>
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">65893</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Backfill NA values with the proper payroll number based on each agency</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="ot">&lt;-</span> </span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  payroll_data_filtered <span class="sc">|&gt;</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">payroll_number =</span> <span class="fu">case_when</span>(</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(payroll_number) <span class="sc">&amp;</span> agency_name_clean <span class="sc">==</span> <span class="st">"FIRE DEPARTMENT"</span> <span class="sc">~</span> <span class="dv">57</span>,</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(payroll_number) <span class="sc">&amp;</span> agency_name_clean <span class="sc">==</span> <span class="st">"POLICE DEPARTMENT"</span> <span class="sc">~</span> <span class="dv">56</span>,</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> payroll_number</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">agency_name =</span> agency_name_clean,</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">work_location_borough =</span> work_location_borough_clean</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>agency_name_clean, <span class="sc">-</span>work_location_borough_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<p><br>
-<br>
-</p>
-</section>
-<section id="agency-start-date" class="level3" data-number="2.3.6">
-<h3 data-number="2.3.6" class="anchored" data-anchor-id="agency-start-date"><span class="header-section-number">2.3.6</span> Agency Start Date</h3>
-<p>The column agency_start_date is loaded as a character when we read the data for the first time. We will change the type to date using <code>lubridate</code>.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="ot">&lt;-</span> </span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agency_start_date =</span> <span class="fu">mdy</span>(agency_start_date))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<p><br>
-<br>
-</p>
-</section>
-<section id="saving-subset-data" class="level3" data-number="2.3.7">
-<h3 data-number="2.3.7" class="anchored" data-anchor-id="saving-subset-data"><span class="header-section-number">2.3.7</span> Saving Subset Data</h3>
-<p>We will save the Final Subset Data into a folder, so we can load later inside <code>results.qmd</code>.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CSV</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># write.csv(payroll_data_fire_police, "data_source/payroll_data_fire_police.csv", row.names = FALSE)</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># RDS</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(payroll_data_fire_police, "data_source/payroll_data_fire_police.rds")</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co"># payroll_data_fire_police &lt;- readRDS("data_source/payroll_data_fire_police.rds")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<p><br>
-<br>
-<br>
-</p>
-</section>
-</section>
-<section id="deciding-on-final-data-subset" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="deciding-on-final-data-subset"><span class="header-section-number">2.4</span> Deciding on final data subset</h2>
-<p>Based on the analysis above, we will add a few filters to produce and clean our final dataset.</p>
-<p><strong>Filters applied to the dataset:</strong><br>
-</p>
-<div class="cell">
-<div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Column Name</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Filter</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; width: 200px;">Agency Name</td>
-<td style="text-align: left;">FIRE DEPARTMENT, POLICE DEPARTMENT</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 200px;">Work Location Borough</td>
-<td style="text-align: left;">BRONX, BROOKLYN, MANHATTAN, QUEENS, RICHMOND</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 200px;">Fiscal Year</td>
-<td style="text-align: left;">From 2015 to 2024</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 200px;">Pay Basis</td>
-<td style="text-align: left;">per Annum, per Day, per Hour</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-<p><br>
-<br>
-</p>
-<p><strong>Cleaning data and Handling NAs:</strong><br>
-</p>
-<div class="cell">
-<div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Column Name</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Note</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; width: 200px;">Agency Name</td>
-<td style="text-align: left;">Group agencies with similar names. Keep only FIRE and POLICE.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 200px;">Work Location Borough</td>
-<td style="text-align: left;">Uppercase all names. Filtering data only for top 5 Boroughs.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 200px;">Fiscal Year</td>
-<td style="text-align: left;">2014 had missing data for Police Department. 2014 will be removed.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 200px;">Pay Basis</td>
-<td style="text-align: left;">Keeping only the top 3 Pay Basis.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 200px;">Payroll Number</td>
-<td style="text-align: left;">Missing NA values have been backfilled based on Agency Name.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 200px;">Agency Start Date</td>
-<td style="text-align: left;">Convert strings to date using lubridate.</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-<p><br>
-<br>
-</p>
-<p><strong>Size of Final subset Data</strong><br>
-</p>
-<div class="cell">
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Dimensions</td>
-<td style="text-align: left;">804,630 rows and 17 columns</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Each row represents</td>
-<td style="text-align: left;">City Employee Salary per Fiscal Year</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><br>
-</p>
-<p><strong>Record count by Agency:</strong><br>
-</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>payroll_data_fire_police <span class="sc">|&gt;</span> </span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agency_name) <span class="sc">|&gt;</span> </span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Count =</span> <span class="fu">n</span>()</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    , <span class="at">.groups =</span> <span class="st">'drop'</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Count)) <span class="sc">|&gt;</span></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Percentage =</span> Count <span class="sc">/</span> <span class="fu">sum</span>(Count) <span class="sc">*</span> <span class="dv">100</span>,</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">Label =</span> <span class="fu">paste</span>(</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">format</span>(Count, <span class="at">big.mark =</span> <span class="st">","</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="st">" ("</span>, <span class="fu">sprintf</span>(<span class="st">"%.0f"</span>, Percentage), <span class="st">"%)"</span>, <span class="at">sep =</span> <span class="st">""</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> Count, <span class="at">fill =</span> agency_name)) <span class="sc">+</span></span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">width =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_polar</span>(<span class="at">theta =</span> <span class="st">"y"</span>) <span class="sc">+</span></span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">name=</span> <span class="st">'Agency'</span>, <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#f94144"</span>, <span class="st">"deepskyblue3"</span>)) <span class="sc">+</span></span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># labs(title = "Record Count by Department") +</span></span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> Label), <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>), <span class="at">color =</span> <span class="st">"white"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="data_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p><strong>Overall dataset Information:</strong><br>
-</p>
-<div class="cell">
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 32%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Metrics</th>
-<th style="text-align: left;">Fire Deparmtnet</th>
-<th style="text-align: left;">Police Department</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Count of Records</td>
-<td style="text-align: left;">192,638</td>
-<td style="text-align: left;">611,992</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Fiscal Years</td>
-<td style="text-align: left;">10 years (2015-2024)</td>
-<td style="text-align: left;">10 years (2015-2024)</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Agency Start Date Range</td>
-<td style="text-align: left;">1968-04-22 to 2024-07-29</td>
-<td style="text-align: left;">1960-11-14 to 2049-10-16</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Work Location Borough</td>
-<td style="text-align: left;">5</td>
-<td style="text-align: left;">5</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Title Description</td>
-<td style="text-align: left;">238</td>
-<td style="text-align: left;">335</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<!-- ## Understanding and cleaning the raw data -->
+<!-- Starting with the original data (6.22 million rows). This is quick summary of how many categories we have in each column: -->
+<!-- ```{r} -->
+<!-- payroll_data |>  -->
+<!--   summarise( -->
+<!--     "Number of Agencies"     = n_distinct(agency_name), -->
+<!--     "Number of Titles"       = n_distinct(title_description), -->
+<!--     "Number of Locations"    = n_distinct(work_location_borough), -->
+<!--     "Number of Pay Basis"    = n_distinct(pay_basis), -->
+<!--     "Number of Fiscal Years" = n_distinct(fiscal_year) -->
+<!--   ) |>  -->
+<!--   kable() -->
+<!-- ``` -->
+<!-- \ -->
+<!-- \ -->
+<!-- ### Agencies -->
+<!-- Many of the agencies in the raw data have the following format: AGENCY_NAME #NUMBER.\ -->
+<!-- Examples:\ -->
+<!-- <p style="margin-top: -15px; font-size:85%;"> -->
+<!-- -   BROOKLYN COMMUNITY BOARD #1 -->
+<!-- -   BROOKLYN COMMUNITY BOARD #2 -->
+<!-- -   BROOKLYN COMMUNITY BOARD #3 -->
+<!-- </p> -->
+<!-- We will group Agency names by aggregating all agencies that have the same name, but different numbers. This will reduce overall number os agencies. -->
+<!-- ```{r} -->
+<!-- payroll_data <-  -->
+<!--   payroll_data |>  -->
+<!--   mutate(agency_name_clean = trimws(gsub("#\\d+$", "", agency_name))) -->
+<!-- payroll_data |>  -->
+<!--   summarise( -->
+<!--     "Number of Agencies Before" = n_distinct(agency_name), -->
+<!--     "Number of Agencies After"  = n_distinct(agency_name_clean), -->
+<!--   ) |>  -->
+<!--   kable() -->
+<!-- ``` -->
+<!-- \ -->
+<!-- Now, let's take a look at the top 10 Agencies: -->
+<!-- ```{r} -->
+<!-- payroll_data_summary <- payroll_data |>  -->
+<!--   group_by(agency_name_clean) |>  -->
+<!--   summarise( -->
+<!--     Total_records = n() -->
+<!--   ) |>  -->
+<!--   arrange(desc(Total_records)) |>  -->
+<!--   slice_head(n = 10)   -->
+<!-- payroll_data_summary |>  -->
+<!--   kable(col.names = c("Agency", "Total Records")) |>  -->
+<!--   row_spec(which(payroll_data_summary$agency_name_clean == "FIRE DEPARTMENT"),   background = "#f94144", color = "white") |>  -->
+<!--   row_spec(which(payroll_data_summary$agency_name_clean == "POLICE DEPARTMENT"), background = "deepskyblue3", color = "white") -->
+<!-- ``` -->
+<!-- \ -->
+<!-- \ -->
+<!-- ### Work Location Borough -->
+<!-- When looking at the Work Location Borough, we see many recording with missing data (506,234 rows). We can also observe that the names of the locations are not standardized, some names are Uppercase and some are not (MANHATTAN vs Manhattan). -->
+<!-- ```{r} -->
+<!-- payroll_data |>  -->
+<!--   group_by(work_location_borough) |>  -->
+<!--   summarise( -->
+<!--     Total_records = n() -->
+<!--   ) |>  -->
+<!--   arrange(desc(Total_records)) |>  -->
+<!--   slice_head(n = 10) |>  -->
+<!--   kable(col.names = c("Locations", "Total Records")) |>  -->
+<!--   row_spec(which(payroll_data |>  -->
+<!--                  group_by(work_location_borough) |>  -->
+<!--                  summarise(Total_records = n()) |>  -->
+<!--                  arrange(desc(Total_records)) |>  -->
+<!--                  slice_head(n = 10) |>  -->
+<!--                  pull(work_location_borough) %in% c("","Bronx", "MANHATTAN", "Manhattan")),   background = "#fcefb4", color = "black") -->
+<!-- ``` -->
+<!-- \ -->
+<!-- Our first step here is to capitalize all the location names. -->
+<!-- ```{r} -->
+<!-- payroll_data <- payroll_data |>  -->
+<!--   mutate(work_location_borough_clean = toupper(work_location_borough)) -->
+<!-- payroll_data |>  -->
+<!--   summarise( -->
+<!--     "Number of Locations Before" = n_distinct(work_location_borough), -->
+<!--     "Number of Locations After"  = n_distinct(work_location_borough_clean), -->
+<!--   ) |>  -->
+<!--   kable() -->
+<!-- ``` -->
+<!-- \ -->
+<!-- The main 5 locations of this dataset are: BRONX, BROOKLYN, MANHATTAN, QUEENS, RICHMOND\ -->
+<!-- Using the top 10 agencies that we found previously, we will keep all the agencies that have at least data for all 5 locations: -->
+<!-- ```{r} -->
+<!-- required_boroughs <- c("BRONX", "BROOKLYN", "MANHATTAN", "QUEENS", "RICHMOND") -->
+<!-- agencies_present_in_required_boroughs <- -->
+<!--   payroll_data |> -->
+<!--   filter(work_location_borough_clean %in% required_boroughs) |>  -->
+<!--   group_by(agency_name_clean) |>   -->
+<!--   summarise( -->
+<!--     borough_count = n_distinct(work_location_borough_clean)   -->
+<!--   ) |> -->
+<!--   filter(borough_count == length(required_boroughs)) |>  -->
+<!--   filter(agency_name_clean %in% payroll_data_summary$agency_name_clean) |>  -->
+<!--   pull(agency_name_clean) -->
+<!-- payroll_data_agencies_present_in_required_boroughs <- -->
+<!--   payroll_data |>  -->
+<!--   filter(agency_name_clean %in% payroll_data_summary$agency_name_clean) |>  -->
+<!--   filter(agency_name_clean %in% agencies_present_in_required_boroughs) |>  -->
+<!--   group_by(agency_name_clean) |>  -->
+<!--   summarise( -->
+<!--     Total_records = n(), -->
+<!--     "Number of Locations" = n_distinct(work_location_borough_clean) -->
+<!--   ) |>  -->
+<!--   arrange(desc(Total_records))  -->
+<!-- payroll_data_agencies_present_in_required_boroughs |>  -->
+<!--   kable(col.names = c("Agency", "Total Records", "Number of Locations")) |>  -->
+<!--   row_spec(which(payroll_data_agencies_present_in_required_boroughs$agency_name_clean == "FIRE DEPARTMENT"),   background = "#f94144", color = "white") |>  -->
+<!--   row_spec(which(payroll_data_agencies_present_in_required_boroughs$agency_name_clean == "POLICE DEPARTMENT"), background = "deepskyblue3", color = "white") -->
+<!-- ``` -->
+<!-- \ -->
+<!-- Since we are interested in the POLICE and FIRE departments, let's take a closer look at the FIRE DEPARTMENT since it contains 7 locations. Based on these results, we have 1 record with location OTHER and 16555 with Blank location. -->
+<!-- ```{r} -->
+<!-- payroll_data |>  -->
+<!--   filter(agency_name_clean %in%  c("POLICE DEPARTMENT","FIRE DEPARTMENT")) |>  -->
+<!--   filter(agency_name_clean %in% agencies_present_in_required_boroughs) |>  -->
+<!--   group_by(agency_name_clean,work_location_borough_clean,fiscal_year) |>  -->
+<!--   summarise( -->
+<!--     Total_records = n(), .groups = 'drop' -->
+<!--   ) |>  -->
+<!--   arrange(agency_name_clean,work_location_borough_clean,fiscal_year) |>  -->
+<!--   filter (!work_location_borough_clean %in% required_boroughs) |>  -->
+<!--   kable(col.names = c("Agency", "Location", "Fiscal Year", "Total Records")) -->
+<!-- ``` -->
+<!-- \ -->
+<!-- The final decision for location is to keep only data for the major 5 locations: \ -->
+<!-- BRONX, BROOKLYN, MANHATTAN, QUEENS, RICHMOND. -->
+<!-- \ -->
+<!-- \ -->
+<!-- ### Fiscal Year -->
+<!-- Using only the FIRE and POLICE department, we can observe that we have no records for 2014 for the Police department. Please note that the 16555 in the FIRE department for 2014 are the same records with blank location we found before.  -->
+<!-- The final decision for Fiscal Year is to drop 2014 and keep only data from 2015 to 2024. -->
+<!-- ```{r} -->
+<!-- # Create the pivot table -->
+<!-- pivot_table_fiscal_year <- payroll_data |> -->
+<!-- filter(agency_name_clean %in%  c( -->
+<!--     "POLICE DEPARTMENT", -->
+<!--     "FIRE DEPARTMENT" -->
+<!--     )) |>  -->
+<!--   group_by(fiscal_year, agency_name_clean) |>  -->
+<!--   summarise(count = n(), .groups = 'drop') |>  -->
+<!--   pivot_wider( -->
+<!--     names_from = agency_name_clean,   -->
+<!--     values_from = count,   -->
+<!--     values_fill = list(count = 0)  -->
+<!--   ) -->
+<!-- pivot_table_fiscal_year |> -->
+<!--   kable(col.names = c("Fiscal Year", "FIRE DEPARTMENT", "POLICE DEPARTMENT")) |>  -->
+<!--   kable_styling() |> -->
+<!--   column_spec(3, background = ifelse(as.matrix(pivot_table_fiscal_year[, 3]) == 0, "#fcefb4", "")) -->
+<!-- ``` -->
+<!-- \ -->
+<!-- \ -->
+<!-- ### Pay Basis -->
+<!-- Based on the different types of pay basis, we will drop the `Prorated Annual` as it is the category with the lowest amount of records and it only affects 1 job title (Chaplain). -->
+<!-- The final decision for Pay Basis is to keep only data for the categories: \ -->
+<!-- per Annum, per Day, per Hour. -->
+<!-- ```{r} -->
+<!-- payroll_data |>  -->
+<!--   # filter(fiscal_year == "2024") |> -->
+<!--   filter(agency_name_clean %in%  c( -->
+<!--     "POLICE DEPARTMENT", -->
+<!--     "FIRE DEPARTMENT" -->
+<!--     )) |>  -->
+<!--   group_by(agency_name_clean,pay_basis) |>  -->
+<!--   summarise( -->
+<!--     Total_records = n(), -->
+<!--     Count_of_titles = n_distinct(title_description) -->
+<!--     , .groups = 'drop' -->
+<!--   ) |>  -->
+<!--   arrange(desc(Total_records)) |> -->
+<!--   kable(col.names = c("Agency", "Pay Basis", "Total Records", "Count of Titles")) -->
+<!-- payroll_data |>  -->
+<!--   # filter(fiscal_year == "2024") |> -->
+<!--   filter(agency_name_clean %in%  c( -->
+<!--     "POLICE DEPARTMENT", -->
+<!--     "FIRE DEPARTMENT" -->
+<!--     )) |>  -->
+<!--   filter(pay_basis == "Prorated Annual") |> -->
+<!--   filter(title_description == "CHAPLAIN") |>  -->
+<!--   group_by(agency_name_clean,pay_basis,title_description) |>  -->
+<!--   summarise( -->
+<!--     Total_records = n() -->
+<!--     , .groups = 'drop' -->
+<!--   ) |>  -->
+<!--   arrange(agency_name_clean) |> -->
+<!--   kable(col.names = c("Agency", "Pay Basis", "Title", "Total Records")) -->
+<!-- ``` -->
+<!-- \ -->
+<!-- \ -->
+<!-- ### Payroll Number  -->
+<!-- First let's start create a dataset filtered based on the criteria we discussed above:\ -->
+<!-- <p style="margin-top: -15px"> -->
+<!-- -   Agency ("POLICE DEPARTMENT","FIRE DEPARTMENT") -->
+<!-- -   Location ("BRONX", "BROOKLYN", "MANHATTAN", "QUEENS", "RICHMOND"),  -->
+<!-- -   Fiscal Year (2015-2024) -->
+<!-- -   Pay Basis ("per Annum", "per Day", "per Hour") -->
+<!-- </p> -->
+<!-- From this dataset, we still have 243,601 NA records for the column `Payroll Number'. By doing a group by analysis per fiscal year, we can observe the NA are related to the years 2015, 2016, and 2017. So we will backfill those years with the proper payroll number code based on each agency. This way we will no longer have NA values in the new dataset. -->
+<!-- ```{r} -->
+<!-- payroll_data_filtered <-  -->
+<!--   payroll_data |>  -->
+<!--   filter(agency_name_clean %in%  c("POLICE DEPARTMENT","FIRE DEPARTMENT")) |>  -->
+<!--   filter(work_location_borough_clean %in%   c("BRONX", "BROOKLYN", "MANHATTAN", "QUEENS", "RICHMOND")) |>  -->
+<!--   filter(fiscal_year > "2014") |>  -->
+<!--   filter(pay_basis %in%   c("per Annum", "per Day", "per Hour")) -->
+<!-- # Count NA values -->
+<!-- na_summary <- payroll_data_filtered |> -->
+<!--   summarise(across(everything(), ~ sum(is.na(.)))) |> -->
+<!--   pivot_longer( -->
+<!--     cols = everything(), -->
+<!--     names_to = "Column", -->
+<!--     values_to = "NA Count" -->
+<!--   ) -->
+<!-- # Count blank values -->
+<!-- blank_summary <- payroll_data_filtered |> -->
+<!--   summarise(across(everything(), ~ sum(. == "", na.rm = TRUE))) |> -->
+<!--   pivot_longer( -->
+<!--     cols = everything(), -->
+<!--     names_to = "Column", -->
+<!--     values_to = "Blank Count" -->
+<!--   ) -->
+<!-- # Count zero values -->
+<!-- zero_summary <- payroll_data_filtered |> -->
+<!--   summarise(across(everything(), ~ sum(. == 0, na.rm = TRUE))) |> -->
+<!--   pivot_longer( -->
+<!--     cols = everything(), -->
+<!--     names_to = "Column", -->
+<!--     values_to = "Zero Count" -->
+<!--   ) -->
+<!-- combined_summary <- na_summary |> -->
+<!--   inner_join(blank_summary, by = "Column") |> -->
+<!--   inner_join(zero_summary, by = "Column") -->
+<!-- # combined_summary |> -->
+<!-- #   filter(`NA Count` > 0 | `Blank Count` > 0 | `Zero Count` > 0) |>  -->
+<!-- #   kable(col.names = c("Column", "NA Count", "Blank Count", "Zero Count")) -->
+<!-- na_summary |>  -->
+<!--   filter(`NA Count` > 0) |>  -->
+<!--   kable(col.names = c("Column", "NA Count")) -->
+<!-- ``` -->
+<!-- ```{r} -->
+<!-- payroll_data_filtered_payroll <- payroll_data_filtered |>  -->
+<!--   group_by(agency_name_clean,payroll_number,fiscal_year) |>  -->
+<!--   summarise( -->
+<!--     Total_records = n() -->
+<!--     ,.groups = "drop" -->
+<!--   ) |>  -->
+<!--   arrange(agency_name_clean,fiscal_year,desc(Total_records)) -->
+<!-- payroll_data_filtered_payroll |>  -->
+<!--   kable(col.names = c("Agency", "Payroll Number", "Fiscal Year", "Total Records")) |> -->
+<!--   column_spec(2, background = ifelse(is.na(as.matrix(payroll_data_filtered_payroll[, 2])), "#fcefb4", "")) -->
+<!-- ``` -->
+<!-- ```{r} -->
+<!-- # Backfill NA values with the proper payroll number based on each agency -->
+<!-- payroll_data_fire_police <-  -->
+<!--   payroll_data_filtered |> -->
+<!--   mutate( -->
+<!--     payroll_number = case_when( -->
+<!--       is.na(payroll_number) & agency_name_clean == "FIRE DEPARTMENT" ~ 57, -->
+<!--       is.na(payroll_number) & agency_name_clean == "POLICE DEPARTMENT" ~ 56, -->
+<!--       TRUE ~ payroll_number -->
+<!--     ) -->
+<!--   ) |>  -->
+<!--   mutate( -->
+<!--     agency_name = agency_name_clean, -->
+<!--     work_location_borough = work_location_borough_clean -->
+<!--   ) |> -->
+<!--   dplyr::select(-agency_name_clean, -work_location_borough_clean) -->
+<!-- ``` -->
+<!-- \ -->
+<!-- \ -->
+<!-- ### Agency Start Date -->
+<!-- The column agency_start_date is loaded as a character when we read the data for the first time. We will change the type to date using `lubridate`. -->
+<!-- ```{r} -->
+<!-- library(lubridate) -->
+<!-- payroll_data_fire_police <-  -->
+<!--   payroll_data_fire_police |>  -->
+<!--   mutate(agency_start_date = mdy(agency_start_date)) -->
+<!-- ``` -->
+<!-- \ -->
+<!-- \ -->
+<!-- ### Saving Subset Data -->
+<!-- We will save the Final Subset Data into a folder, so we can load later inside `results.qmd`. -->
+<!-- ```{r} -->
+<!-- # CSV -->
+<!-- # write.csv(payroll_data_fire_police, "data_source/payroll_data_fire_police.csv", row.names = FALSE) -->
+<!-- # RDS -->
+<!-- # saveRDS(payroll_data_fire_police, "data_source/payroll_data_fire_police.rds") -->
+<!-- # payroll_data_fire_police <- readRDS("data_source/payroll_data_fire_police.rds") -->
+<!-- ``` -->
+<!-- \ -->
+<!-- \ -->
+<!-- \ -->
+<!-- ## Deciding on final data subset -->
+<!-- Based on the analysis above, we will add a few filters to produce and clean our final dataset. -->
+<!-- **Filters applied to the dataset:**\ -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- library(tibble) -->
+<!-- library(knitr) -->
+<!-- library(kableExtra) -->
+<!-- payroll_data_format <- tibble( -->
+<!--   column_name = c( -->
+<!--     "Agency Name",  -->
+<!--     "Work Location Borough", -->
+<!--     "Fiscal Year",  -->
+<!--     "Pay Basis" -->
+<!--   ), -->
+<!--   filter = c( -->
+<!--     "FIRE DEPARTMENT, POLICE DEPARTMENT", -->
+<!--     "BRONX, BROOKLYN, MANHATTAN, QUEENS, RICHMOND", -->
+<!--     "From 2015 to 2024",  -->
+<!--     "per Annum, per Day, per Hour" -->
+<!--   ) -->
+<!-- ) -->
+<!-- names(payroll_data_format) <- c("Column Name","Filter") -->
+<!-- kable(payroll_data_format, -->
+<!--       # caption = "Dataset Format",  -->
+<!--       align = "l") |> -->
+<!--   kable_styling(full_width = FALSE) |> -->
+<!--   column_spec(1, width = "200px") -->
+<!-- ``` -->
+<!-- \ -->
+<!-- \ -->
+<!-- **Cleaning data and Handling NAs:**\ -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- library(tibble) -->
+<!-- library(knitr) -->
+<!-- library(kableExtra) -->
+<!-- payroll_data_format <- tibble( -->
+<!--   column_name = c( -->
+<!--     "Agency Name", -->
+<!--     "Work Location Borough",  -->
+<!--     "Fiscal Year",  -->
+<!--     "Pay Basis", -->
+<!--     "Payroll Number", -->
+<!--     "Agency Start Date" -->
+<!--   ), -->
+<!--   filter = c( -->
+<!--     "Group agencies with similar names. Keep only FIRE and POLICE.", -->
+<!--     "Uppercase all names. Filtering data only for top 5 Boroughs.", -->
+<!--     "2014 had missing data for Police Department. 2014 will be removed.",  -->
+<!--     "Keeping only the top 3 Pay Basis.", -->
+<!--     "Missing NA values have been backfilled based on Agency Name.", -->
+<!--     "Convert strings to date using lubridate." -->
+<!--   ) -->
+<!-- ) -->
+<!-- names(payroll_data_format) <- c("Column Name","Note") -->
+<!-- kable(payroll_data_format, -->
+<!--       # caption = "Dataset Format",  -->
+<!--       align = "l") |> -->
+<!--   kable_styling(full_width = FALSE) |> -->
+<!--   column_spec(1, width = "200px") -->
+<!-- ``` -->
+<!-- \ -->
+<!-- \ -->
+<!-- **Size of Final subset Data**\ -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- library(knitr) -->
+<!-- library(kableExtra) -->
+<!-- # Create a tibble for the metadata -->
+<!-- metadata <- tibble::tibble( -->
+<!--   Field = c( -->
+<!--     # "Dataset Name", -->
+<!--     # "Provided by", -->
+<!--     # "Data Category", -->
+<!--     # "Frequency of Updates",  -->
+<!--     # "Date Created",  -->
+<!--     # "Data Last Updated",  -->
+<!--     "Dimensions", -->
+<!--     "Each row represents" -->
+<!--     # "Source URL" -->
+<!--   ), -->
+<!--   Value = c( -->
+<!--     # "Citywide Payroll Data (Fiscal Year)", -->
+<!--     # "Office of Payroll Administration (OPA)", -->
+<!--     # "City Government", -->
+<!--     # "Annually",  -->
+<!--     # "October 31, 2015",  -->
+<!--     # "October 30, 2024",  -->
+<!--     "804,630 rows and 17 columns", -->
+<!--     "City Employee Salary per Fiscal Year" -->
+<!--     # "https://data.cityofnewyork.us/" -->
+<!--   ) -->
+<!-- ) -->
+<!-- # Print the metadata table using kable -->
+<!-- kable(metadata, col.names = NULL,  -->
+<!--       # caption = "Dataset Metadata", -->
+<!--       align = "l") -->
+<!-- ``` -->
+<!-- \ -->
+<!-- **Record count by Agency:**\ -->
+<!-- ```{r} -->
+<!-- #| message: false -->
+<!-- #| warning: false -->
+<!-- #| fig-width: 7 -->
+<!-- #| fig-height: 3 -->
+<!-- library(ggplot2) -->
+<!-- library(tibble) -->
+<!-- library(dplyr) -->
+<!-- payroll_data_fire_police |>  -->
+<!--   group_by(agency_name) |>  -->
+<!--   summarise( -->
+<!--     Count = n() -->
+<!--     , .groups = 'drop' -->
+<!--   ) |>  -->
+<!--   arrange(desc(Count)) |> -->
+<!--   mutate(Percentage = Count / sum(Count) * 100, -->
+<!--          Label = paste( -->
+<!--                        format(Count, big.mark = ","), "\n", " (", sprintf("%.0f", Percentage), "%)", sep = "")) |>  -->
+<!-- ggplot(aes(x = "", y = Count, fill = agency_name)) + -->
+<!--   geom_bar(stat = "identity", width = 1) + -->
+<!--   coord_polar(theta = "y") + -->
+<!--   scale_fill_manual(name= 'Agency', values = c("#f94144", "deepskyblue3")) + -->
+<!--   # labs(title = "Record Count by Department") + -->
+<!--   theme_void() + -->
+<!--   geom_text(aes(label = Label), position = position_stack(vjust = 0.5), color = "white") -->
+<!-- ``` -->
+<!-- **Overall dataset Information:**\ -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- # Create a tibble for the metadata -->
+<!-- metadata_final_table <- tibble::tibble( -->
+<!--   "Metrics" = c( -->
+<!--     "Count of Records", -->
+<!--     "Fiscal Years", -->
+<!--     "Agency Start Date Range",  -->
+<!--     "Work Location Borough", -->
+<!--     "Title Description" -->
+<!--   ), -->
+<!--   "Fire Deparmtnet" = c( -->
+<!--     "192,638", -->
+<!--     "10 years (2015-2024)", -->
+<!--     "1968-04-22 to 2024-07-29   ",  -->
+<!--     "5", -->
+<!--     "238" -->
+<!--   ), -->
+<!--   "Police Department" = c( -->
+<!--     "611,992", -->
+<!--     "10 years (2015-2024)", -->
+<!--     "1960-11-14 to 2049-10-16",  -->
+<!--     "5", -->
+<!--     "335" -->
+<!--   ), -->
+<!-- ) -->
+<!-- # Print the metadata table using kable -->
+<!-- kable(metadata_final_table,  -->
+<!--       # col.names = NULL,  -->
+<!--       # caption = "Dataset Metadata", -->
+<!--       align = "l") -->
+<!-- ``` -->
 <p><br>
 <br>
 <br>

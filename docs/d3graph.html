@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>4&nbsp; Interactive graph – Fire and Police Department Payroll 🚒 💵 🚓</title>
+<title>4&nbsp; Interactive graph – Fire and Police Department Payroll</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -96,7 +96,7 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">Fire and Police Department Payroll 🚒 💵 🚓</a> 
+      <a href="./">Fire and Police Department Payroll</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/ad4277/payroll" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -139,13 +139,25 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Conclusion</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Appendix</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#who-gets-the-money" id="toc-who-gets-the-money" class="nav-link active" data-scroll-target="#who-gets-the-money"><span class="header-section-number">4.1</span> Who gets the Money?</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/ad4277/payroll/edit/main/d3graph.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ad4277/payroll/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -169,18 +181,75 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<style>
-  * {
-    font-family: sans-serif;
-  }
-</style>
-<div id="plot">
+<!-- <style> -->
+<!--   * { -->
+<!--     font-family: sans-serif; -->
+<!--   } -->
+<!-- </style> -->
+<!-- <div id="plot"> -->
+<!-- </div> -->
+<!-- <div style="padding-left: 30px;"> -->
+<!--   <p></p> -->
+<!--   <button type="button" onclick="add()">Add bar</button> -->
+<!--   <button type="button" onclick="remove()">Remove bar</button> -->
+<!-- </div> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
+<!-- <script src="scripts/myscript.js"></script> -->
+<meta charset="utf-8">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<title>
+Temporal force-directed graph
+</title>
+<link rel="stylesheet" type="text/css" href="./scripts/inspector.css">
+<script type="module">
+
+import define from "./scripts/force_chart_script_js.js";
+import {Runtime, Library, Inspector} from "./scripts/runtime.js";
+
+const runtime = new Runtime();
+// const main = runtime.module(define, Inspector.into(document.body));
+const main = runtime.module(define, Inspector.into(document.getElementById('chart_force')));
+
+// part modified in inspector: add white to text
+// .observablehq--undefined{color:var(--syntax_atom);color: white}
+
+</script>
+
+<!-- <h1>something to go right below2</h1> -->
+<!-- <h2>something to go right below2</h2> -->
+<!-- <h3>something to go right below2</h3> -->
+<section id="who-gets-the-money" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="who-gets-the-money"><span class="header-section-number">4.1</span> Who gets the Money?</h2>
+<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus.</p>
+<p>Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus.</p>
+<div id="chart_force">
 
 </div>
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-<script src="scripts/myscript.js"></script>
+<p><img src="./jobs_timeline.png" alt="My Image" width="750"></p>
+<p><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></p>
+<p>What is the story? hi this is a test2wss</p>
+<p>jan 15 balance october 16 nov 2015 red july 18 red March 2022 blue july 2020 blue</p>
+<div id="chart">
+<p>
+something1
+</p>
+<p><button type="button" onclick="add()">Add bar</button> <button type="button" onclick="remove()">Remove bar</button></p>
+</div>
+<div style="padding-left: 30px;">
+<p>
+something2
+</p>
+<p><button type="button" onclick="add()">Add bar</button> <button type="button" onclick="remove()">Remove bar</button></p>
+</div>
+<p>
+something to go right below2
+
+</p><p>another this there</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -623,7 +692,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/ad4277/payroll/edit/main/d3graph.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ad4277/payroll/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ad4277/payroll/edit/main/d3graph.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ad4277/payroll/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This book was built with <a href="https://quarto.org/">Quarto</a>.</p>
 </div>

@@ -22,6 +22,9 @@ book:
     - d3graph.qmd
     - conclusion.qmd
     - appendix.qmd
+    # - resultsdraft1.qmd
+    # - resultsdraft2.qmd
+    # - resultsdraft3.qmd
     
 
 format:

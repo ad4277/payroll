@@ -43,13 +43,34 @@ const main = runtime.module(define, Inspector.into(document.getElementById('char
 
 </script>
 
+
+
+
 <body>
-hi this is a test2wss
+<!-- <h1>something to go right below2</h1> -->
+<!-- <h2>something to go right below2</h2> -->
+<!-- <h3>something to go right below2</h3> -->
+## Who gets the Money?
 
+Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
 
-<h1>something to go right below2</h1>
+Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
 
 <div id="chart_force"></div>
+<img src="./jobs_timeline.png" alt="My Image" width="750">
+
+
+
+
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+
+
+
+What is the story? 
+hi this is a test2wss
+
 
 jan 15 balance
 october 16

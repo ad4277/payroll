@@ -2,22 +2,24 @@
 
 Possible 10 Charts based on Problem Set1:
 
--   [x] hitogram / facets (ps1)
--   boxplot jitter (ps1)
--   with ridgeline (ps1)
+-  [x] hitogram / facets (ps1)
+-  [x] boxplot jitter (ps1)
+-  [x] with ridgeline (ps1)
 -   density lines
+-  [x]  Bar chart
 -   bar chart lump facet
--   scattter plot
+-  [x]  scattter plot
 -   Density plot
 -   geom_point with facet 9x9 grid (ps2 california)
--   Cleveland dot plot
+-   [x]  Cleveland dot plot
 -   ggparcords
--   parcoords
+-   [x]  parcoords
 -   likert
 -   mosaic
--   alluvium
+-   [x]  alluvium
 
-Questions trying to solve:
+
+Possible questions trying to solve:
 
 -   What is the concentration data?
 -   What are the top 10 positions based on numbers of employees?
@@ -67,6 +69,8 @@ library(visdat)
 library(lubridate)
 library(scales)
 library(ggalluvial)
+library('patchwork')
+library(ggrepel)
 ```
 
 ```{r}
@@ -979,30 +983,37 @@ ggplot() +
   facet_grid(fct_infreq(agency_name) ~ .,
              scales ='free_y',
              space = 'free_y') +
-  scale_fill_brewer(name = "(Out of State/In State) % Bands",
+  scale_fill_brewer(name = "% Ratio",
                     palette = "RdYlGn",
                     direction = -1,
                     na.translate = FALSE) +
-  scale_color_brewer(name = "(Out of State/In State) % Bands",
+  scale_color_brewer(name = "% Ratio",
                      palette = "RdYlGn",
                      direction = -1,
                      na.translate = FALSE) +
   scale_x_continuous(
     limits = c(-250000, 250000),
-    name = "In State Tuition Fees (dots)",
+    name = "Regular Salary Paid (dots)",
     labels = function(x) ifelse(x >= 0, scales::label_number()(x), ""),
     sec.axis = sec_axis(~./-2500, name = "% Ratio (bars)",
                         labels = function(x) ifelse(x >= 0,
                                                     paste0(scales::label_number()(x),
                                                            '%'), ""))
   ) +
-  labs(title = "Ratio of mean out-of-state to mean in-state tuition VS Mean Tuition by State, Facet by Region",
-       y = "State",) +
+  labs(title = "Ratio of `Total Salary` to `Regular Salary` VS Regular Salary by Job Title, Facet by Agency",
+       y = "Job Titles",
+       caption = "% Ratio = Total Salary Paid (Regular + Overtime + Other) / Regular Salary Paid") +
   theme_minimal() +
-  theme(legend.position = "bottom",
+  theme(
+    legend.position = "bottom",
+          # legend.position = c(0, 0),             # Place the legend at the bottom left
+  legend.justification = c(1, 1)      ,   # Align the legend to the left
         panel.border = element_rect(color = "darkgray", fill = NA, linewidth = 1),
         axis.title.x = element_text(hjust = 1),
-        axis.title.x.top = element_text(hjust = 0)
+        axis.title.x.top = element_text(hjust = 0),
+        plot.title = element_text(hjust = 0),
+  plot.title.position = "plot",
+  # plot.title.justification = c(0.5, 0.5) 
   )
 
 ```
@@ -1017,6 +1028,427 @@ Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas s
 Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
 
 
+
+```{r}
+#| fig-width: 10
+#| fig-height: 9
+#| message: false
+#| warning: false
+
+
+
+# Calculate mean and sd for each agency_name
+facet_stats <- payroll_data_fire_police |>
+  group_by(agency_name) |>
+  summarise(
+    mean_total_paid = mean(total_paid, na.rm = TRUE),
+    sd_total_paid = sd(total_paid, na.rm = TRUE)
+  )
+
+# Create a custom function to generate a normal curve
+normal_curve_data <- function(mean, sd, x_range, n = 100) {
+  x <- seq(x_range[1], x_range[2], length.out = n)
+  y <- dnorm(x, mean = mean, sd = sd)
+  data.frame(x = x, y = y)
+}
+
+# Generate data for normal curves for each facet
+normal_curve <- facet_stats |>
+  rowwise() |>
+  mutate(
+    curve_data = list(
+      normal_curve_data(
+        mean = mean_total_paid,
+        sd = sd_total_paid,
+        x_range = c(-250000, 300000)  # Define the x-axis range
+      )
+    )
+  ) |>
+  unnest(curve_data)  # Unnest the list-column into rows
+
+vertical_line_glyph <- function(data, params, size) {
+  grid::linesGrob(
+    x = c(0.5, 0.5), y = c(0.1, 0.9),
+    gp = grid::gpar(col = alpha(data$colour, data$alpha), lwd = size)
+  )
+}
+
+
+
+
+chart_01 <-
+ggplot(payroll_data_fire_police) +
+  geom_histogram(mapping = aes(x = total_paid, 
+                               y = after_stat(density), 
+                               fill = "Density Histogram"),
+                 binwidth = 10000,
+                 color = "blue",
+                 linetype = "solid",
+                 # center = 100000,
+                 # boundary = c(-50000,10000),
+                 # bo==
+                 )+
+  geom_density(mapping = aes(x = total_paid, 
+                             color = "Density Curve"),
+               lwd = 1.2,
+               key_glyph = draw_key_path
+               ) +
+  geom_function(fun = dnorm,
+                aes(x = total_paid, 
+                    color = "Normal Curve"), 
+                lwd= 1.2,
+                args = list(mean = mean(payroll_data_fire_police$total_paid, na.rm = TRUE),
+                            sd = sd(payroll_data_fire_police$total_paid, na.rm = TRUE)),
+                ) +
+  scale_color_manual(values = c("Density Curve" = "red", "Normal Curve" = "limegreen")) +
+  scale_fill_manual(values = c("Density Histogram" = "lightblue")) +
+  scale_x_continuous(
+    limits = c(-25000, 300000),
+    breaks = seq(-50000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 25000),
+    labels = scales::label_number(scale = 1/1000, suffix = "k")
+  ) +
+  labs(title = "Combined Density Histogram of Salary Paid for Fire and Police Departments",
+       x = "Salary Paid",
+       y = "Density",
+       color = "Curves",
+       fill = "Bars", 
+       # caption = "Blue: Histogram, Red: Data Density Curve, Green: Normal Curve"
+       ) +
+  # theme_minimal() +
+  theme(text = element_text(size = 14))+
+  theme(legend.position = "none")
+
+
+
+
+
+chart_02 <-
+# Plot
+ggplot(payroll_data_fire_police) +
+  geom_histogram(
+    mapping = aes(x = total_paid, y = after_stat(density), fill = "Density Histogram"),
+    binwidth = 10000,
+    color = "blue",
+    linetype = "solid"
+  ) +
+  geom_density(
+    mapping = aes(x = total_paid, color = "Density Curve"),
+    lwd = 1.2,
+    key_glyph = draw_key_path
+  ) +
+  geom_line(
+    data = normal_curve,
+    aes(x = x, y = y, color = "Normal Curve"),
+    lwd = 1.2
+  ) +
+    geom_vline(
+    data = facet_stats,
+    aes(xintercept = mean_total_paid, color = "Mean Reference Line"),
+    linetype = "dashed",
+    show.legend = TRUE,key_glyph = "path"
+  ) +
+  geom_text(
+    data = facet_stats,
+    aes(
+      x = mean_total_paid,
+      y = 0.00001,  # Adjust position for label
+      label = scales::label_number(scale = 1 / 1000, suffix = "k")(mean_total_paid)
+    ),
+    inherit.aes = FALSE,
+    color = "purple",
+    size = 6,
+    angle = 90,  # Rotate text vertically
+    vjust = 1.5,
+    hjust = 0.6
+  ) +
+  facet_wrap(~ agency_name) +
+  # scale_color_manual(values = c("Density Curve" = "red", "Normal Curve" = "limegreen", "Mean Reference Line" = "purple")) +
+  scale_color_manual(
+    values = c(
+      "Density Curve" = "red",
+      "Normal Curve" = "limegreen",
+      "Mean Reference Line" = "purple"
+    ),
+    guide = guide_legend(override.aes = list(
+      `Density Curve` = list(linetype = "solid"),
+      `Normal Curve` = list(linetype = "solid"),
+      `Mean Line` = list(linetype = "solid")
+    ))
+  ) +
+  scale_fill_manual(values = c("Density Histogram" = "lightblue")) +
+  scale_x_continuous(
+    limits = c(-25000, 300000),
+    breaks = seq(-50000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 50000),
+    labels = scales::label_number(scale = 1 / 1000, suffix = "k")
+  ) +
+  labs(
+    title = "Density Histogram of Salary Paid per Agency",
+    x = "Salary Paid",
+    y = "Density",
+    color = "Curves",
+    fill = "Bars",
+    caption = "Salary Paid includes: Regular, Overtime and Other compensation."
+  ) +
+  scale_linetype_manual(name = "Curves", values = c("Horizontal","solid")) +
+            guides(fill = guide_legend(override.aes = list(linetype = 0)),
+                   # color = guide_legend(override.aes = list(linetype = c(0,4,5) ))
+                   ) +
+  # theme_minimal() +
+  theme(text = element_text(size = 14))+
+  theme(legend.position = "bottom")
+
+
+
+# <!-- #| fig-width: 10 -->
+# <!-- #| fig-height: 10 -->
+# <!-- #| message: false -->
+# <!-- #| warning: false -->
+
+
+chart_01 + chart_02 +
+  plot_layout(ncol = 1) 
+  # plot_annotation(title = "Data Distribution")
+```
+
+
+## Who gets the Money?
+
+
+Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
+
+Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
+
+
+```{r}
+#| fig-width: 9
+#| fig-height: 5
+#| message: false
+#| warning: false
+
+
+payroll_data_fire_police |> 
+  # filter(fiscal_year %in% c(2023,2024)) |> 
+  mutate(fiscal_year_name = as.character(fiscal_year)) |> 
+ggplot() +
+  geom_density_ridges(mapping= aes(x = total_paid,
+                                   y = fiscal_year_name,
+                                   color = agency_name,
+                                   fill = agency_name,
+                                   ),
+                      alpha=0.15,
+                      bandwidth = 10000,
+                      # jittered_points = TRUE,
+                      # position = position_raincloud(adjust_vlines = TRUE),
+                      position = "raincloud",
+                      quantiles = 2, quantile_lines = TRUE,
+                      vline_width = 1, vline_color = "darkgreen",
+                      # point_alpha = 0.01,
+                      # point_size = 0.001,
+                      # color='deepskyblue4',
+                      rel_min_height = 0.002,
+                      ) +
+  facet_wrap(~ agency_name) +
+  # facet_grid(agency_name~pay_basis) +
+   scale_x_continuous(
+    limits = c(-25000, 300000),
+    breaks = seq(-200000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 100000),
+    labels = scales::label_number(scale = 1/1000, suffix = "k")
+  ) +
+  scale_y_discrete(
+    expand = expansion(add = c(0.1, 1.5)) # Add space above the highest category
+  ) +
+  scale_color_manual(
+    values = c("POLICE DEPARTMENT" = "deepskyblue3", "FIRE DEPARTMENT" = "#f94144")
+  ) +
+  scale_fill_manual(
+    values = c("POLICE DEPARTMENT" = "deepskyblue3", "FIRE DEPARTMENT" = "#f94144")
+  ) +
+  labs(title = "Ridgeline density plot of Salary Paid by Fiscal Year",
+       x = "Salary Paid",
+       y = "Fiscal Year",
+       color = "Agency",
+       fill = "Agency",
+       caption = "Salary Paid includes: Regular, Overtime and Other compensation.\nGreen Vertical Line: Mean of each density curve.")+
+    theme_minimal() +
+  # scale_linetype_manual(name = "Curves", values = c("Horizontal","solid")) +
+            guides(fill = guide_legend(override.aes = list(linetype = 0)))+
+theme(
+    legend.position = "bottom",
+    # plot.margin = margin(t = 200, r = 5, b = 5, l = 5) # Add top margin (t = 20)
+  )
+```
+
+
+## Who gets the Money?
+
+
+Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
+
+Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
+
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+#| message: false
+#| warning: false
+
+
+payroll_data_fire_police |> 
+  filter(fiscal_year %in% c("2024", "2023")) |>
+  filter(agency_name == "POLICE DEPARTMENT") |>
+  # filter(leave_status_as_of_june_30 == "ACTIVE") |>
+  group_by(fiscal_year, title_description) |> 
+  summarise(
+    total_paid = sum(total_paid, na.rm = TRUE),
+    .groups = 'drop'
+  ) |>
+  pivot_wider(names_from = fiscal_year, values_from = total_paid) |> 
+  mutate(
+    difference = `2024` - `2023`,
+    difference_perc = (`2024` - `2023`) / `2023` * 100
+  ) |>
+  filter(difference > 0) |>
+  arrange(desc(difference)) |> 
+  mutate(
+    label = ifelse(row_number() <= 10, title_description, NA),  # Add labels for top 10
+    is_top10 = factor(row_number() <= 10, levels = c(TRUE, FALSE), labels = c("Top 10", "Other Job Titles")) # Custom order
+   ) |> 
+  ggplot() +
+  geom_point(
+    mapping = aes(
+      x = difference, 
+      y = difference_perc, 
+      fill = difference, 
+      color = is_top10
+    ),
+    size = 3,
+    alpha = 0.7,
+    stroke = 0.6,
+    na.rm = TRUE,
+    shape = 21 # Use shape 21 to apply both color and fill
+  ) +
+  geom_label_repel(
+    aes(
+      x = difference,
+      y = difference_perc,
+      label = label
+    ),
+    na.rm = TRUE,
+    size = 3,      # Text size
+    box.padding = 0.35, # Padding around text box
+    point.padding = 0.3, # Space between point and label
+    segment.color = "grey50", # Line color connecting label to point
+    max.overlaps = 10,  # Limits overlapping labels
+    max.iter = 10000,
+    nudge_y = 190,
+    # nudge_x = 1,
+    force = 170,
+    # force_pull = 1,
+  ) +
+  scale_fill_distiller(
+    palette = "Blues", 
+    direction = 1, 
+    limits = c(0, 7000000),
+    # limits = c(0, 200000000)
+    # oob = scales::oob_squish, # Ensures values outside the range are treated properly
+    na.value = "orange",
+    labels = scales::label_number(scale = 1 / 1000000, suffix = "M"), # Display in millions
+    breaks = c(0, 5000000, 10000000), # Custom ticks
+    name = "Salary Paid\nDifference YoY" # Legend title
+  ) +
+  scale_color_manual(
+    values = c("Top 10" = "orange", "Other Job Titles" = 'deepskyblue3'), # Red for top 10, no fill for others
+    # labels = c("TRUE" = "Top 10", "FALSE" = "Other Job Titles"), # Custom labels
+     # alpha = c("TRUE" = 1, "FALSE" = 0),
+    guide = "none" # Remove legend for fill
+  ) +
+  labs(
+    x = "Salary Paid Diffence", 
+    y = "Percentage Difference", 
+    title = "Salary Paid Diffence between 2023 and 2024", 
+    color = "Job Titles\nwith higher\nSalary YoY"
+  ) +
+  scale_x_log10(
+    # labels = scales::label_comma(),
+    breaks = c(0, 10000,100000, 1000000, 10000000, 100000000,1000000000,10000000000),
+    labels = c("0","10K","100K", "1M", "10M", "100M","1B","10B"),
+    # expand = expansion(add = c(10, 0))
+                ) +
+  scale_y_continuous(
+    limits = c(0, 300),
+     labels = scales::label_percent(scale = 1, suffix = "%") # Add % suffix
+  ) +
+  guides(color = guide_legend(override.aes = list(size = 4))) +
+  theme_minimal() +
+  # theme_light() +
+  theme(
+    panel.grid.minor.x = element_blank(), # Remove minor grid lines on x-axis
+    legend.position = "right"           # Move legend to bottom
+  )
+
+```
+
+
+
+
+## Who gets the Money?
+
+
+Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
+
+Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5
+
+ggplot(payroll_data_fire_police) +
+  geom_boxplot(mapping = aes(x = total_paid, 
+                             y = fct_rev(as.factor(work_location_borough))
+                             ),
+               outlier.alpha = 0.25,
+               outlier.stroke = 0.7,
+               ) +
+  geom_jitter(mapping = aes(x = total_paid,
+                            y = work_location_borough,
+                            color=agency_name,
+                            # alpha = ifelse(agency_name == "POLICE DEPARTMENT", 0.0008, 0.01)
+                            ),
+              width = 0.25,
+              height = 0.25,
+              size = 0.001,
+              # alpha = 0.008,
+              alpha = ifelse(payroll_data_fire_police$agency_name == "POLICE DEPARTMENT", 0.006, 0.02),
+              #color='deepskyblue4',
+              ) +
+  scale_alpha_identity() +
+  facet_grid(agency_name ~ .) +
+  scale_color_manual(
+    values = c("POLICE DEPARTMENT" = "#00a6de", "FIRE DEPARTMENT" = "#f94144")
+  ) +
+  scale_x_continuous(
+    # limits = c(-25000, 300000),
+    breaks = seq(-200000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 100000),
+    labels = scales::label_number(scale = 1/1000, suffix = "k")
+  ) +
+  # scale_x_log10(labels = scales::label_comma()) +
+  labs(title = "Boxplot with jitter of Salary Paid over 10 years by Agency",
+       x = "Salary Paid",
+       y = "Location") +
+  theme_minimal() +
+  theme_light() +
+  theme(legend.position = "none")
+```
+
+## Who gets the Money?
+
+
+Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
+
+Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
+
+
 ## Who gets the Money?
 
 
@@ -1026,48 +1458,6 @@ Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iacu
 
 
 
-## Who gets the Money?
-
-
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
-
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
-
-
-
-## Who gets the Money?
-
-
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
-
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
-
-
-
-## Who gets the Money?
-
-
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
-
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
-
-
-## Who gets the Money?
-
-
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
-
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
-
-
-
-## Who gets the Money?
-
-
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
-
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
-
 
 
 \
@@ -1084,32 +1474,32 @@ Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iacu
 \
 \
 
-## hitogram / facets (ps1)
+<!-- ## hitogram / facets (ps1) -->
 
-## boxplot jitter (ps1)
+<!-- ## boxplot jitter (ps1) -->
 
-## with ridgeline (ps1)
+<!-- ## with ridgeline (ps1) -->
 
-## density lines
+<!-- ## density lines -->
 
-## bar chart lump facet
+<!-- ## bar chart lump facet -->
 
-## scattter plot
+<!-- ## scattter plot -->
 
-## D3ensity plot
+<!-- ## D3ensity plot -->
 
-## geom_point with facet 9x9 grid (ps2 california)
+<!-- ## geom_point with facet 9x9 grid (ps2 california) -->
 
-## Cleveland dot plot
+<!-- ## Cleveland dot plot -->
 
-## ggparcords
+<!-- ## ggparcords -->
 
-## parcoords
+<!-- ## parcoords -->
 
-## likert
+<!-- ## likert -->
 
-## mosaic
+<!-- ## mosaic -->
 
-##alluvium
+<!-- ##alluvium -->
 
-# other
+<!-- # other -->

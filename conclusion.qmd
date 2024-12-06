@@ -2808,9 +2808,15 @@ parcoords(
    color = list(
     colorBy = "agency_name_order",  
     colorScale = "scaleOrdinal",
-    colorScheme = c("#0099CC", "#f94144","deepskyblue3") 
+    colorScheme = c("#0099CC", "#f94144")
   ),
-  withD3 = TRUE
+  withD3 = TRUE,
+  margin = list(
+    top = 30,    # Adjust top margin
+    right = 20,  # Adjust right margin
+    bottom = 30, # Adjust bottom margin
+    left = 125   # Increase left margin for better spacing
+  )
 )
 ```
 

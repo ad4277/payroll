@@ -5,18 +5,18 @@ Possible 10 Charts based on Problem Set1:
 -  [x] hitogram / facets (ps1)
 -  [x] boxplot jitter (ps1)
 -  [x] with ridgeline (ps1)
--   density lines
--  [x]  Bar chart
--   bar chart lump facet
--  [x]  scattter plot
--   Density plot
--   geom_point with facet 9x9 grid (ps2 california)
--   [x]  Cleveland dot plot
--   ggparcords
--   [x]  parcoords
--   likert
--   mosaic
--   [x]  alluvium
+-  [ ] density lines
+-  [x] Bar chart
+-  [ ] bar chart lump facet
+-  [x] scattter plot
+-  [ ] Density plot
+-  [ ] geom_point with facet 9x9 grid (ps2 california)
+-  [x] Cleveland dot plot
+-  [ ] ggparcords
+-  [x] parcoords
+-  [ ] likert
+-  [ ] mosaic
+-  [x] alluvium
 
 
 Possible questions trying to solve:

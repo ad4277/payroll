@@ -98,131 +98,7 @@ Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iacu
 
 
 ::: panel-tabset
-## Number of Employees
-
-```{r}
-#| fig-width: 10
-#| fig-height: 6
-
-
-# Ensure fiscal_year is numeric
-summarized_data <- payroll_data_fire_police |> 
-  group_by(agency_name, fiscal_year, work_location_borough) |> 
-  summarise(
-    total_records = n(),
-    total_paid = sum(total_paid),
-    paid_per_person = sum(total_paid) / n(),
-    .groups = "drop"
-  ) |> 
-  mutate(fiscal_year = as.numeric(fiscal_year))
-
-
-# Calculate high-water mark and the corresponding year for each facet
-high_water_mark_records <- summarized_data |>
-  group_by(fiscal_year, agency_name) |>
-  summarise(max_records = sum(total_records), .groups = "drop") |>
-  group_by(agency_name) |>
-  filter(max_records == max(max_records)) |>
-  summarise(
-    fiscal_year = fiscal_year[1],  # Get the fiscal year for max records
-    max_records = max_records[1]  # Get the maximum record count
-  )
-
-
-
-# Plot
-ggplot(summarized_data) +
-  geom_col(aes(x = fiscal_year, y = total_records, fill = work_location_borough)) +
-  
-  # Add horizontal dashed line at high water mark with color mapped to a new variable
-  geom_hline(
-    data = high_water_mark_records,
-    aes(yintercept = max_records, color = "Highest value in 10 years"),  # Map color to legend
-    # inherit.aes = FALSE,
-    linetype = "dashed"
-  ) +
-  
-  # Add text labels for high water marks
-  geom_text(
-    data = high_water_mark_records,
-    aes(
-      x = fiscal_year,
-      y = max_records,
-      label = paste0("Year: ", fiscal_year, "\n Employees: ", label_comma()(max_records))
-    ),
-    inherit.aes = FALSE,
-    color = "black",
-    vjust = -0.5,
-    hjust = 1,
-    size = 4
-  ) +
-  
-  # Add dots at high water marks
-  geom_point(
-    data = high_water_mark_records,
-    aes(x = fiscal_year, y = max_records),
-    inherit.aes = FALSE,
-    color = "black",   # Dot color
-    size = 3,        # Dot size
-    shape = 16       # Circle shape (default)
-  ) +
-  
-  # facet_wrap(~agency_name) 
-  facet_wrap(~agency_name) +
-  
-  # Scale and labels for x-axis
-  scale_x_continuous(
-    breaks = seq(min(summarized_data$fiscal_year), max(summarized_data$fiscal_year), by = 1),
-    labels = function(x) format(as.Date(paste0(x, "-01-01")), "%Y")
-  ) +
-  
-  # Labels for title and axes
-  labs(
-    title = "Employees by Fiscal Year",
-    x = "Fiscal Year",
-    y = "Number of Employees",
-    fill = "Location:",
-    color = "Reference Line:"  # Add a label for the color legend
-  ) +
-  
-  # Y-axis settings
-  scale_y_continuous(
-    limits = c(0, NA),  # Keep lower bound at 0
-    labels = scales::label_number(scale = 1/1000, suffix = "k"),
-    expand = expansion(mult = c(0, 0.2))  # Add some padding for aesthetics
-  ) +
-  
-  # Set the colors for the fill based on boroughs
-  scale_fill_manual(
-    values = c(
-      "BRONX" = "#FF595E",
-      "BROOKLYN" = "#FFCA3A",
-      "MANHATTAN" = "#8AC926",
-      "QUEENS" = "#1982C4",
-      "RICHMOND" = "#6A4C93"
-    )
-  ) +
-  
-  # Set color for high water mark line
-  scale_color_manual(
-    values = c("Highest value in 10 years" = "black")  # Color the reference line black
-  ) +
-  
-  # Minimal theme
-  theme_minimal() +
-  theme(
-    text = element_text(size = 14),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.title = element_text(hjust = 0.5),
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor.x = element_blank(),
-    legend.position = "bottom",
-    legend.box = "vertical"  #
-  )
-
-```
 ## Amount Paid per Year
-
 ```{r}
 #| fig-width: 10
 #| fig-height: 6
@@ -312,6 +188,128 @@ ggplot(summarized_data) +
   scale_y_continuous(
     limits = c(0, NA),  # Keep lower bound at 0
     labels = scales::label_number(scale = 1/1000000000, suffix = " B"),
+    expand = expansion(mult = c(0, 0.2))  # Add some padding for aesthetics
+  ) +
+  
+  # Set the colors for the fill based on boroughs
+  scale_fill_manual(
+    values = c(
+      "BRONX" = "#FF595E",
+      "BROOKLYN" = "#FFCA3A",
+      "MANHATTAN" = "#8AC926",
+      "QUEENS" = "#1982C4",
+      "RICHMOND" = "#6A4C93"
+    )
+  ) +
+  
+  # Set color for high water mark line
+  scale_color_manual(
+    values = c("Highest value in 10 years" = "black")  # Color the reference line black
+  ) +
+  
+  # Minimal theme
+  theme_minimal() +
+  theme(
+    text = element_text(size = 14),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(hjust = 0.5),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "bottom",
+    legend.box = "vertical"  #
+  )
+
+```
+## Number of Employees
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+
+# Ensure fiscal_year is numeric
+summarized_data <- payroll_data_fire_police |> 
+  group_by(agency_name, fiscal_year, work_location_borough) |> 
+  summarise(
+    total_records = n(),
+    total_paid = sum(total_paid),
+    paid_per_person = sum(total_paid) / n(),
+    .groups = "drop"
+  ) |> 
+  mutate(fiscal_year = as.numeric(fiscal_year))
+
+
+# Calculate high-water mark and the corresponding year for each facet
+high_water_mark_records <- summarized_data |>
+  group_by(fiscal_year, agency_name) |>
+  summarise(max_records = sum(total_records), .groups = "drop") |>
+  group_by(agency_name) |>
+  filter(max_records == max(max_records)) |>
+  summarise(
+    fiscal_year = fiscal_year[1],  # Get the fiscal year for max records
+    max_records = max_records[1]  # Get the maximum record count
+  )
+
+
+
+# Plot
+ggplot(summarized_data) +
+  geom_col(aes(x = fiscal_year, y = total_records, fill = work_location_borough)) +
+  
+  # Add horizontal dashed line at high water mark with color mapped to a new variable
+  geom_hline(
+    data = high_water_mark_records,
+    aes(yintercept = max_records, color = "Highest value in 10 years"),  # Map color to legend
+    # inherit.aes = FALSE,
+    linetype = "dashed"
+  ) +
+  
+  # Add text labels for high water marks
+  geom_text(
+    data = high_water_mark_records,
+    aes(
+      x = fiscal_year,
+      y = max_records,
+      label = paste0("Year: ", fiscal_year, "\n Employees: ", label_comma()(max_records))
+    ),
+    inherit.aes = FALSE,
+    color = "black",
+    vjust = -0.5,
+    hjust = 1,
+    size = 4
+  ) +
+  
+  # Add dots at high water marks
+  geom_point(
+    data = high_water_mark_records,
+    aes(x = fiscal_year, y = max_records),
+    inherit.aes = FALSE,
+    color = "black",   # Dot color
+    size = 3,        # Dot size
+    shape = 16       # Circle shape (default)
+  ) +
+  
+  # facet_wrap(~agency_name) 
+  facet_wrap(~agency_name) +
+  
+  # Scale and labels for x-axis
+  scale_x_continuous(
+    breaks = seq(min(summarized_data$fiscal_year), max(summarized_data$fiscal_year), by = 1),
+    labels = function(x) format(as.Date(paste0(x, "-01-01")), "%Y")
+  ) +
+  
+  # Labels for title and axes
+  labs(
+    title = "Employees by Fiscal Year",
+    x = "Fiscal Year",
+    y = "Number of Employees",
+    fill = "Location:",
+    color = "Reference Line:"  # Add a label for the color legend
+  ) +
+  
+  # Y-axis settings
+  scale_y_continuous(
+    limits = c(0, NA),  # Keep lower bound at 0
+    labels = scales::label_number(scale = 1/1000, suffix = "k"),
     expand = expansion(mult = c(0, 0.2))  # Add some padding for aesthetics
   ) +
   

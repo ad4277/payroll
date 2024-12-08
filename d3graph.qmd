@@ -57,7 +57,9 @@ Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas s
 Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
 
 <div id="chart_force"></div>
-<img src="./jobs_timeline.png" alt="My Image" width="750">
+<!-- <img src="./jobs_timeline.png" alt="My Image" width="750"> -->
+<img src="./jobs_timeline_line_bar.png" alt="My Image" width="750">
+
 
 
 

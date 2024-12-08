@@ -33,6 +33,35 @@ Possible questions trying to solve:
 -   Cost per year, per location -\> likert
 
 <!-- https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data -->
+
+What is the story?
+
+this is a normal line of text
+  * this is the first level of bullet points, made up of <space><space>*<space>
+    * this is more indented, composed of <space><space><space><space>*<space>
+
+
+-  Who gets the Money?
+  -    per year analysis
+-  Distribution of salary even? is it equal between agencies?
+-    10-years
+  -    per year
+    -    per location
+
+
+
+
+
+
+
+
+Who gets paid the most?
+
+
+Who gets paid the least??
+
+
+
 \
 \
 \

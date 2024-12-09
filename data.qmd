@@ -1,5 +1,7 @@
 # Data
-
+::: callout-note
+## This page contains Tabs. Please click through tabs to see additional charts/info.
+:::
 For this project, we will be using a subset of the **Citywide Payroll Data**.\
 This dataset is available via NYC OpenData and provided by the Office of Payroll Administration (OPA).
 
@@ -76,7 +78,8 @@ library(lubridate)
 
 ## Description
 
-**Data Metadata**
+::: panel-tabset
+## Data Metadata
 
 ```{r}
 #| echo: false
@@ -127,7 +130,7 @@ kable(metadata,
 \
 \
 
-**Data Format**
+## Data Format
 
 ```{r}
 #| echo: false
@@ -180,6 +183,8 @@ kable(payroll_data_format,
   kable_styling(full_width = FALSE) |>
   column_spec(1, width = "200px")
 ```
+
+:::
 
 \
 \
@@ -326,11 +331,13 @@ To analyse missing data, we will classify our data in 4 categories: \
 &nbsp;&nbsp;&nbsp; [■]{style="color:#D7191C;"}  NA      - any values equal to *NA* \
 &nbsp;&nbsp;&nbsp; [■]{style="color:#FDAE61;"}  Blank   - string values equal to "" \
 &nbsp;&nbsp;&nbsp; [■]{style="color:#ABD9E9;"}  Zero    - numeric values equal to 0 \
-&nbsp;&nbsp;&nbsp; [■]{style="color:#2C7BB6;"}  Present - any values with data \
+&nbsp;&nbsp;&nbsp; [■]{style="color:#2C7BB6;"}  Complete - any values with data \
 
+
+### NAs and Blanks
 
 First, let's check the missing values of the original dataset.\
-Using a sample of 1 million records (from 6.22 million rows) we have close to **4.5%** of missing data classified as NA or Blank by the vis_miss() plot. We can also observe missing values in 7 columns**\***: \
+Using a sample of 1 million records (from 6.22 million rows) we have close to **4.5%** of missing data classified as [■]{style="color:#D7191C;"} NA or [■]{style="color:#FDAE61;"} Blank by the vis_miss() plot. We can also observe missing values in 7 columns**\***: \
 <p style="margin-top: -15px;">
 -  3 columns related to a person's name (first_name, mid_init, last_name)
 -  payroll_number
@@ -370,7 +377,7 @@ payroll_data_missing <-
 payroll_data_missing |> 
   vis_miss(
     sort_miss = TRUE,
-    # cluster = TRUE,
+    # cluster = TRUE, # disabled because vector memory limit of 16.0 Gb reached, see mem.maxVSize()
     show_perc_col = TRUE,
     warn_large_data = FALSE,
     ) + 
@@ -379,9 +386,176 @@ payroll_data_missing |>
 ```
 
 \
-After transforming our original data to create our final subset data (Fire and Police Departments), we can now examine how the missing values from the original compares to the final dataset.
+After transforming our original data to create our final subset data (Fire and Police Departments), we can now examine the missing values of the final dataset.
+
+
 
 ```{r}
+#| fig-width: 9
+#| fig-height: 7
+#| message: false
+#| warning: false
+
+# install.packages("remotes")
+# remotes::install_github("jtr13/redav")
+library(redav)
+
+plot_missing_modified <- function(x, percent = TRUE, num_char = 100, 
+                         max_rows = NULL, max_cols = NULL) {	
+
+  na_count_all <- data.frame(is.na(x)) %>%	
+    dplyr::group_by_all() %>%	
+    dplyr::count(name = "count", sort = TRUE) %>%	
+    dplyr::ungroup() %>%	
+    tibble::rownames_to_column("pattern")	
+  
+  if (!is.null(max_rows)) na_count_all <- na_count_all %>% 
+      dplyr::filter(as.numeric(pattern) <= max_rows)
+  
+  na_count_all <- na_count_all %>% 
+    dplyr::mutate(pattern = factor(.data$pattern, levels = nrow(na_count_all):1))
+
+  
+  # count the number of columns with missing values; will be used later to determine if there's a "none missing" pattern	
+  na_count_all <- na_count_all %>% 	
+    dplyr::rowwise() %>%	
+    dplyr::mutate(num_missing_cols = sum(dplyr::c_across(where(is.logical))))	
+  
+  # data frame for missing patterns bar chart	
+  na_count_by_pattern <- na_count_all[,c("pattern", "count", "num_missing_cols")]
+  na_count_by_pattern$none_missing <- ifelse(na_count_by_pattern$num_missing_cols == 0, TRUE, FALSE)
+
+  # data frame for missing by column bar chart	
+  na_count_by_column <- data.frame(is.na(x)) %>%	
+    colSums() %>% 	
+    sort(decreasing = TRUE) %>% 	
+    tibble::enframe(name = "var", value = "count")	
+  
+  if (!is.null(max_cols)) na_count_by_column <- na_count_by_column %>%
+    dplyr::slice(1:max_cols)
+  
+  # tidy and sort na_count_all by column counts	
+  na_count_all_tidy <- na_count_all %>% 	
+    tidyr::pivot_longer(where(is.logical), names_to = "variable") %>%	
+    dplyr::filter(variable %in% na_count_by_column$var) %>%
+    dplyr::mutate(variable = factor(.data$variable, levels = na_count_by_column$var))  %>% 	
+    dplyr::mutate(none_missing = ifelse(.data$num_missing_cols == 0, TRUE, FALSE))
+  
+  # calculate the % of data shown
+  perc_shown <- 100*sum(na_count_by_pattern$count)/nrow(x)
+  
+  # main plot
+  main_plot <- na_count_all_tidy %>%
+    ggplot2::ggplot(ggplot2::aes(.data$variable, .data$pattern, fill = factor(.data$value), alpha = .data$none_missing)) +	
+    ggplot2::geom_tile(color = "white") +	
+    ggplot2::scale_x_discrete(labels = abbreviate(levels(na_count_all_tidy$variable), num_char)) +
+    ggplot2::scale_fill_manual(values = c("grey70", "mediumpurple")) +	
+    ggplot2::scale_alpha_manual(values = c(.7, 1)) +	
+    ggplot2::labs(y = "missing pattern",
+                  caption = paste0("These missing patterns represent ",
+                                   round(perc_shown, 1), "% of the rows.")) +	
+    ggplot2::guides(fill = "none", alpha = "none") +	
+    ggplot2::theme_classic(12)+ 
+    ggplot2::theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # check for "none missing" pattern
+  none_missing_pattern <- na_count_by_pattern %>%
+    dplyr::filter(.data$none_missing) %>% dplyr::pull(.data$pattern)
+  
+  if (length(none_missing_pattern) > 0) {	
+    column_count <- min(c(ncol(na_count_all)-2, max_cols+1))
+    main_plot <- main_plot +	
+      ggplot2::annotate("text", x = column_count/2,	
+               y = nrow(na_count_all) + 1 - as.numeric(as.character(none_missing_pattern)),	
+               label = "complete cases")	
+  }	
+  
+  # margin plots
+  
+  denom <- ifelse(percent, nrow(x)/100, 1)
+  
+  # top
+  missing_by_column_plot <- 
+    na_count_by_column %>% 
+    dplyr::mutate(var = abbreviate(var, num_char)) %>% 
+    ggplot2::ggplot(ggplot2::aes(forcats::fct_inorder(.data$var), .data$count/denom)) +	
+    ggplot2::geom_col(fill = "cornflowerblue", alpha = .7) +
+    ggplot2::scale_y_continuous(expand = c(0, 0), n.breaks = 3) +	
+    ggplot2::labs(x = "",
+                  y = ifelse(percent, "% rows \n missing:", "num rows \n missing:")) +	
+    ggplot2::theme_linedraw(12) + 	
+    ggplot2::theme(panel.grid.major.x = ggplot2::element_blank(),	
+          panel.grid.minor.x = ggplot2::element_blank(),
+          )	+ 
+    ggplot2::theme(axis.text.x = element_text(angle = 45, hjust = 0))+
+    scale_x_discrete(position = "top") +
+    ggplot2::geom_text(
+      ggplot2::aes(
+        label = ifelse(.data$count / denom > 0, scales::percent(.data$count / denom / 100, accuracy = 0.1), NA)
+        ),
+      vjust = -0.5,
+      size = 3
+      ) 
+  
+  # right
+  missing_by_pattern_plot <- 
+    ggplot2::ggplot(na_count_by_pattern, ggplot2::aes(.data$pattern, .data$count/denom, alpha = .data$none_missing)) +
+    ggplot2::geom_col(fill = "cornflowerblue") +
+    ggplot2::coord_flip() +
+    ggplot2::scale_y_continuous(expand = c(0, 0), n.breaks = 3) +
+    ggplot2::scale_alpha_manual(values = c(.7, 1)) +
+    ggplot2::labs(x = "", y = ifelse(percent, "% rows", "row count")) +
+    ggplot2::guides(alpha = "none") +
+    ggplot2::theme_linedraw(12) +
+    ggplot2::theme(panel.grid.major.y = ggplot2::element_blank(), 
+          panel.grid.minor.y = ggplot2::element_blank()) +
+    ggplot2::geom_text(
+      ggplot2::aes(
+        label = ifelse(.data$count / denom > 0, scales::percent(.data$count / denom / 100, accuracy = 0.1), NA)),
+      hjust = -0.1,
+      size = 3
+      ) 
+  
+  if (percent) {	
+    missing_by_column_plot <- missing_by_column_plot +
+      ggplot2::scale_y_continuous(expand = c(0, 0), n.breaks = 5,
+                         limits = c(0, 100))	
+    missing_by_pattern_plot <- missing_by_pattern_plot +
+      ggplot2::scale_y_continuous(expand = c(0, 0), n.breaks = 5,
+                         limits = c(0, 100))	
+  }	
+  
+  missing_by_column_plot + patchwork::plot_spacer() + 	
+    main_plot + missing_by_pattern_plot + 	
+    patchwork::plot_layout(widths = c(4, 1), heights = c(2, 4))
+}
+
+# utils::globalVariables("where")
+
+payroll_data_fire_police <- readRDS("data_source/payroll_data_fire_police.rds")
+
+payroll_data_fire_police_na_blank <-
+  payroll_data_fire_police |> 
+  mutate(across(everything(), ~ case_when(. == "" ~ NA, TRUE ~ .)))
+
+
+plot_missing_modified(payroll_data_fire_police_na_blank, percent = TRUE)
+```
+
+### Zeros and Complete Values
+
+In additiona to NAs and Blanks, an important part of this dataset is the analysis of [■]{style="color:#ABD9E9;"} Zero values. For this dataset, Zeros are relevant information and should not be excluded from the data. Let's take a look at the full analysis of NAs, Blanks, Zeros, and Complete values. 
+
+We can now examine how the values from the original compares to the final dataset:
+
+
+::: panel-tabset
+## Original VS Subset Comparison
+
+```{r}
+#| fig-width: 9
+#| fig-height: 5
+
 #Data Transformation
 
 payroll_data_total_summary <- payroll_data |>
@@ -427,19 +601,19 @@ payroll_data_combined_summary <-
 
 payroll_data_combined_summary_likert <-
 payroll_data_combined_summary |> 
-  mutate(`Present` = `Total Count` - `NA` - `Blank` - Zero) |> 
-  mutate(`Present` = `Present` / `Total Count`) |> 
+  mutate(`Complete` = `Total Count` - `NA` - `Blank` - Zero) |> 
+  mutate(`Complete` = `Complete` / `Total Count`) |> 
   mutate(`NA` = `NA` / `Total Count`) |> 
   mutate(`Blank` = `Blank` / `Total Count`) |> 
   mutate(`Zero` = Zero / `Total Count`) |> 
-  dplyr::select(`Column`,`NA`,`Blank`,Zero,`Present`) |> 
+  dplyr::select(`Column`,`NA`,`Blank`,Zero,`Complete`) |> 
   filter(!Column %in% c('agency_name_clean','work_location_borough_clean'))
 
 
 likert_colors <- c("NA" = "#D7191C",
                    "Blank" = "#FDAE61",
                    "Zero" = "#ABD9E9",
-                   "Present" = "#2C7BB6")
+                   "Complete" = "#2C7BB6")
 
 
 
@@ -487,18 +661,16 @@ payroll_data_fire_police_combined_summary <-
 
 payroll_data_fire_police_combined_summary_likert <-
   payroll_data_fire_police_combined_summary |> 
-  mutate(`Present` = `Total Count` - `NA` - `Blank` - Zero) |> 
-  mutate(`Present` = `Present` / `Total Count`) |> 
+  mutate(`Complete` = `Total Count` - `NA` - `Blank` - Zero) |> 
+  mutate(`Complete` = `Complete` / `Total Count`) |> 
   mutate(`NA` = `NA` / `Total Count`) |> 
   mutate(`Blank` = `Blank` / `Total Count`) |> 
   mutate(`Zero` = Zero / `Total Count`) |> 
-  dplyr::select(`Column`,`NA`,`Blank`,Zero,`Present`) |> 
+  dplyr::select(`Column`,`NA`,`Blank`,Zero,`Complete`) |> 
   filter(!Column %in% c('agency_name_clean','work_location_borough_clean'))
-```
 
-```{r}
-#| fig-width: 9
-#| fig-height: 5
+
+# Chart
 
 payroll_data_missing_group_likert <- bind_rows(
   payroll_data_combined_summary_likert |> mutate(group= 'Original Data'), 
@@ -518,6 +690,185 @@ HH::likert(x=Column~. | group,payroll_data_missing_group_likert,
            xlim=c(-50,100),
            )
 ```
+::: callout-note
+## Why did I use this chart?
+add exmplanation here
+:::
+
+## Original Details
+```{r}
+#| echo: false
+
+
+payroll_data_missing_table <- tibble(
+  column_name = c(
+    "Payroll Number",
+    "Last Name", 
+    "First Name",
+    "Mid Init",
+    "Work Location Borough",
+    "Agency Start Date",
+    "Title Description",
+    "Regular Hours", 
+    "Regular Gross Paid", 
+    "OT Hours", 
+    "Total OT Paid", 
+    "Total Other Pay",
+    "Fiscal Year , Agency Name, Leave Status as of June 30, Base Salary, Pay Basis"
+  ),
+  
+  
+  missing_na = c(
+    "28.0 % ",
+    "0.0004 % ",
+    "0.0014 %",
+    "-",
+    "-", 
+    "-", 
+    "-", 
+    "-", 
+    "-",  
+    "-",  
+    "-", 
+    "-", 
+    "-"
+  ),
+  missing_blank = c(
+    "-", 
+    "0.2 %",
+    "0.2 %",
+    "41.1 %",
+    "8.1 %",
+    "0.002 %", 
+    "0.002 %", 
+    "-", 
+    "-",  
+    "-",  
+    "-", 
+    "-", 
+    "-"
+  ),
+  missing_zero = c(
+    "-",
+    "-",
+    "-",
+    "0.0006 %",
+    "-", 
+    "-", 
+    "-", 
+    "57.9 %", 
+    "3.8 %",  
+    "75.1 %",  
+    "72.5 %", 
+    "37.3 %",
+    "-"
+  ),
+  complete = c(
+    "72 %",
+    "99.8 %",
+    "99.8 %",
+    "58.9 %", 
+    "91.9 %", 
+    "99.9 %", 
+    "99.9 %", 
+    "42.1 %",  
+    "96.2 %",
+    "24.9 %",  
+    "27.5 %", 
+    "62.7 %",
+    "100 %" 
+  )
+)
+
+names(payroll_data_missing_table) <- c("Column Name","NA","Blank","Zero", "Complete")
+
+kable(payroll_data_missing_table,
+      # caption = "Dataset Format", 
+      align = "lcccc") |>
+  kable_styling(full_width = FALSE) |>
+  column_spec(1, width = "250px") |> 
+  column_spec(2, width = "60px", background = ifelse(as.matrix(payroll_data_missing_table[, 2]) > 0, "#D7191C", ""),color = "white") |> 
+  column_spec(3, width = "60px", background = ifelse(as.matrix(payroll_data_missing_table[, 3]) > 0, "#FDAE61", "")) |> 
+  column_spec(4, width = "60px", background = ifelse(as.matrix(payroll_data_missing_table[, 4]) > 0, "#ABD9E9", "")) |> 
+  column_spec(5, width = "60px", background = ifelse(as.matrix(payroll_data_missing_table[, 5]) > 0, "#2C7BB6", ""),color = "white") 
+```
+
+
+## Subset Details
+```{r}
+#| echo: false
+
+
+payroll_data_missing_table <- tibble(
+  column_name = c(
+    "Mid Init",
+    "Last Name, First Name",
+    "Regular Hours", 
+    "Regular Gross Paid", 
+    "OT Hours", 
+    "Total OT Paid", 
+    "Total Other Pay",
+    "Fiscal Year ,  Payroll Number , Agency Name, Agency Start Date, Work Location Borough, Title Description, Leave Status as of June 30, Base Salary, Pay Basis"
+  ),
+  
+  
+  missing_na = c(
+    "-",
+    "-",
+    "-", 
+    "-", 
+    "-",  
+    "-",  
+    "-", 
+    "-"
+  ),
+  missing_blank = c(
+    "29.4 %",
+    "1.2 %",
+    "-", 
+    "-", 
+    "-",  
+    "-",  
+    "-", 
+    "-"
+  ),
+  missing_zero = c(
+    "-",
+    "-",
+    "6.9 %", 
+    "1.5 %",  
+    "20.9 %",  
+    "15.9 %", 
+    "3.7 %",
+    "-"
+  ),
+  complete = c(
+    "70.6 %",
+    "98.8 %",
+    "93.1 %", 
+    "98.5 %",  
+    "79.1 %",  
+    "84.1 %", 
+    "96.3 %",
+    "100 %" 
+  )
+)
+
+names(payroll_data_missing_table) <- c("Column Name","NA","Blank","Zero", "Complete")
+
+kable(payroll_data_missing_table,
+      # caption = "Dataset Format", 
+      align = "lcccc") |>
+  kable_styling(full_width = FALSE) |>
+  column_spec(1, width = "250px") |> 
+  column_spec(2, width = "60px", background = ifelse(as.matrix(payroll_data_missing_table[, 2]) > 0, "#D7191C", "")) |> 
+  column_spec(3, width = "60px", background = ifelse(as.matrix(payroll_data_missing_table[, 3]) > 0, "#FDAE61", "")) |> 
+  column_spec(4, width = "60px", background = ifelse(as.matrix(payroll_data_missing_table[, 4]) > 0, "#ABD9E9", "")) |> 
+  column_spec(5, width = "60px", background = ifelse(as.matrix(payroll_data_missing_table[, 5]) > 0, "#2C7BB6", ""),color = "white") 
+```
+
+
+:::
 
 Our original dataset has [■]{style="color:#D7191C;"} NA data for payroll_number, first_name, last_name. It also has [■]{style="color:#FDAE61;"} Blank data in 6 columns: first_name, mid_init, last_name, work_location_borough, title_description, agency_start_date.
 
@@ -540,6 +891,168 @@ payroll_data_fire_police |>
 
 \
 \
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+::: callout-note
+**Instruction**
+
+2 Data data.qmd
+
+2.1 Technical description
+
+Identify one or more data sources (see II. D. above) that you propose to draw on for the project. For each, describe how the data are collected and by whom. Describe the format of the data, the frequency of updates, dimensions, and any other relevant information. Note any issues / problems with the data, either known or that you discover. Explain how you plan to import the data. Carefully document your sources with links to the precise data sources that you used. If that is not possible (for example if your data is not available online, then explain that clearly.)
+
+(suggested: 1/2 page) 250-500 words
+
+2.2 Missing value analysis
+
+Describe any patterns you discover in missing values. If no values are missing, graphs should still be included showing that.
+
+(suggested: 2 graphs plus commentary)
+:::
+
+
+
+
+
+<!-- ```{r} -->
+
+<!-- plot_missing(mycars, percent = TRUE)[[1]] + -->
+<!--   theme(axis.text.x = element_text(angle = 45, hjust = 0)) +  -->
+<!--   scale_x_discrete(position = "top") + -->
+<!-- plot_missing(mycars, percent = TRUE)[[2]] +  -->
+<!-- plot_missing(mycars, percent = TRUE)[[3]] +  -->
+<!--   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  -->
+<!-- plot_missing(mycars, percent = TRUE)[[4]] + -->
+<!-- patchwork::plot_layout(widths = c(4, 1), heights = c(1, 4)) -->
+
+
+<!-- # plot_missing_modified(mycars, percent = TRUE)[[4]] -->
+<!-- ``` -->
+
+
+
+<!-- ```{r} -->
+<!-- plot_missing(payroll_data_fire_police_na_blank, percent = FALSE) -->
+<!-- ``` -->
+<!-- ```{r} -->
+<!-- plot_missing(payroll_data_fire_police_na_blank, percent = FALSE) + -->
+<!-- theme(axis.text.x = element_text(angle = 45, hjust = 1)) -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- #| fig-width: 9 -->
+<!-- #| fig-height: 7 -->
+<!-- #| message: false -->
+<!-- #| warning: false -->
+
+<!--   # plot_missing_modified(payroll_data_fire_police_na_blank, percent = FALSE) -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- #| fig-width: 9 -->
+<!-- #| fig-height: 7 -->
+<!-- #| message: false -->
+<!-- #| warning: false -->
+
+
+<!-- plot_missing_modified(payroll_data_na_blank, percent = TRUE) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- #| fig-width: 9 -->
+<!-- #| fig-height: 7 -->
+<!-- #| message: false -->
+<!-- #| warning: false -->
+
+
+<!-- plot_missing_modified(payroll_data_fire_police_na_blank, percent = TRUE) -->
+<!-- ``` -->
+
+
+
+
+<!-- ```{r} -->
+<!-- payroll_data_na_blank_zero <- -->
+<!--   payroll_data |>  -->
+<!--   # mutate(across(everything(), ~ ifelse(. == "", NA, .))) -->
+<!--   mutate(across(everything(), ~ case_when( -->
+<!--     . == "" ~ NA,   # Replace blanks with NA -->
+<!--     TRUE ~ .        # Keep original value -->
+<!--   ))) |>  -->
+<!--   mutate(across(everything(), ~ case_when( -->
+<!--     . == 0 ~ NA,   # Replace blanks with NA -->
+<!--     TRUE ~ .        # Keep original value -->
+<!--   )))  -->
+<!--   # mutate(across(everything(), ~ sum(. == 0, na.rm = TRUE))) -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- #| fig-width: 9 -->
+<!-- #| fig-height: 7 -->
+
+
+<!-- plot_missing_modified(payroll_data_na_blank_zero, percent = TRUE) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- payroll_data_na_blank <- -->
+<!--   payroll_data |>  -->
+<!--   # mutate(across(everything(), ~ ifelse(. == "", NA, .))) -->
+<!--   mutate(across(everything(), ~ case_when( -->
+<!--     . == "" ~ NA,   # Replace blanks with NA -->
+<!--     TRUE ~ .        # Keep original value -->
+<!--   )))  -->
+<!--   # mutate(across(everything(), ~ sum(. == 0, na.rm = TRUE))) -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- #| fig-width: 9 -->
+<!-- #| fig-height: 12 -->
+
+
+<!-- plot_missing_modified(payroll_data_na_blank, percent = TRUE) -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- payroll_data_fire_police_na_blank_zero <- -->
+<!--   payroll_data_fire_police |>  -->
+<!--   # mutate(across(everything(), ~ ifelse(. == "", NA, .))) -->
+<!--   mutate(across(everything(), ~ case_when( -->
+<!--     . == "" ~ NA,   # Replace blanks with NA -->
+<!--     TRUE ~ .        # Keep original value -->
+<!--   ))) |>  -->
+<!--   mutate(across(everything(), ~ case_when( -->
+<!--     . == 0 ~ NA,   # Replace blanks with NA -->
+<!--     TRUE ~ .        # Keep original value -->
+<!--   )))  -->
+<!--   # mutate(across(everything(), ~ sum(. == 0, na.rm = TRUE))) -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- #| fig-width: 9 -->
+<!-- #| fig-height: 7 -->
+
+<!--   plot_missing_modified(payroll_data_fire_police_na_blank_zero, percent = FALSE) -->
+<!-- ``` -->
 
 
 

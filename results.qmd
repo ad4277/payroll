@@ -93,6 +93,8 @@ library(scales)
 library(ggalluvial)
 library('patchwork')
 library(ggrepel)
+library(parcoords)
+library(GGally)
 ```
 
 ```{r}
@@ -1012,11 +1014,12 @@ Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iacu
 <!-- ::: panel-tabset -->
 <!-- ## Number of Employees -->
 
+
+
+
+
 ```{r}
-#| fig-width: 8
-#| fig-height: 11
-#| message: false
-#| warning: false
+
 
 payroll_data_fire_police_chart_2 <-
   payroll_data_fire_police |> 
@@ -1106,7 +1109,7 @@ payroll_data_fire_police_chart_2 <-
 
 
 
-library(parcoords)
+
 
 title_mapping <- c(
   "EXECUTIVE AGENCY COUNSEL" = "EXEC AGENCY CNSL",
@@ -1188,17 +1191,20 @@ payroll_data_fire_police_chart_2 |>
 #   arrange(desc(title_description_short)) |> 
 #   mutate(order_sequence = paste0("000-",sprintf("%05d", row_number())))
 
-title_order_sequence <- payroll_data_fire_police_chart_2_250 |> 
+title_order_sequence <- 
+  payroll_data_fire_police_chart_2_250 |> 
   dplyr::select(title_description_short) |> 
   distinct() |> 
   arrange(desc(title_description_short)) |> 
   mutate(order_sequence = paste0("000-", sprintf("%05d", row_number())))
 
 # Perform a left join to add order_sequence
-payroll_data_fire_police_chart_2_250 <- payroll_data_fire_police_chart_2_250 |> 
+payroll_data_fire_police_chart_2_250 <- 
+  payroll_data_fire_police_chart_2_250 |> 
   left_join(title_order_sequence, by = "title_description_short")
 
-title_description_list <- payroll_data_fire_police_chart_2_250 |> 
+title_description_list <- 
+  payroll_data_fire_police_chart_2_250 |> 
   dplyr::select(title_description_short) |> 
   distinct(title_description_short) |> 
   arrange(title_description_short) |> 
@@ -1206,7 +1212,82 @@ title_description_list <- payroll_data_fire_police_chart_2_250 |>
 
 # View the list
 # print(as.character(title_description_list))
-  
+```
+
+
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4
+
+payroll_data_fire_police_chart_2_250_selection <-
+  payroll_data_fire_police_chart_2_250 |> 
+  # filter(regular_gross_paid >= 250000) |> 
+  mutate(agency_name_factor = as.factor(agency_name)) |> 
+  mutate(regular_paid_group = as.factor(
+    dplyr::if_else(regular_gross_paid>= 200000, "200k and above", 
+                   dplyr::if_else(regular_gross_paid>= 100000 & regular_gross_paid< 200000, "100k-200k", 
+                                      "Less than 100k"))
+  )
+         )|> 
+  mutate(regular_paid_group = fct_relevel(regular_paid_group, "200k and above","100k-200k","Less than 100k")) |> 
+  dplyr::select(
+    agency_name_factor,
+    # title_description_short,
+    regular_paid_group,
+    regular_gross_paid,
+    total_ot_paid,
+    total_other_pay,
+    total_paid)
+
+ggparcoord(data = payroll_data_fire_police_chart_2_250_selection,
+           columns = 3:6,
+           alphaLines = 0.1,
+           groupColumn = "regular_paid_group",
+           # mapping = aes(color = agency_name,fill = I("lightblue1")),
+           scale="globalminmax",
+           # splineFactor = 1, 
+           # missing="median",
+           showPoints = TRUE,
+          ) +
+  # geom_hline(yintercept =  2.5, color = "black", linetype = "dashed") +
+  # geom_hline(yintercept = -2.5, color = "black", linetype = "dashed") +
+  scale_color_manual("regular_paid_group",
+                     name= 'Regular Pay Range',
+                     # values = c("#0496ff", "#ade8f4", "#023e8a")) +
+                     values = c("#76c893", "#d9ed92", "#4f772d")) +
+  labs(x = "Variables", 
+       y = "Salary", 
+       title = "Parallel Coordinates Plot for Outliers") +
+  # guides(alpha = "none") + 
+  scale_x_discrete(
+    labels = c(
+      "regular_gross_paid" = "Regular Pay",
+      "total_ot_paid" = "Overtime Pay",
+      "total_other_pay" = "Other Pay",
+      "total_paid" = "Total Salary\n(Regular + Overtime + Other)"
+    )
+  ) +
+  scale_y_continuous(
+    breaks = seq(0, 400000, 100000), # Adjust the breaks
+    labels = scales::label_number(scale = 1 /1000, suffix = "K") # Show in 'K' format
+  ) +
+  theme_classic()
+
+```
+
+
+
+
+
+
+
+
+```{r}
+#| fig-width: 8
+#| fig-height: 11
+#| message: false
+#| warning: false
 
 parcoords(
   payroll_data_fire_police_chart_2_250[, c(
@@ -1238,8 +1319,11 @@ parcoords(
     order_sequence = list(
       title = "Job Title",
       tickValues = as.character(title_description_list)
-    )
-
+    ),
+    regular_gross_paid = list(title = "Regular Pay"),
+    total_ot_paid = list(title = "Overtime Pay"),
+    total_other_pay = list(title = "Other Pay"),
+    total_paid = list(title = "Total Salary (Reg+Ovt+Oth)")
   ),
   # color = list(
   #   colorBy = "outliers_rank",  
@@ -1378,7 +1462,7 @@ payroll_data_fire_police |>
     .groups = "drop"
   ) |>
   arrange(agency_name, desc(Total_records)) |>
-  select('agency_name',
+  dplyr::select('agency_name',
          'title_description',
          'mean_regular_paid' ,
          'mean_total_paid') |>
@@ -1465,7 +1549,162 @@ ggplot() +
 
 
 
+```{r}
+#| fig-width: 8
+#| fig-height: 10
+#| message: false
+#| warning: false
 
+
+payroll_data_fire_police |>
+  filter(fiscal_year == "2024") |>
+  # filter(leave_status_as_of_june_30 == 'ACTIVE') |>
+  # filter(title_description %in% title_descriptions_top10) |>
+  # filter(pay_basis == 'per Annum') |>
+  filter((agency_name == 'FIRE DEPARTMENT' & title_description %in% title_descriptions_top_fire) |
+          (agency_name == 'POLICE DEPARTMENT' & title_description %in% title_descriptions_top_police)  ) |>    mutate(
+     title_description = str_replace_all(title_description, title_short_fire)
+   ) |>
+  # group_by(agency_name, title_description) |>
+  mutate(
+    title_description = str_to_title(title_description),
+    title_description = str_remove(title_description, "-$"),
+    title_description = str_replace_all(title_description, exceptions_proper)
+  ) |>
+  group_by(agency_name, title_description, pay_basis, work_location_borough) |>
+  group_by(agency_name, title_description, work_location_borough) |>
+  group_by(agency_name, title_description) |>
+  # group_by(agency_name, work_location_borough) |>
+  summarise(
+    Total_records = n(),
+    mean_base_salary = mean(base_salary, na.rm = TRUE),
+    mean_regular_paid = mean(regular_gross_paid, na.rm = TRUE),
+    mean_total_paid = mean(total_paid, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  arrange(agency_name, desc(Total_records)) |>
+  dplyr::select('agency_name',
+         'title_description',
+         'mean_regular_paid' ,
+         'mean_total_paid') |>
+  # pivot_wider(names_from = tuition_type_factor, values_from = mean_tuition) |>
+  mutate(perc_diff = abs(mean_total_paid - mean_regular_paid) / mean_regular_paid * 100) |>
+  mutate(perc_diff_band = cut(perc_diff,
+                              breaks = c(seq(0, 1000, by = 25), Inf),
+                              include.lowest = TRUE)) |>
+ggplot() +
+  geom_bar(aes(x = -perc_diff *2500,
+               y= title_description,
+               fill = perc_diff_band),
+           stat = 'identity',
+           alpha = 1,
+  ) +
+  geom_text(aes(x = -perc_diff * 2500,
+                y = title_description,
+                label = paste0(round(perc_diff, 0), "%")),
+            hjust = 1.2,
+            size = 3,
+            color = "black",
+            alpha = 0.8,
+            check_overlap=TRUE,
+  ) +
+
+  geom_point(aes(x = mean_total_paid,
+                 y = reorder(title_description, mean_total_paid),
+                 color = "Total Salary"),
+             # color = "#1e6091",
+             alpha = 1,
+             size = 1.5,
+             stroke=2,
+  ) +
+    geom_segment(aes(x = 0,
+                   xend = mean_total_paid,
+                   y = reorder(title_description, mean_total_paid,),
+                   yend = reorder(title_description, mean_total_paid)),
+               color = "#1e6091",
+               alpha=0.5,
+  ) +
+    geom_point(aes(x = mean_regular_paid,
+                 y = reorder(title_description, mean_regular_paid),
+                 color = "Regular Salary"),
+             # color = "deepskyblue3",
+             size = 1.5,
+             alpha=1,
+             stroke=2,
+  ) +
+  geom_segment(aes(x = 0,
+                   xend = mean_regular_paid,
+                   y = reorder(title_description, mean_regular_paid,),
+                   yend = reorder(title_description, mean_regular_paid)),
+               color = "deepskyblue3",
+               alpha=1,
+               
+  ) +
+
+  # geom_text(aes(x = mean_regular_paid,
+  #               y = reorder(title_description, mean_regular_paid),
+  #               label = scales::label_comma()(round(mean_regular_paid, 0))),
+  #           hjust = -0.4,
+  #           size = 3,
+  #           alpha = 0.6,
+  #           check_overlap=TRUE,
+  # ) +
+  # geom_vline(xintercept = c(-250000, -187500, -125000, -62500),
+  #            linetype = "dashed",
+  #            color = "gray50",
+  #            alpha = 0.2) +
+  facet_grid(fct_infreq(agency_name) ~ .,
+             scales ='free_y',
+             space = 'free_y') +
+  scale_fill_brewer(name = "% Ratio:",
+                    palette = "RdYlGn",
+                    direction = -1,
+                    na.translate = FALSE) +
+  scale_color_brewer(name = "% Ratio:",
+                     palette = "RdYlGn",
+                     direction = -1,
+                     na.translate = FALSE) +
+  scale_color_manual(name = "Dots:",
+                     values = c("Total Salary" = "#1e6091",
+                                "Regular Salary" = "deepskyblue3")) +
+  # scale_x_continuous(
+  #   limits = c(-250000, 250000),
+  #   name = "Regular Salary Paid (dots)",
+  #   labels = function(x) ifelse(x >= 0, scales::label_number()(x), ""),
+  #   sec.axis = sec_axis(~./-2500, name = "% Ratio (bars)",
+  #                       labels = function(x) ifelse(x >= 0,
+  #                                                   paste0(scales::label_number()(x),
+  #                                                          '%'), ""))
+  # ) +
+  scale_x_continuous(
+    limits = c(-250000, 250000),
+    name = "Salary (dots)",
+    breaks = c(-250000, -187500, -125000, -62500, 0, 100000,200000), # Custom breaks
+    labels = c("", "", "", "", "0","100k","200k"), # Custom labels for breaks
+    sec.axis = sec_axis(~./-2500, name = "% Ratio (bars)",
+                        labels = function(x) ifelse(x >= 0,
+                                                    paste0(scales::label_number()(x),
+                                                           '%'), ""))
+  ) +
+  labs(title = "Ratio of `Total Salary` to `Regular Salary` VS Regular Salary by Job Title, Facet by Agency",
+       y = "Job Titles",
+       caption = "% Ratio = Total Salary Paid (Regular + Overtime + Other) / Regular Salary Paid") +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    # legend.box = "vertical",
+          # legend.position = c(0, 0),             # Place the legend at the bottom left
+  legend.justification = c(1, 1)      ,   # Align the legend to the left
+        panel.border = element_rect(color = "darkgray", fill = NA, linewidth = 1),
+        axis.title.x = element_text(hjust = 1),
+        axis.title.x.top = element_text(hjust = 0),
+        plot.title = element_text(hjust = 0),
+  plot.title.position = "plot",
+    panel.grid.minor.x = element_blank() ,
+  # plot.title.justification = c(0.5, 0.5) 
+  )
+
+```
 
 
 
@@ -1493,6 +1732,222 @@ Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas s
 Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
 
 
+
+
+```{r}
+#| fig-width: 10
+#| fig-height: 10
+payroll_data_fire_police |> 
+ # filter(fiscal_year %in% c("2024")) |>
+  # filter(fiscal_year %in% c("2023")) |>
+  # filter(agency_name == "POLICE DEPARTMENT") |>
+  # filter(leave_status_as_of_june_30 == "ACTIVE") |>
+  # filter(str_detect(title_description, "POLICE OFFICER|P\\.O\\.")) |>
+  # filter(str_detect(title_description, "P\\.O\\.")) |>
+  # filter(str_detect(title_description, "POLICE OFFICER")) |>
+
+
+
+ggplot() +
+  geom_density(mapping = aes(x = total_paid,after_stat(scaled),fill=agency_name),
+               alpha = 0.5,
+               # na.rm = TRUE,
+               # trim =TRUE,
+               # stat = "density",
+                # position = "stack",
+               bounds = c(-50000,300000)
+               ) +
+  # scale_fill_manual(values = c("In state" = "yellow",
+  #                              "Out of state" = "red",
+  #                              "In district" = "cyan")) +
+  facet_grid(leave_status_as_of_june_30 ~ pay_basis)+
+  scale_fill_manual(
+    values = c("POLICE DEPARTMENT" = "deepskyblue3", "FIRE DEPARTMENT" = "#f94144"))+
+  labs(title = "Separate Density Plots of Tuition Fees by Tuition Type and Level of Study",
+       x = "Tuition Fees (FT)",
+       y = "Density",
+       # fill = "Tuition Type"
+       )+
+  # theme_minimal() +
+  scale_x_continuous(
+    # limits = c(-25000, 300000),
+    breaks = seq(-200000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 100000),
+    labels = scales::label_number(scale = 1/1000, suffix = "k")
+  ) +
+  theme_light() +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    )
+
+
+# ggplot(payroll_data_fire_police) +
+#   geom_density(mapping = aes(x = total_paid,after_stat(count),fill=agency_name),
+#                alpha = 0.5,
+#                # na.rm = TRUE,
+#                # trim =TRUE,
+#                # stat = "density",
+#                 position = "stack",
+#                bounds = c(-50000,300000)
+#                ) +
+#   # scale_fill_manual(values = c("In state" = "yellow",
+#   #                              "Out of state" = "red",
+#   #                              "In district" = "cyan")) +
+#   facet_grid(leave_status_as_of_june_30 ~ pay_basis)+
+#   scale_fill_manual(
+#     values = c("POLICE DEPARTMENT" = "deepskyblue3", "FIRE DEPARTMENT" = "#f94144"))+
+#   labs(title = "Separate Density Plots of Tuition Fees by Tuition Type and Level of Study",
+#        x = "Tuition Fees (FT)",
+#        y = "Density",
+#        # fill = "Tuition Type"
+#        )
+```
+
+```{r}
+range_band= 50000
+
+payroll_data_fire_police_test <-
+payroll_data_fire_police |> 
+  # filter(fiscal_year == 2024) |>
+  # filter(fiscal_year %in% c("2024","2023")) |>
+  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
+  # filter(leave_status_as_of_june_30 == "ACTIVE") |>
+   mutate(
+    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
+    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
+    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
+  ) |> 
+    mutate(
+    # Define the range for breaks, including the floor of minimum to handle negative values
+    total_paid_group = cut(
+      total_paid,
+      breaks = seq(
+        floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
+        ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
+        by = range_band
+      ),
+      labels = paste0(
+        seq(
+          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
+          ceiling(max(total_paid, na.rm = TRUE) / range_band - 1) * range_band,
+          by = range_band
+        ) / 1000,
+        "k-",
+        seq(
+          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band + range_band, 
+          ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
+          by = range_band
+        ) / 1000,
+        "k"
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) |> 
+  mutate(
+    total_paid_group = recode(
+      total_paid_group,
+      "-200k--150k" = "Less than 0",
+      "-150k--100k" = "Less than 0",
+      "-100k--50k" = "Less than 0",
+      "-50k-0k" = "Less than 0",
+      "0k-50k" = "0k-50k",
+      "50k-100k" = "50k-100k",
+      "100k-150k" = "100k-150k",
+      "150k-200k" = "150k-200k",
+      "200k-250k" = "200k-250k",
+      "250k-300k" = "250k and above",
+      "300k-350k" = "250k and above",
+      "350k-400k" = "250k and above",
+      "400k-450k" = "250k and above",
+      "450k-500k" = "250k and above",
+      "500k-550k" = "250k and above",
+      "550k-600k" = "250k and above",
+      "600k-650k" = "250k and above"
+    ),
+    total_paid_group = factor(total_paid_group, 
+                              levels = c("250k and above", "200k-250k", 
+                                         "150k-200k", "100k-150k", "50k-100k", 
+                                         "0k-50k", "Less than 0"))
+  ) |> 
+  mutate(
+    flag_regular = factor(flag_regular, levels = c("Yes", "No")),
+    flag_overtime = factor(flag_overtime, levels = c("Yes", "No")),
+  ) |> 
+mutate(
+    years_at_agency = 2024 - agency_start_date_year,  # Calculate the years worked
+    years_band = case_when(
+      years_at_agency >= 0 & years_at_agency <= 5 ~ "0-5 years",
+      years_at_agency > 5 & years_at_agency <= 10 ~ "5-10 years",
+      years_at_agency > 10 & years_at_agency <= 20 ~ "10-20 years",
+      years_at_agency > 20 ~ "20+ years",
+      TRUE ~ "Unknown"  # In case of any missing or incorrect data
+    ),
+    years_band = factor(years_band, levels = c("20+ years", "10-20 years", "5-10 years", "0-5 years"))
+  ) |> 
+  mutate(total_paid_group_fill = total_paid_group,
+years_band_group = years_band)
+
+
+
+
+
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+  
+payroll_data_fire_police_test |> 
+ # filter(fiscal_year %in% c("2024")) |>
+  # filter(fiscal_year %in% c("2023")) |>
+  # filter(fiscal_year %in% c("2022")) |>
+  # filter(agency_name == "POLICE DEPARTMENT") |>
+  filter(leave_status_as_of_june_30 == "ACTIVE") |>
+  filter(pay_basis == "per Annum") |>
+  # filter(str_detect(title_description, "POLICE OFFICER|P\\.O\\.")) |>
+  # filter(str_detect(title_description, "P\\.O\\.")) |>
+  # filter(str_detect(title_description, "POLICE OFFICER")) |>
+
+
+
+ggplot() +
+  geom_density(mapping = aes(x = total_paid,after_stat(count),fill=agency_name),
+               alpha = 0.5,
+               # na.rm = TRUE,
+               # trim =TRUE,
+               # stat = "density",
+                position = "stack",
+               bounds = c(-50000,300000)
+               ) +
+  # scale_fill_manual(values = c("In state" = "yellow",
+  #                              "Out of state" = "red",
+  #                              "In district" = "cyan")) +
+  facet_grid(years_band_group ~ pay_basis)+
+  scale_fill_manual(
+    values = c("POLICE DEPARTMENT" = "deepskyblue3", "FIRE DEPARTMENT" = "#f94144"))+
+  labs(title = "Separate Density Plots of Tuition Fees by Tuition Type and Level of Study",
+       x = "Tuition Fees (FT)",
+       y = "Density",
+       # fill = "Tuition Type"
+       )+
+  # theme_minimal() +
+  scale_x_continuous(
+    # limits = c(-25000, 300000),
+    breaks = seq(-200000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 100000),
+    labels = scales::label_number(scale = 1/1000, suffix = "k")
+  ) +
+  theme_light() +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    )
+
+```
 
 
 

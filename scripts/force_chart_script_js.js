@@ -1,8 +1,4 @@
-
-
 import define1 from "./scrubber_file_js.js";
-// import {Scrubber} from "@mbostock/scrubber"
-// location.reload(); 
 
 function _1(md){return(
 md`force-chart`
@@ -74,13 +70,19 @@ function _chart(d3,invalidation,drag)
     if (node.ag === 'f') return '#f94144'; // Red for 'f'
     if (node.ag === 'pr') return '#99dfff';    // Blue for 'a'
     if (node.ag === 'fr') return '#fcaeaf';   // Green for 'b'
-    return 'gray'; // Default color for unspecified cases
+    return 'gray'; 
   }
 
   function getNodeLabel(node) {
     // return node.id === 1 ? 'blue' : 'gray'
     return node.ag === 'p' ? "rgba(0, 140, 205, 0.7)" : "rgba(249, 65, 68, 0.7)"
   }
+
+  function getNodeSize(node) {
+  // return Math.sqrt(parseInt(node.ct) || 1) * 2;
+    return Math.min(Math.max(5, 5 + (Math.sqrt(parseInt(node.ct) || 1) - 1) / (Math.sqrt(10500) - 1) * 10), 15)
+
+}
 
   function ticked() {
     node.attr("cx", d => d.x)
@@ -105,89 +107,7 @@ function _chart(d3,invalidation,drag)
       nodes = nodes.map(d => ({...old.get(d.id), ... d}));
       links = links.map(d => ({...d}));
 
-      // node = node
-      //   .data(nodes, d => d.id)
-      //   .join(enter => enter.append("circle")
-      //     .attr("r", 5)
-      //     // .attr("fill", getNodeColor)
-      //     .attr("fill", getNodeAgency)
-      //     .call(drag(simulation))
-      //     .call(node => node.append("title").text(d => d.id)));
-
-  //     node = node
-  // .data(nodes, d => d.id)
-  // .join(enter => enter.append("circle")
-  //   .attr("r", 5)
-  //   .attr("fill", getNodeAgency)
-  //   .call(drag(simulation))
-  //   .on("mouseover", function (event, d) {
-  //     // Add a text label near the hovered node
-  //     svg.append("text")
-  //       .attr("class", "node-label") // Use a class to simplify selection
-  //       .attr("x", d.x + 10) // Slightly offset from the node
-  //       .attr("y", d.y - 10)
-  //       .attr("text-anchor", "start")
-  //       .attr("font-size", "12px")
-  //       .attr("fill", "#333")
-  //       .text(d.id); // Display the node's ID or any other relevant data
-  //   })
-  //   .on("mouseout", function () {
-  //     // Remove all labels when the mouse leaves the node
-  //     svg.selectAll(".node-label").remove();
-  //   })
-  //   .call(node => node.append("title").text(d => d.id))); // Optional tooltip
-
-
-
-
-  //     node = node
-  // .data(nodes, d => d.id)
-  // .join(enter => enter.append("circle")
-  //   .attr("r", 5)
-  //   .attr("fill", getNodeAgency)
-  //   .call(drag(simulation))
-  //   .on("mouseover", function (event, d) {
-  //     // Create a group to hold the label and background rect
-  //     const labelGroup = svg.append("g")
-  //       .attr("class", "node-label-group");
-
-  //     // Add background rectangle
-  //     labelGroup.append("rect")
-  //       .attr("class", "node-label-bg")
-  //       .attr("x", d.x + 10) // Position slightly offset
-  //       .attr("y", d.y - 20) // Adjust for text height
-  //       .attr("rx", 4) // Rounded corners
-  //       .attr("ry", 4)
-  //       // .attr("fill", "rgba(255, 255, 255, 0.7)"); // Semi-transparent white
-  //       // .attr("fill", getNodeLabel); 
-  //       .attr("fill", "rgba(235, 239, 242, 0.9)")
-        
-
-  //     // Add text label
-  //     labelGroup.append("text")
-  //       .attr("class", "node-label")
-  //       .attr("x", d.x + 10) // Slightly offset from the node
-  //       .attr("y", d.y - 10)
-  //       .attr("text-anchor", "start")
-  //       .attr("font-size", "12px")
-  //       .attr("fill", "#333")
-  //       .text(d.id); // Use node property for label text
-
-  //     // Dynamically adjust the background size based on text
-  //     const textElement = labelGroup.select("text").node();
-  //     const bbox = textElement.getBBox();
-  //     labelGroup.select("rect")
-  //       .attr("width", bbox.width + 6) // Add padding
-  //       .attr("height", bbox.height + 4)
-  //       .attr("x", bbox.x - 3) // Adjust for padding
-  //       .attr("y", bbox.y - 2);
-  //   })
-  //   .on("mouseout", function () {
-  //     // Remove the label group on mouseout
-  //     svg.selectAll(".node-label-group").remove();
-  //   })
-  //   // .call(node => node.append("title").text(d => d.id))
-  //   ); // Optional tooltip
+ 
 
 
 
@@ -195,7 +115,8 @@ function _chart(d3,invalidation,drag)
  node = node
   .data(nodes, d => d.id)
   .join(enter => enter.append("circle")
-    .attr("r", 5)
+    // .attr("r", 5)
+    .attr("r", getNodeSize)
     .attr("fill", getNodeAgency)
     .call(drag(simulation))
     .on("mouseover", function (event, d) {
@@ -210,7 +131,7 @@ function _chart(d3,invalidation,drag)
         .attr("y", d.y - 20) // Adjust for text height
         .attr("rx", 4) // Rounded corners
         .attr("ry", 4)
-        // .attr("fill", "rgba(255, 255, 255, 0.7)"); // Semi-transparent white
+        // .attr("fill", "rgba(255, 255, 255, 0.7)");
         // .attr("fill", getNodeLabel); 
         .attr("fill", "rgba(235, 239, 242, 0.9)")
         
@@ -218,20 +139,23 @@ function _chart(d3,invalidation,drag)
       // Add text label
       labelGroup.append("text")
         .attr("class", "node-label")
-        .attr("x", d.x + 10) // Slightly offset from the node
+        .attr("x", d.x + 10) 
         .attr("y", d.y - 10)
         .attr("text-anchor", "start")
         .attr("font-size", "12px")
         .attr("fill", "#333")
-        .text(d.id); // Use node property for label text
+        // .text(d.id); 
+        // .text(`${d.id} (${d.ct} hired employees)`);
+        .text(d.ct === "" ? `${d.id} ` : `${d.id} (${d.ct} hired employees)`);
+
 
       // Dynamically adjust the background size based on text
       const textElement = labelGroup.select("text").node();
       const bbox = textElement.getBBox();
       labelGroup.select("rect")
-        .attr("width", bbox.width + 6) // Add padding
+        .attr("width", bbox.width + 6) 
         .attr("height", bbox.height + 4)
-        .attr("x", bbox.x - 3) // Adjust for padding
+        .attr("x", bbox.x - 3) 
         .attr("y", bbox.y - 2);
     })
     .on("mouseout", function () {

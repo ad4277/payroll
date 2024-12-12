@@ -12,9 +12,7 @@ One of the reasons I selected this dataset is its versatility; it includes a var
 
 Specifically, I am interested in studying trends such as workforce growth, salary composition across different roles, and identifying the top-ranking positions and locations with the highest payroll activity. By delving into these questions, I aim to uncover meaningful insights into the structure and evolution of these essential public service departments. Let’s uncover the stories hidden in the data!
 
-
 [🚒 💵 🚓]{style="font-size:300%;"}
-
 
 <!-- **Instruction** -->
 
@@ -23,4 +21,3 @@ Specifically, I am interested in studying trends such as workforce growth, salar
 <!-- Explain why you chose this topic, and the questions you are interested in studying. Provide context for readers who are not familiar with the topic. -->
 
 <!-- (suggested: 1/2 page) 250-500 words -->
-

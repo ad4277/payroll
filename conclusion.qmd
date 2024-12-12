@@ -1,47 +1,57 @@
-# Conclusion
+# Data
+::: callout-note
+## This page contains Tabs. Please click through tabs to see additional charts/info.
+:::
+## Description
+For this project, we will be using a subset of the **Citywide Payroll Data**.\
+This dataset is available via NYC OpenData and provided by the Office of Payroll Administration (OPA).
 
-hi, this is my conclusion
+The final subset of data for this project will be focused on 2 Agencies:\
+<p style="margin-top: -15px">
+-   Fire Department 🧑‍🚒 🚒
+-   Police Department 👮🚓
+</p>
 
+Here are the filters applied to the original data to produce our final subset of data:
 ```{r}
-# this is test
+#| echo: false
+#| message: false
+#| warning: false
+
+
+library(tibble)
+library(knitr)
+library(kableExtra)
+
+payroll_data_format <- tibble(
+  column_name = c(
+    "Fiscal Year", 
+    "Agency Name", 
+    "Work Location Borough",
+    "Pay Basis"
+  ),
+  filter = c(
+    "From 2015 to 2024 (10 years)", 
+    "FIRE DEPARTMENT, POLICE DEPARTMENT",
+    "BRONX, BROOKLYN, MANHATTAN, QUEENS, STATEN ISLAND",
+    "per Annum, per Day, per Hour"
+  )
+)
+
+names(payroll_data_format) <- c("Column Name","Filter")
+
+kable(payroll_data_format,
+      # caption = "Dataset Format", 
+      align = "l") |>
+  kable_styling(full_width = FALSE) |>
+  column_spec(1, width = "200px")
 ```
 
-```{mermaid}
-%%| echo: false
+\
 
-flowchart LR
-  A[Importing Data] --> B[Understanding and \n cleaning the raw data]
-  B --> C(Transforming columns)
-  B --> D(Filtering Data)
-  B --> E(Backfilling NA)
-  C --> F[Saving Subset Data]
-  D --> F[Saving Subset Data]
-  E --> F[Saving Subset Data]
-```
+<!-- First, we will examine the metadata of the dataset, how to import the data and process the subset data. Finally, an analysis of missing values to identify any potential issues that may impact our analysis. -->
 
-# Results
-
-
-Possible 10 Charts based on Problem Set1
-hitogram / facets (ps1)
-boxplot jitter (ps1)
-with ridgeline (ps1)
-density lines
-bar chart lump facet
-scattter plot
-Density plot
-geom_point with facet 9x9 grid (ps2 california)
-Cleveland dot plot
-ggparcords
-parcoords
-likert
-mosaic
-alluvium
-11
-
-
-<!-- https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data -->
-
+<!-- , followed by the decision-making process for selecting a subset of the data and transforming the original dataset with 6,225,611 rows to our final dataset with 804,630 rows. -->
 
 ```{r}
 #| echo: false
@@ -60,2768 +70,310 @@ library(knitr)
 library(kableExtra)
 library(tidyverse)
 library(ggplot2)
-library(ggridges)
 library(dplyr)
 library(visdat)
-# library(HH)
+library(HH)
 library(lubridate)
 ```
 
+\
+\
 
+
+
+### Data information
+
+The payroll data is provided annually by [NYC OpenData](https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data) and contains New York City employee salaries by Fiscal Year. We are using the latest snapshot of the data, released on October 30, 2024. Here are some details about the format of the data, the frequency of updates, dimensions about the data, and other relevant metadata:
+
+::: panel-tabset
+## Data Metadata
 
 ```{r}
-# Read the data RDS
-payroll_data_fire_police <- readRDS("data_source/payroll_data_fire_police.rds")
+#| echo: false
+
+
+library(tibble)
+library(knitr)
+library(kableExtra)
+
+# Create a tibble for the metadata
+metadata <- tibble::tibble(
+  Field = c(
+    "Dataset Name",
+    "Provided by",
+    "Data Category",
+    "Frequency of Updates ", 
+    "Date Created", 
+    "Data Last Updated", 
+    "Dimensions",
+    "Each row represents",
+    "Source URL"
+  ),
+  Value = c(
+    "Citywide Payroll Data (Fiscal Year)",
+    "Office of Payroll Administration (OPA)",
+    "City Government",
+    "Annually", 
+    "October 31, 2015", 
+    "October 30, 2024", 
+    "Raw Data: 6,225,611 rows | 17 columns <br> \n Subset Data: 804,630 rows | 17 columns",
+    "City Employee Salary per Fiscal Year",
+    "https://data.cityofnewyork.us/"
+  )
+)
+
+# Print the metadata table using kable
+kable(metadata, 
+      col.names = NULL, 
+      escape = F,
+      format = "html",
+      # caption = "Dataset Metadata",
+      align = "l")  |>
+  column_spec(1, width = "200px") |>
+  kable_styling()
+
+```
+
+\
+\
+
+## Data Format
+
+```{r}
+#| echo: false
+
+
+
+payroll_data_format <- tibble(
+  column_name = c(
+    "Fiscal Year", "Payroll Number", "Agency Name", "Last Name", "First Name", 
+    "Mid Init", "Agency Start Date", "Work Location Borough", 
+    "Title Description", "Leave Status as of June 30", "Base Salary", 
+    "Pay Basis", "Regular Hours", "Regular Gross Paid", "OT Hours", 
+    "Total OT Paid", "Total Other Pay"
+  ),
+  description = c(
+    "Fiscal Year", "Payroll Number", "The Payroll agency that the employee works for", 
+    "Last name of employee", "First name of employee", 
+    "Middle initial of employee", "Date which employee began working for their current agency", 
+    "Borough of employee's primary work location", "Civil service title description of the employee", 
+    "Status of employee as of the close of the relevant fiscal year: Active, Ceased, or On Leave", 
+    "Base Salary assigned to the employee", 
+    "Lists whether the employee is paid on an hourly, per diem or annual basis", 
+    "Number of regular hours employee worked in the fiscal year", 
+    "The amount paid to the employee for base salary during the fiscal year", 
+    "Overtime Hours worked by employee in the fiscal year", 
+    "Total overtime pay paid to the employee in the fiscal year", 
+    "Includes any compensation in addition to gross salary and overtime pay, i.e., Differentials, lump sums, uniform allowance, meal allowance, retroactive pay increases, settlement amounts, and bonus pay, if applicable."
+  ),
+  # api_field_name = c(
+  #   "fiscal_year", "payroll_number", "agency_name", "last_name", "first_name", 
+  #   "mid_init", "agency_start_date", "work_location_borough", 
+  #   "title_description", "leave_status_as_of_june_30", "base_salary", 
+  #   "pay_basis", "regular_hours", "regular_gross_paid", "ot_hours", 
+  #   "total_ot_paid", "total_other_pay"
+  # ),
+  data_type = c(
+    "Number", "Number", "Text", "Text", "Text", 
+    "Text", "Timestamp", "Text", 
+    "Text", "Text", "Number", 
+    "Text", "Number", "Number", "Number", 
+    "Number", "Number"
+  )
+)
+
+names(payroll_data_format) <- c("Column Name","Description","Data Type")
+
+kable(payroll_data_format,
+      # caption = "Dataset Format", 
+      align = "l") |>
+  kable_styling(full_width = FALSE) |>
+  column_spec(1, width = "200px")
+```
+
+:::
+
+\
+
+
+### Data Source
+
+
+```{mermaid}
+%%| echo: false
+
+flowchart LR
+  A[Importing Data] --> B[Understanding and \n cleaning the raw data]
+  B --> C(Transforming columns)
+  B --> D(Filtering Data)
+  B --> E(Backfilling NA)
+  C --> F[Saving Subset Data]
+  D --> F[Saving Subset Data]
+  E --> F[Saving Subset Data]
 ```
 
 
 
-```{r}
+
+
+::: panel-tabset
+## **Importing the data**\
+
+To access the data, we can go directly to the URL:\
+<p style="font-size:95%; font-style:italic">
+<https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data>
+</p>
+
+From this URL, you can click the button 'Export', and then select Download File-CSV format (All data 6225611 rows). This will download a file of about 840MB. Remember, we are using the data Last Updated on October 30, 2024.
+
+The file will be downloaded with the name: Citywide_Payroll_Data\_\_Fiscal_Year\_\_**YYYYMMDD**.csv\
+<p style="font-size:90%; font-style:italic">
+(YYYYMMDD refers to the date that you downloaded the file)
+</p>
+
+Once the data was downloaded, it was added to a new folder inside the repository called 'data_source'.
+
+```{r, eval=FALSE}
+#| message: false
+#| warning: false
+
+# import original data
+payroll_data_source <- read.csv("./data_source/Citywide_Payroll_Data__Fiscal_Year__20241111.csv")
+
+# make a copy of original data for transformations
+payroll_data <- data.frame(payroll_data_source)
+
+# rename columns
+names(payroll_data) <- gsub("[\\.]+", "_", tolower(names(payroll_data_source)))
+```
+
+
+\
+\
+
+## **Cleaning the data**\
+
+The decision-making process for selecting a subset of the data and the detailed transformation and clean up of the original dataset with 6,225,611 rows to our final dataset with 804,630 rows can be found in the `Appendix` section.
+
+
+\
+\
+
+## **Creating the final subset data**\
+
+The data used for this analysis is a subset of the entire raw data. The **final subset data** (focused on the **Fire and Police departments**) contains 804,630 rows out of the 6,225,611 rows from the original dataset. 
+
+To generate the final subset that will be used in the analysis, please run the code below:
+
+```{r, eval=FALSE}
+# `payroll_data` dataframe comes from the **Importing the data** section.
+
 payroll_data_fire_police <-
-  payroll_data_fire_police |> 
+  payroll_data |>
+  # clean agency name:
+  mutate(agency_name_clean = trimws(gsub("#\\d+$", "", agency_name))) |>
+  # clean job titles:
   mutate(title_description = toupper(title_description)) |> 
-  mutate(agency_start_date_year = year(agency_start_date)) |> 
-  mutate(total_paid = rowSums(across(c(regular_gross_paid, total_ot_paid, total_other_pay)),na.rm = TRUE))
+  # clean location name:
+  mutate(work_location_borough_clean = toupper(work_location_borough)) |>
+
+  # filtering data:
+  filter(agency_name_clean %in%  c("POLICE DEPARTMENT","FIRE DEPARTMENT")) |>
+  filter(work_location_borough_clean %in%   c("BRONX", "BROOKLYN", "MANHATTAN", "QUEENS", "RICHMOND")) |>
+  filter(fiscal_year >= "2015" & fiscal_year <= "2024") |>
+  filter(pay_basis %in%   c("per Annum", "per Day", "per Hour")) |>
+
+  # backfill payroll number after filtering
+  mutate(
+    payroll_number_clean = case_when(
+      is.na(payroll_number) & agency_name_clean == "FIRE DEPARTMENT" ~ 57,
+      is.na(payroll_number) & agency_name_clean == "POLICE DEPARTMENT" ~ 56,
+      TRUE ~ payroll_number
+    )) |>
+
+  # converting dates:
+  mutate(agency_start_date_clean = mdy(agency_start_date)) |>
+
+  # renaming clean columns to original names:
+  mutate(
+    agency_name = agency_name_clean,
+    work_location_borough = work_location_borough_clean,
+    payroll_number = payroll_number_clean,
+    agency_start_date = agency_start_date_clean
+  ) |>
+
+  # dropping clean columns
+  dplyr::select(-agency_name_clean,
+                -work_location_borough_clean,
+                -payroll_number_clean,
+                -agency_start_date_clean)
+
+
+
+# Please uncomment the CSV or the RDS method to save the subset data:
+
+# Save the data CSV
+# write.csv(payroll_data_fire_police, "data_source/payroll_data_fire_police.csv", row.names = FALSE)
+
+# Save the data RDS
+# saveRDS(payroll_data_fire_police, "data_source/payroll_data_fire_police.rds")
+
+# Read the data RDS
+# payroll_data_fire_police <- readRDS("data_source/payroll_data_fire_police.rds")
 ```
 
 
-# ideas
-number of people growth over time vs cost over time
+:::
 
+\
+\
 
 
-##ggparcords
-##parcoords
-##likert
-##mosaic
 
 
-## alluvium
 
-```{r}
-library(ggplot2)
-library(ggalluvial)
-```
+# Conclusion
 
+The analysis of payroll data for NYC’s Fire and Police Departments highlights notable differences in employee distribution and compensation patterns. While the Police Department employs three times as many staff as the Fire Department, its total salary expenditure is only 2.5 times higher, suggesting that Fire Department employees, on average, receive higher pay.
 
-```{r}
-payroll_data_fire_police_pay_range <-
-payroll_data_fire_police |> 
-  filter(fiscal_year == 2024) |>
-  filter(agency_start_date_year == 2009) |>
-  filter(leave_status_as_of_june_30 == "ACTIVE") |> 
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER"))
-  filter(title_description %in% c("CAPTAIN")) |>
-  select(last_name, leave_status_as_of_june_30, title_description,regular_gross_paid,total_ot_paid,total_other_pay,total_paid) |> 
-  mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    regular_gross_paid_group = cut(
-      regular_gross_paid,
-      breaks = seq(
-        floor(min(regular_gross_paid, na.rm = TRUE) / 50000) * 50000, 
-        ceiling(max(regular_gross_paid, na.rm = TRUE) / 50000) * 50000,
-        by = 50000
-      ),
-      labels = paste0(
-        seq(
-          floor(min(regular_gross_paid, na.rm = TRUE) / 50000) * 50000, 
-          ceiling(max(regular_gross_paid, na.rm = TRUE) / 50000 - 1) * 50000,
-          by = 50000
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(regular_gross_paid, na.rm = TRUE) / 50000) * 50000 + 50000, 
-          ceiling(max(regular_gross_paid, na.rm = TRUE) / 50000) * 50000,
-          by = 50000
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_ot_paid_group = cut(
-      total_ot_paid,
-      breaks = seq(
-        floor(min(total_ot_paid, na.rm = TRUE) / 50000) * 50000, 
-        ceiling(max(total_ot_paid, na.rm = TRUE) / 50000) * 50000,
-        by = 50000
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_ot_paid, na.rm = TRUE) / 50000) * 50000, 
-          ceiling(max(total_ot_paid, na.rm = TRUE) / 50000 - 1) * 50000,
-          by = 50000
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_ot_paid, na.rm = TRUE) / 50000) * 50000 + 50000, 
-          ceiling(max(total_ot_paid, na.rm = TRUE) / 50000) * 50000,
-          by = 50000
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_other_pay_group = cut(
-      total_other_pay,
-      breaks = seq(
-        floor(min(total_other_pay, na.rm = TRUE) / 50000) * 50000, 
-        ceiling(max(total_other_pay, na.rm = TRUE) / 50000) * 50000,
-        by = 50000
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_other_pay, na.rm = TRUE) / 50000) * 50000, 
-          ceiling(max(total_other_pay, na.rm = TRUE) / 50000 - 1) * 50000,
-          by = 50000
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_other_pay, na.rm = TRUE) / 50000) * 50000 + 50000, 
-          ceiling(max(total_other_pay, na.rm = TRUE) / 50000) * 50000,
-          by = 50000
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_paid_group = cut(
-      total_paid,
-      breaks = seq(
-        floor(min(total_paid, na.rm = TRUE) / 50000) * 50000, 
-        ceiling(max(total_paid, na.rm = TRUE) / 50000) * 50000,
-        by = 50000
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / 50000) * 50000, 
-          ceiling(max(total_paid, na.rm = TRUE) / 50000 - 1) * 50000,
-          by = 50000
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / 50000) * 50000 + 50000, 
-          ceiling(max(total_paid, na.rm = TRUE) / 50000) * 50000,
-          by = 50000
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  # mutate(
-  #   regular_gross_paid_group = factor(
-  #     regular_gross_paid_group,
-  #     levels = rev(sort(unique(regular_gross_paid_group))) # Explicit descending order
-  #   ),
-  #   total_paid_group = factor(
-  #     total_paid_group,
-  #     levels = rev(sort(unique(total_paid_group))) # Explicit descending order
-  #   )
-  # )|> 
-  arrange(total_paid)
+Employment and salary trends also vary by location, with Manhattan hosting the majority of Police employees and Brooklyn leading in Fire Department staff. Salary progression aligns closely with years of experience, with employees earning higher compensation as their tenure increases. Among those earning over \$250K, the compensation structure varies significantly, with Overtime and Other pay contributing substantially to total earnings.
 
-```
+Future research should revisit the Police Department’s compensation for 2024, which shows an unusually high surge in total salaries. This anomaly appears inconsistent with the 2024 budget plans provided by the New York City Council and warrants deeper investigation.
 
+<!-- ::: callout-note -->
 
+<!-- 5 Conclusion  conclusion.qmd -->
 
+<!-- Discuss: main takeaways of your exploration, limitations, future directions, lessons learned. -->
 
+<!-- (suggested length: one paragraph) -->
 
+<!-- ::: -->
 
-```{r}
-levels(payroll_data_fire_police_pay_range$regular_gross_paid_group)
-levels(payroll_data_fire_police_pay_range$total_paid_group)
+------------------------------------------------------------------------
 
-```
+::: panel-tabset
+## Original VS Subset Comparison
 
 
+::: callout-note
+## Diverging stacked bar chart to analyze missing data
+[In this dataset, values classified as "Complete" or "Zero" are considered positive, as they indicate usable data that can be effectively analyzed. Conversely, "NA" and "Blank" values pose potential issues for data interpretation. To reflect this distinction, the diverging stacked bar chart will position "NA" and "Blank" values on the left side, representing a negative impact on the analysis.]{style="font-size:70%;"}
+:::
 
-```{r}
-#| fig-width: 8
-#| fig-height: 5
+::: callout-note
+## Diverging stacked bar chart to analyze missing data
+[In this dataset, values classified as "Complete" or "Zero" are considered positive, as they indicate usable data that can be effectively analyzed. Conversely, "NA" and "Blank" values pose potential issues for data interpretation. To reflect this distinction, the diverging stacked bar chart will position "NA" and "Blank" values on the left side, representing a negative impact on the analysis.]{style="font-size:82%;"}
+:::
 
-ggplot(payroll_data_fire_police_pay_range,
-       aes(axis1 = total_paid_group, 
-           axis2 = regular_gross_paid_group,
-           axis3 = total_ot_paid_group,
-           axis4 = total_other_pay_group,
-           )) +
-  geom_alluvium(aes(fill = total_paid_group), alpha = 0.8) +
-  geom_stratum(aes(fill = total_paid_group)) +
-  geom_text(stat = "stratum", 
-            aes(label = paste(after_stat(stratum), "\n", after_stat(count))), 
-            size = 3, 
-            hjust = 0.5) +
-  # scale_x_discrete(
-  #   limits = c("regular_gross_paid_group", "total_paid_group"),
-  #   labels = c("regular_gross_paid_group", "total_paid_group")
-  # ) +
-  scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-  labs(title = "Student Performance on Three Essays with GPA",
-       x = "Essays and GPA",
-       y = "Number of Students",
-       fill = "GPA") +
-  theme_minimal()
-```
+::: callout-note
+## Diverging stacked bar chart to analyze missing data
+[In this dataset, values classified as "Complete" or "Zero" are considered positive, as they indicate usable data that can be effectively analyzed. Conversely, "NA" and "Blank" values pose potential issues for data interpretation. To reflect this distinction, the diverging stacked bar chart will position "NA" and "Blank" values on the left side, representing a negative impact on the analysis.]{style="font-size:90%;"}
+:::
 
+::: callout-note
+## Diverging stacked bar chart to analyze missing data
+[In this dataset, values classified as "Complete" or "Zero" are considered positive, as they indicate usable data that can be effectively analyzed. Conversely, "NA" and "Blank" values pose potential issues for data interpretation. To reflect this distinction, the diverging stacked bar chart will position "NA" and "Blank" values on the left side, representing a negative impact on the analysis.]{style="font-size:60%;"}
+:::
 
-
-
-```{r}
-payroll_data_fire_police_pay_range <- payroll_data_fire_police_pay_range |> 
-  # mutate(across(where(is.character), ~ factor(., levels = rev(sort(unique(.))))))
-  mutate(across(where(is.factor), ~ factor(., levels = rev(sort(unique(.))))))
-
-
-levels(payroll_data_fire_police_pay_range$regular_gross_paid_group)
-levels(payroll_data_fire_police_pay_range$total_ot_paid_group)
-levels(payroll_data_fire_police_pay_range$total_other_pay_group)
-levels(payroll_data_fire_police_pay_range$total_paid_group)
-
-# [1] "Harriman"  "Hudson"    "Riverside" "Watson"
-```
-
-
-```{r}
-# Frequency Table:
-
-payroll_data_fire_police_pay_range_frequency <- 
-  payroll_data_fire_police_pay_range |> 
-  select(regular_gross_paid_group,total_ot_paid_group,total_other_pay_group,total_paid_group) |> 
-  group_by(across(everything())) |> 
-  summarise(frequency = n(), .groups = 'drop')
-```
-
-
-```{r}
-essay_grades_frequency_lode = to_lodes_form(payroll_data_fire_police_pay_range_frequency, axes = 1:4)
-essay_grades_frequency_lode$x <- factor(essay_grades_frequency_lode$x,
-                                        labels = c("Essay 1",
-                                                   "Essay 2", 
-                                                   "Essay 3",
-                                                   "Total"))
-essay_grades_frequency_lode$stratum <- factor(
-  essay_grades_frequency_lode$stratum,
-  levels = names(sort(setNames(
-    as.numeric(gsub("k", "", gsub("\\D", "", levels(essay_grades_frequency_lode$stratum)))),
-    levels(essay_grades_frequency_lode$stratum)
-  ), decreasing = TRUE))
-)
-```
-
-```{r}
-essay_grades_frequency_lode = to_lodes_form(payroll_data_fire_police_pay_range_frequency, axes = 1:3)
-essay_grades_frequency_lode$x <- factor(essay_grades_frequency_lode$x,
-                                        labels = c("Essay 1",
-                                                   "Essay 2", 
-                                                   "Essay 3"))
-```
-
-
-```{r}
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  # geom_flow() +
-  geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = stratum),color="#000000") +
-  # geom_lode() +
-  geom_stratum(color = "#00509d", 
-               fill='white', 
-               linewidth = 1.5, 
-               aes(fill = NA), 
-               alpha = 0.5) +
-  geom_text(stat = "stratum", 
-            aes(label = paste(after_stat(stratum),"\n" ,after_stat(count))),
-            hjust = 0.5
-            ) +
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
-
-```{r}
-essay_grades_frequency_lode = to_lodes_form(payroll_data_fire_police_pay_range_frequency, axes = 1:4)
-essay_grades_frequency_lode$x <- factor(essay_grades_frequency_lode$x,
-                                        labels = c("Essay 1",
-                                                   "Essay 2", 
-                                                   "Essay 3",
-                                                   "Total"))
-```
-
-
-```{r}
-
-
-
-levels(essay_grades_frequency_lode$stratum)
-```
-
-
-```{r}
-# ggplot(essay_grades_frequency_lode, 
-#        aes(alluvium=alluvium, 
-#            x= x,
-#            axis1 = regular_gross_paid_group, 
-#            # axis2 = regular_gross_paid_group,
-#            # axis3 = total_ot_paid_group,
-#            # axis4 = total_other_pay_group, 
-#            stratum=stratum, 
-#            y=frequency)) +
-#   geom_flow() +
-#   # geom_alluvium(decreasing = TRUE)+
-#   geom_alluvium(aes(fill = stratum), alpha = 0.8) +
-#   # geom_lode() +
-#   # geom_stratum(color = "#00509d", 
-#   #              fill='white', 
-#   #              linewidth = 1.5, 
-#   #              aes(fill = NA), 
-#   #              alpha = 0.5) +
-#   # geom_stratum(aes(fill = stratum)) +
-#   geom_text(stat = "stratum", 
-#             aes(label = paste(after_stat(stratum),"\n" ,after_stat(count))),
-#             hjust = 0.5
-#             ) +
-#   scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-#   labs(title = "Student Performance on the Three Essays",
-#        x = "Essays",
-#        y = "Number of Students",
-#        fill="Section") +
-#   theme_minimal() +
-#   theme(legend.position = "bottom")
-
-# 
-# 
-# ggplot(payroll_data_fire_police_pay_range,
-#        aes(axis1 = total_paid_group, 
-#            axis2 = regular_gross_paid_group,
-#            axis3 = total_ot_paid_group,
-#            axis4 = total_other_pay_group,
-#            )) +
-#   geom_alluvium(aes(fill = total_paid_group), alpha = 0.8) +
-#   geom_stratum(aes(fill = total_paid_group)) +
-#   geom_text(stat = "stratum", 
-#             aes(label = paste(after_stat(stratum), "\n", after_stat(count))), 
-#             size = 3, 
-#             hjust = 0.5) +
-#   # scale_x_discrete(
-#   #   limits = c("regular_gross_paid_group", "total_paid_group"),
-#   #   labels = c("regular_gross_paid_group", "total_paid_group")
-#   # ) +
-#   scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-#   labs(title = "Student Performance on Three Essays with GPA",
-#        x = "Essays and GPA",
-#        y = "Number of Students",
-#        fill = "GPA") +
-#   theme_minimal()
-# 
-
-
-```
-
-
-```{r}
-payroll_data_fire_police_pay_range_frequency <-
-  payroll_data_fire_police_pay_range_frequency |> 
-  mutate(total_paid_group_fill = total_paid_group)
-
-essay_grades_frequency_lode = to_lodes_form(payroll_data_fire_police_pay_range_frequency, axes = 1:4)
-essay_grades_frequency_lode$x <- factor(essay_grades_frequency_lode$x,
-                                        labels = c(1,2,3,
-                                                   "Total"))
-essay_grades_frequency_lode$stratum <- factor(
-  essay_grades_frequency_lode$stratum,
-  levels = names(sort(setNames(
-    as.numeric(gsub("k", "", gsub("\\D", "", levels(essay_grades_frequency_lode$stratum)))),
-    levels(essay_grades_frequency_lode$stratum)
-  ), decreasing = TRUE))
-)
-```
-
-
-```{r}
-#| fig-width: 10
-#| fig-height: 5
-
-
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  geom_flow() +
-  # geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = total_paid_group_fill), alpha = 0.8) +
-  # geom_lode() +
-  # geom_stratum(color = "#00509d", 
-  #              fill='white', 
-  #              linewidth = 1.5, 
-  #              aes(fill = NA), 
-  #              alpha = 0.5) +
-  geom_stratum(aes(fill = total_paid_group_fill)) +
-  geom_text(stat = "stratum", 
-            aes(label = paste(after_stat(stratum),"\n" ,after_stat(count))),
-            hjust = 0.5
-            ) +
-  scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
-
-
-
-# other
-
-
-sdf
-
-ads
-
-
-```{r}
-payroll_data_fire_police_pay_range <-
-payroll_data_fire_police |> 
-  filter(fiscal_year == 2024) |>
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
-  # filter(agency_start_date_year == 2009) |>
-  filter(leave_status_as_of_june_30 == "ACTIVE") |> 
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER"))
-  # filter(title_description %in% c("CAPTAIN")) |>
-  select(last_name, leave_status_as_of_june_30, title_description,regular_gross_paid,total_ot_paid,total_other_pay,total_paid) |> 
-  mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    regular_gross_paid_group = cut(
-      regular_gross_paid,
-      breaks = seq(
-        floor(min(regular_gross_paid, na.rm = TRUE) / 100000) * 100000, 
-        ceiling(max(regular_gross_paid, na.rm = TRUE) / 100000) * 100000,
-        by = 100000
-      ),
-      labels = paste0(
-        seq(
-          floor(min(regular_gross_paid, na.rm = TRUE) / 100000) * 100000, 
-          ceiling(max(regular_gross_paid, na.rm = TRUE) / 100000 - 1) * 100000,
-          by = 100000
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(regular_gross_paid, na.rm = TRUE) / 100000) * 100000 + 100000, 
-          ceiling(max(regular_gross_paid, na.rm = TRUE) / 100000) * 100000,
-          by = 100000
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_ot_paid_group = cut(
-      total_ot_paid,
-      breaks = seq(
-        floor(min(total_ot_paid, na.rm = TRUE) / 100000) * 100000, 
-        ceiling(max(total_ot_paid, na.rm = TRUE) / 100000) * 100000,
-        by = 100000
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_ot_paid, na.rm = TRUE) / 100000) * 100000, 
-          ceiling(max(total_ot_paid, na.rm = TRUE) / 100000 - 1) * 100000,
-          by = 100000
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_ot_paid, na.rm = TRUE) / 100000) * 100000 + 100000, 
-          ceiling(max(total_ot_paid, na.rm = TRUE) / 100000) * 100000,
-          by = 100000
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_other_pay_group = cut(
-      total_other_pay,
-      breaks = seq(
-        floor(min(total_other_pay, na.rm = TRUE) / 100000) * 100000, 
-        ceiling(max(total_other_pay, na.rm = TRUE) / 100000) * 100000,
-        by = 100000
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_other_pay, na.rm = TRUE) / 100000) * 100000, 
-          ceiling(max(total_other_pay, na.rm = TRUE) / 100000 - 1) * 100000,
-          by = 100000
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_other_pay, na.rm = TRUE) / 100000) * 100000 + 100000, 
-          ceiling(max(total_other_pay, na.rm = TRUE) / 100000) * 100000,
-          by = 100000
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_paid_group = cut(
-      total_paid,
-      breaks = seq(
-        floor(min(total_paid, na.rm = TRUE) / 100000) * 100000, 
-        ceiling(max(total_paid, na.rm = TRUE) / 100000) * 100000,
-        by = 100000
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / 100000) * 100000, 
-          ceiling(max(total_paid, na.rm = TRUE) / 100000 - 1) * 100000,
-          by = 100000
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / 100000) * 100000 + 100000, 
-          ceiling(max(total_paid, na.rm = TRUE) / 100000) * 100000,
-          by = 100000
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  # mutate(
-  #   regular_gross_paid_group = factor(
-  #     regular_gross_paid_group,
-  #     levels = rev(sort(unique(regular_gross_paid_group))) # Explicit descending order
-  #   ),
-  #   total_paid_group = factor(
-  #     total_paid_group,
-  #     levels = rev(sort(unique(total_paid_group))) # Explicit descending order
-  #   )
-  # )|> 
-  arrange(total_paid)
-
-
-
-# Frequency Table:
-
-payroll_data_fire_police_pay_range_frequency <- 
-  payroll_data_fire_police_pay_range |> 
-  select(regular_gross_paid_group,total_ot_paid_group,total_other_pay_group,total_paid_group) |> 
-  group_by(across(everything())) |> 
-  summarise(frequency = n(), .groups = 'drop')
-
-payroll_data_fire_police_pay_range_frequency <-
-  payroll_data_fire_police_pay_range_frequency |> 
-  mutate(total_paid_group_fill = total_paid_group)
-
-essay_grades_frequency_lode = to_lodes_form(payroll_data_fire_police_pay_range_frequency, axes = 1:4)
-essay_grades_frequency_lode$x <- factor(essay_grades_frequency_lode$x,
-                                        labels = c(1,2,3,
-                                                   "Total"))
-# essay_grades_frequency_lode$stratum <- factor(
-#   essay_grades_frequency_lode$stratum,
-#   levels = names(sort(setNames(
-#     as.numeric(gsub("k", "", gsub("\\D", "", levels(essay_grades_frequency_lode$stratum)))),
-#     levels(essay_grades_frequency_lode$stratum)
-#   ), decreasing = TRUE))
-# )
-
-# Function to convert range strings into numeric values for sorting
-convert_range_to_numeric <- function(range) {
-  # Extract both the lower and upper bounds using a regular expression
-  bounds <- as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", range), " ")))
-  
-  # If the bounds are empty or invalid, return NA (to avoid issues)
-  if (length(bounds) < 2 || any(is.na(bounds))) {
-    return(NA)
-  }
-  
-  # Return the first number of the range (lower bound)
-  return(bounds[1])
-}
-
-# Apply the custom sorting logic
-essay_grades_frequency_lode$stratum <- factor(
-  essay_grades_frequency_lode$stratum,
-  levels = names(sort(setNames(
-    sapply(levels(essay_grades_frequency_lode$stratum), convert_range_to_numeric),
-    levels(essay_grades_frequency_lode$stratum)
-  ), decreasing = TRUE))
-)
-
-```
-
-```{r}
-levels(essay_grades_frequency_lode$stratum)
-```
-
-
-
-```{r}
-#| fig-width: 10
-#| fig-height: 5
-
-
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  geom_flow() +
-  # geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = total_paid_group_fill), alpha = 0.8) +
-  # geom_lode() +
-  # geom_stratum(color = "#00509d", 
-  #              fill='white', 
-  #              linewidth = 1.5, 
-  #              aes(fill = NA), 
-  #              alpha = 0.5) +
-  geom_stratum(aes(fill = total_paid_group_fill)) +
-  geom_text(stat = "stratum", 
-            aes(label = paste(after_stat(stratum),
-                              "\n" ,after_stat(count))),
-            hjust = 0.5
-            ) +
-  scale_fill_brewer(palette = "Spectral", direction = 1, na.translate = FALSE) +
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
-
-
-```{r}
-payroll_data_fire_police_pay_range <-
-payroll_data_fire_police |> 
-  filter(fiscal_year == 2024) |>
-  filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
-  # filter(agency_start_date_year == 2009) |>
-  filter(leave_status_as_of_june_30 == "ACTIVE") |> 
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER"))
-  # filter(title_description %in% c("CAPTAIN")) |>
-  select(last_name, leave_status_as_of_june_30, title_description,regular_gross_paid,total_ot_paid,total_other_pay,total_paid) |> 
- mutate(
-    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
-    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
-    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
-  ) |> 
-  mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_paid_group = cut(
-      total_paid,
-      breaks = seq(
-        floor(min(total_paid, na.rm = TRUE) / 100000) * 100000, 
-        ceiling(max(total_paid, na.rm = TRUE) / 100000) * 100000,
-        by = 100000
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / 100000) * 100000, 
-          ceiling(max(total_paid, na.rm = TRUE) / 100000 - 1) * 100000,
-          by = 100000
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / 100000) * 100000 + 100000, 
-          ceiling(max(total_paid, na.rm = TRUE) / 100000) * 100000,
-          by = 100000
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-  #   regular_gross_paid_group = factor(
-  #     regular_gross_paid_group,
-  #     levels = rev(sort(unique(regular_gross_paid_group))) # Explicit descending order
-  #   ),
-    total_paid_group = factor(
-      total_paid_group,
-      levels = rev(sort(unique(total_paid_group))) # Explicit descending order
-    )
-  )|>
-  arrange(total_paid)
-
-
-
-# Frequency Table:
-
-payroll_data_fire_police_pay_range_frequency <- 
-  payroll_data_fire_police_pay_range |> 
-  select(flag_regular,flag_overtime,flag_other,total_paid_group) |> 
-  group_by(across(everything())) |> 
-  summarise(frequency = n(), .groups = 'drop')
-
-# payroll_data_fire_police_pay_range_frequency <-
-#   payroll_data_fire_police_pay_range_frequency |> 
-#   mutate(total_paid_group_fill = total_paid_group)
-
-essay_grades_frequency_lode = to_lodes_form(payroll_data_fire_police_pay_range_frequency, axes = 1:4)
-essay_grades_frequency_lode$x <- factor(essay_grades_frequency_lode$x,
-                                        labels = c(1,2,3,
-                                                   "Total"))
-# essay_grades_frequency_lode$stratum <- factor(
-#   essay_grades_frequency_lode$stratum,
-#   levels = names(sort(setNames(
-#     as.numeric(gsub("k", "", gsub("\\D", "", levels(essay_grades_frequency_lode$stratum)))),
-#     levels(essay_grades_frequency_lode$stratum)
-#   ), decreasing = TRUE))
-# )
-
-# # Function to convert range strings into numeric values for sorting
-# convert_range_to_numeric <- function(range) {
-#   # Extract both the lower and upper bounds using a regular expression
-#   bounds <- as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", range), " ")))
-#   
-#   # If the bounds are empty or invalid, return NA (to avoid issues)
-#   if (length(bounds) < 2 || any(is.na(bounds))) {
-#     return(NA)
-#   }
-#   
-#   # Return the first number of the range (lower bound)
-#   return(bounds[1])
-# }
-# 
-# # Apply the custom sorting logic
-# essay_grades_frequency_lode$stratum <- factor(
-#   essay_grades_frequency_lode$stratum,
-#   levels = names(sort(setNames(
-#     sapply(levels(essay_grades_frequency_lode$stratum), convert_range_to_numeric),
-#     levels(essay_grades_frequency_lode$stratum)
-#   ), decreasing = TRUE))
-# )
-
-```
-
-```{r}
-levels(essay_grades_frequency_lode$stratum)
-```
-
-```{r}
-#| fig-width: 10
-#| fig-height: 8
-
-
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  # geom_flow() +
-  # geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = stratum), alpha = 0.8) +
-  # geom_lode() +
-  geom_stratum(color = "#00509d",
-               fill='white',
-               linewidth = 1.5,
-               aes(fill = NA),
-               alpha = 0.5) +
-  geom_stratum(aes(fill = stratum)) +
-  geom_text(stat = "stratum", 
-            aes(label = paste(after_stat(stratum),
-                              "\n" ,after_stat(count))),
-            hjust = 0.5
-            ) +
-  scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
-
-
-```{r}
-payroll_data_fire_police |> 
-  # filter(fiscal_year == 2024) |>
-  filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
-  filter(leave_status_as_of_june_30 == "ACTIVE") |> 
-   mutate(
-    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
-    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
-    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
-  ) |> 
-  
-  group_by(flag_regular, flag_overtime,flag_other) |> 
-  summarise(n())
-```
-
-
-
-
-
-
-
-
-```{r}
-range_band= 50000
-
-# payroll_data_fire_police_test <-
-payroll_data_fire_police |> 
-  filter(fiscal_year == 2024) |>
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
-  # filter(leave_status_as_of_june_30 == "ACTIVE") |> 
-   mutate(
-    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
-    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
-    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
-  ) |> 
-    mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_paid_group = cut(
-      total_paid,
-      breaks = seq(
-        floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-        ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-        by = range_band
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band - 1) * range_band,
-          by = range_band
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band + range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-          by = range_band
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    total_paid_group = recode(
-      total_paid_group,
-      "-200k--150k" = "Less than 0",
-      "-150k--100k" = "Less than 0",
-      "-100k--50k" = "Less than 0",
-      "-50k-0k" = "Less than 0",
-      "0k-50k" = "0k-50k",
-      "50k-100k" = "50k-100k",
-      "100k-150k" = "100k-150k",
-      "150k-200k" = "150k-200k",
-      "200k-250k" = "200k-250k",
-      "250k-300k" = "250k-300k",
-      "300k-350k" = "300k and above",
-      "350k-400k" = "300k and above",
-      "400k-450k" = "300k and above",
-      "450k-500k" = "300k and above",
-      "500k-550k" = "300k and above",
-      "550k-600k" = "300k and above",
-      "600k-650k" = "300k and above"
-    ),
-    total_paid_group = factor(total_paid_group, 
-                              levels = c("300k and above", "250k-300k", "200k-250k", 
-                                         "150k-200k", "100k-150k", "50k-100k", 
-                                         "0k-50k", "Less than 0"))
-  ) |> 
-  group_by(flag_regular, flag_overtime,flag_other,total_paid_group) |> 
-  # group_by(total_paid_group) |> 
-  # group_by(flag_regular) |> 
-  group_by(agency_name,flag_overtime) |>
-  # group_by(agency_name,flag_other) |>
-  # group_by(flag_other) |> 
-  summarise(n()) 
-  # levels(total_paid_group)
-
-# payroll_data_fire_police_test
-
-# levels(payroll_data_fire_police_test$total_paid_group)
-```
-
-
-
-```{r}
-range_band= 50000
-
-payroll_data_fire_police_test <-
-payroll_data_fire_police |> 
-  filter(fiscal_year == 2024) |>
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
-  # filter(leave_status_as_of_june_30 == "ACTIVE") |> 
-   mutate(
-    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
-    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
-    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
-  ) |> 
-    mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_paid_group = cut(
-      total_paid,
-      breaks = seq(
-        floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-        ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-        by = range_band
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band - 1) * range_band,
-          by = range_band
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band + range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-          by = range_band
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    total_paid_group = recode(
-      total_paid_group,
-      "-200k--150k" = "Less than 0",
-      "-150k--100k" = "Less than 0",
-      "-100k--50k" = "Less than 0",
-      "-50k-0k" = "Less than 0",
-      "0k-50k" = "0k-50k",
-      "50k-100k" = "50k-100k",
-      "100k-150k" = "100k-150k",
-      "150k-200k" = "150k-200k",
-      "200k-250k" = "200k-250k",
-      "250k-300k" = "250k and above",
-      "300k-350k" = "250k and above",
-      "350k-400k" = "250k and above",
-      "400k-450k" = "250k and above",
-      "450k-500k" = "250k and above",
-      "500k-550k" = "250k and above",
-      "550k-600k" = "250k and above",
-      "600k-650k" = "250k and above"
-    ),
-    total_paid_group = factor(total_paid_group, 
-                              levels = c("250k and above", "200k-250k", 
-                                         "150k-200k", "100k-150k", "50k-100k", 
-                                         "0k-50k", "Less than 0"))
-  ) |> 
-  mutate(
-    flag_regular = factor(flag_regular, levels = c("Yes", "No"))
-  ) |> 
-  mutate(total_paid_group_fill = total_paid_group)
-
-
-
-payroll_data_fire_police_pay_range_frequency <- 
-  payroll_data_fire_police_test |> 
-  # select(total_paid_group,flag_regular,flag_overtime,flag_other,agency_name,total_paid_group_fill) |> 
-  select(flag_regular,flag_overtime,flag_other,total_paid_group,agency_name,total_paid_group_fill) |> 
-  group_by(across(everything())) |> 
-  summarise(frequency = n(), .groups = 'drop')
-
-# payroll_data_fire_police_pay_range_frequency <-
-#   payroll_data_fire_police_pay_range_frequency |> 
-#   mutate(total_paid_group_fill = total_paid_group)
-
-essay_grades_frequency_lode = to_lodes_form(payroll_data_fire_police_pay_range_frequency, axes = 1:4)
-essay_grades_frequency_lode$x <- factor(essay_grades_frequency_lode$x,
-                                        labels = c(1,2,3,
-                                                   "Total"))
-# essay_grades_frequency_lode$stratum <- factor(
-#   essay_grades_frequency_lode$stratum,
-#   levels = names(sort(setNames(
-#     as.numeric(gsub("k", "", gsub("\\D", "", levels(essay_grades_frequency_lode$stratum)))),
-#     levels(essay_grades_frequency_lode$stratum)
-#   ), decreasing = TRUE))
-# )
-
-# # Function to convert range strings into numeric values for sorting
-# convert_range_to_numeric <- function(range) {
-#   # Extract both the lower and upper bounds using a regular expression
-#   bounds <- as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", range), " ")))
-#   
-#   # If the bounds are empty or invalid, return NA (to avoid issues)
-#   if (length(bounds) < 2 || any(is.na(bounds))) {
-#     return(NA)
-#   }
-#   
-#   # Return the first number of the range (lower bound)
-#   return(bounds[1])
-# }
-# 
-# # Apply the custom sorting logic
-# essay_grades_frequency_lode$stratum <- factor(
-#   essay_grades_frequency_lode$stratum,
-#   levels = names(sort(setNames(
-#     sapply(levels(essay_grades_frequency_lode$stratum), convert_range_to_numeric),
-#     levels(essay_grades_frequency_lode$stratum)
-#   ), decreasing = TRUE))
-# )
-
-```
-
-```{r}
-levels(essay_grades_frequency_lode$stratum)
-```
-
-```{r}
-#| fig-width: 10
-#| fig-height: 8
-
-
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  # geom_flow() +
-  # geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = stratum), alpha = 0.8) +
-  # geom_lode() +
-  geom_stratum(color = "#00509d",
-               fill='white',
-               linewidth = 1.5,
-               aes(fill = NA),
-               alpha = 0.5) +
-  geom_stratum(aes(fill = stratum)) +
-  geom_text(stat = "stratum", 
-            aes(label = paste(after_stat(stratum),
-                              "\n" ,after_stat(count))),
-            hjust = 0.5
-            ) +
-  scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
-
-
-
-
-
-```{r}
-#| fig-width: 12
-#| fig-height: 6
-
-library(scales)
-
-essay_grades_frequency_lode <- essay_grades_frequency_lode |> 
-  mutate(
-    stratum_width = ifelse(stratum == "Total", 2, 1) # Replace "LastStratumName" with the actual name
-  )
-
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  # geom_flow(width = 0.5) +
-  # geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = total_paid_group_fill), alpha = 0.8,
-                # width = 0.5
-                ) +
-  # geom_lode() +
-  
-  # geom_stratum(color = "#00509d",
-  #              fill='white',
-  #              linewidth = 1.5,
-  #              aes(fill = NA),
-  #              alpha = 0.5) +
-  geom_stratum(aes(fill = total_paid_group_fill),
-               # width = c(0.5,0.5,0.5,2),
-               # width = 0.7,
-               # width =ifelse(as.character(total_paid_group_fill) == 4, 3, NA),
-               # position = "jitter",
-               ) +
-   geom_label(stat = "stratum", 
-              # aes(label = after_stat(stratum)),
-              aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-              size =3,
-              ) +
-  # geom_text(stat = "stratum",
-  #           aes(label = paste(after_stat(stratum)
-  #                             # ,                              "\n" ,after_stat(count)
-  #                             )),
-  #            # aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-  #           hjust = 0.5,
-  #           size = 3
-  #           ) +
-  scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-   scale_x_discrete(                   expand = c(.1, .1)) +
-  # ggrepel::geom_text_repel(
-  #   aes(label = ifelse(as.numeric(x) == 4, as.character(stratum), NA) ),
-  #   stat = "stratum",
-  #   size = 3, direction = "y", nudge_x = 1.2
-  # ) +
-  scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
-  ggrepel::geom_label_repel(
- aes(label = ifelse(as.numeric(x) == 4, as.character(stratum), NA)),
-  stat = "stratum",
-  size = 3,
-  direction = "y",
-  nudge_x = 1.2,
-  box.padding = 0.3, # Padding around the text
-  label.padding = unit(0.25, "lines"), # Padding inside the box
-  label.size = 0.5, # Border thickness
-  label.r = unit(0.15, "lines"), # Corner radius of the box
-  fill = "white", # Background color for the label
-  color = "black" # Text color
-) +
-  facet_wrap(~ agency_name, scales = "free") +
-  # facet_grid(agency_name ~ ., scales = "free") +
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "bottom",
-         panel.spacing = unit(3, "lines"),
-        legend.direction = "horizontal",
-        legend.box = "horizontal", 
-        legend.text = element_text(size = 10) ,
-        )+
-  guides(
-    fill = guide_legend(
-      nrow = 1,                      # Force legend items into one row
-      # keywidth = 1.5, keyheight = 0.5 # Adjust key size for spacing
-    )
-  )
-```
-
-
-
-
-```{r}
-#| fig-width: 12
-#| fig-height: 6
-
-essay_grades_frequency_lode <- essay_grades_frequency_lode |> 
-  mutate(
-    stratum_width = ifelse(stratum == "Total", 2, 1) # Replace "LastStratumName" with the actual name
-  )
-
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  # geom_flow() +
-  # geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = total_paid_group_fill), alpha = 0.8) +
-  # geom_lode() +
-  # geom_stratum(color = "#00509d",
-  #              fill='white',
-  #              linewidth = 1.5,
-  #              aes(fill = NA),
-  #              alpha = 0.5) +
-  geom_stratum(aes(fill = total_paid_group_fill),
-               # width = c(0.5,0.5,0.5,2),
-               # width = 0.5,
-               # position = "jitter",
-               ) +
-  geom_text(stat = "stratum",
-            # aes(label = paste(after_stat(stratum)
-            #                   # ,                              "\n" ,after_stat(count)
-            #                   )),
-             aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-            hjust = 0.5
-            ) +
-  scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-   scale_x_discrete(                   expand = c(.1, 0.1)) +
-  ggrepel::geom_text_repel(
-    aes(label = ifelse(as.numeric(x) == 4, as.character(stratum), NA) ),
-    stat = "stratum",
-    size = 3, direction = "y", nudge_x = 1.2
-  ) +
-  # facet_wrap(~ agency_name, scales = "free") +
-  facet_grid(agency_name ~ ., scales = "free") +
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "right")
-```
-
-
-```{r}
-#| fig-width: 9
-#| fig-height: 11
-
-library(scales)
-
-essay_grades_frequency_lode <- essay_grades_frequency_lode |> 
-  mutate(
-    stratum_width = ifelse(stratum == "Total", 2, 1) # Replace "LastStratumName" with the actual name
-  )
-
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  # geom_flow(width = 0.5) +
-  # geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = total_paid_group_fill), alpha = 0.8,
-                # width = 0.5
-                ) +
-  # geom_lode() +
-  
-  # geom_stratum(color = "#00509d",
-  #              fill='white',
-  #              linewidth = 1.5,
-  #              aes(fill = NA),
-  #              alpha = 0.5) +
-  geom_stratum(aes(fill = total_paid_group_fill),
-               # width = c(0.5,0.5,0.5,2),
-               # width = 0.7,
-               # width =ifelse(as.character(total_paid_group_fill) == 4, 3, NA),
-               # position = "jitter",
-               ) +
-   geom_label(stat = "stratum", 
-              # aes(label = after_stat(stratum)),
-              aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-              size =3,
-              ) +
-  # geom_text(stat = "stratum",
-  #           aes(label = paste(after_stat(stratum)
-  #                             # ,                              "\n" ,after_stat(count)
-  #                             )),
-  #            # aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-  #           hjust = 0.5,
-  #           size = 3
-  #           ) +
-  scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-   scale_x_discrete(                   expand = c(.1, .1)) +
-  # ggrepel::geom_text_repel(
-  #   aes(label = ifelse(as.numeric(x) == 4, as.character(stratum), NA) ),
-  #   stat = "stratum",
-  #   size = 3, direction = "y", nudge_x = 1.2
-  # ) +
-  scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
-  ggrepel::geom_label_repel(
- aes(label = ifelse(as.numeric(x) == 4, as.character(stratum), NA)),
-  stat = "stratum",
-  size = 3,
-  direction = "y",
-  nudge_x = .7,
-  box.padding = 0.3, # Padding around the text
-  label.padding = unit(0.25, "lines"), # Padding inside the box
-  label.size = 0.5, # Border thickness
-  label.r = unit(0.15, "lines"), # Corner radius of the box
-  fill = "white", # Background color for the label
-  color = "black" # Text color
-) +
-  # facet_wrap(~ agency_name, scales = "free") +
-  facet_grid(agency_name ~ ., scales = "free") +
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "bottom",
-         panel.spacing = unit(3, "lines"),
-        legend.direction = "horizontal",
-        legend.box = "horizontal", 
-        legend.text = element_text(size = 10) ,
-        )+
-  guides(
-    fill = guide_legend(
-      nrow = 1,                      # Force legend items into one row
-      # keywidth = 1.5, keyheight = 0.5 # Adjust key size for spacing
-    )
-  )
-```
-
-
-
-
-
-
-
-
-
-
-
-```{r}
-#| fig-width: 9
-#| fig-height: 11
-
-range_band= 50000
-
-payroll_data_fire_police_test <-
-payroll_data_fire_police |> 
-  filter(fiscal_year == 2024) |>
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
-  # filter(leave_status_as_of_june_30 == "ACTIVE") |> 
-   mutate(
-    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
-    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
-    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
-  ) |> 
-    mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_paid_group = cut(
-      total_paid,
-      breaks = seq(
-        floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-        ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-        by = range_band
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band - 1) * range_band,
-          by = range_band
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band + range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-          by = range_band
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    total_paid_group = recode(
-      total_paid_group,
-      "-200k--150k" = "Less than 0",
-      "-150k--100k" = "Less than 0",
-      "-100k--50k" = "Less than 0",
-      "-50k-0k" = "Less than 0",
-      "0k-50k" = "0k-50k",
-      "50k-100k" = "50k-100k",
-      "100k-150k" = "100k-150k",
-      "150k-200k" = "150k-200k",
-      "200k-250k" = "200k-250k",
-      "250k-300k" = "250k and above",
-      "300k-350k" = "250k and above",
-      "350k-400k" = "250k and above",
-      "400k-450k" = "250k and above",
-      "450k-500k" = "250k and above",
-      "500k-550k" = "250k and above",
-      "550k-600k" = "250k and above",
-      "600k-650k" = "250k and above"
-    ),
-    total_paid_group = factor(total_paid_group, 
-                              levels = c("250k and above", "200k-250k", 
-                                         "150k-200k", "100k-150k", "50k-100k", 
-                                         "0k-50k", "Less than 0"))
-  ) |> 
-  mutate(
-    flag_regular = factor(flag_regular, levels = c("Yes", "No"))
-  ) |> 
-  mutate(total_paid_group_fill = total_paid_group)
-
-
-
-payroll_data_fire_police_pay_range_frequency <- 
-  payroll_data_fire_police_test |> 
-  # select(total_paid_group,flag_regular,flag_overtime,flag_other,agency_name,total_paid_group_fill) |> 
-  # select(flag_regular,flag_overtime,flag_other,total_paid_group,agency_name,total_paid_group_fill) |>
-  select(work_location_borough,flag_regular,flag_overtime,flag_other,total_paid_group,agency_name,total_paid_group_fill) |> 
-  group_by(across(everything())) |> 
-  summarise(frequency = n(), .groups = 'drop')
-
-# payroll_data_fire_police_pay_range_frequency <-
-#   payroll_data_fire_police_pay_range_frequency |> 
-#   mutate(total_paid_group_fill = total_paid_group)
-
-essay_grades_frequency_lode = to_lodes_form(payroll_data_fire_police_pay_range_frequency, axes = 1:5)
-essay_grades_frequency_lode$x <- factor(essay_grades_frequency_lode$x,
-                                        labels = c(1,2,3,4,
-                                                   "Total"))
-
-
-
-library(scales)
-
-essay_grades_frequency_lode <- essay_grades_frequency_lode |> 
-  mutate(
-    stratum_width = ifelse(stratum == "Total", 2, 1) # Replace "LastStratumName" with the actual name
-  )
-
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  # geom_flow(width = 0.5) +
-  # geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = total_paid_group_fill), alpha = 0.8,
-                # width = 0.5
-                ) +
-  # geom_lode() +
-  
-  # geom_stratum(color = "#00509d",
-  #              fill='white',
-  #              linewidth = 1.5,
-  #              aes(fill = NA),
-  #              alpha = 0.5) +
-  geom_stratum(aes(fill = total_paid_group_fill),
-               # width = c(0.5,0.5,0.5,2),
-               # width = 0.7,
-               # width =ifelse(as.character(total_paid_group_fill) == 4, 3, NA),
-               # position = "jitter",
-               ) +
-   geom_label(stat = "stratum", 
-              # aes(label = after_stat(stratum)),
-              aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-              size =3,
-              ) +
-  # geom_text(stat = "stratum",
-  #           aes(label = paste(after_stat(stratum)
-  #                             # ,                              "\n" ,after_stat(count)
-  #                             )),
-  #            # aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-  #           hjust = 0.5,
-  #           size = 3
-  #           ) +
-  scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-   scale_x_discrete(                   expand = c(.1, .1)) +
-  # ggrepel::geom_text_repel(
-  #   aes(label = ifelse(as.numeric(x) == 4, as.character(stratum), NA) ),
-  #   stat = "stratum",
-  #   size = 3, direction = "y", nudge_x = 1.2
-  # ) +
-  scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
-  ggrepel::geom_label_repel(
- aes(label = ifelse(as.numeric(x) == 5, as.character(stratum), NA)),
-  stat = "stratum",
-  size = 3,
-  direction = "y",
-  nudge_x = .7,
-  box.padding = 0.3, # Padding around the text
-  label.padding = unit(0.25, "lines"), # Padding inside the box
-  label.size = 0.5, # Border thickness
-  label.r = unit(0.15, "lines"), # Corner radius of the box
-  fill = "white", # Background color for the label
-  color = "black" # Text color
-) +
-  # facet_wrap(~ agency_name, scales = "free") +
-  facet_grid(agency_name ~ ., scales = "free") +
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "bottom",
-         panel.spacing = unit(3, "lines"),
-        legend.direction = "horizontal",
-        legend.box = "horizontal", 
-        legend.text = element_text(size = 10) ,
-        )+
-  guides(
-    fill = guide_legend(
-      nrow = 1,                      # Force legend items into one row
-      # keywidth = 1.5, keyheight = 0.5 # Adjust key size for spacing
-    )
-  )
-```
-
-
-
-
-```{r}
-#| fig-width: 9
-#| fig-height: 11
-
-range_band= 50000
-
-payroll_data_fire_police_test <-
-payroll_data_fire_police |> 
-  filter(fiscal_year == 2024) |>
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
-  # filter(leave_status_as_of_june_30 == "ACTIVE") |> 
-   mutate(
-    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
-    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
-    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
-  ) |> 
-    mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_paid_group = cut(
-      total_paid,
-      breaks = seq(
-        floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-        ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-        by = range_band
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band - 1) * range_band,
-          by = range_band
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band + range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-          by = range_band
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    total_paid_group = recode(
-      total_paid_group,
-      "-200k--150k" = "Less than 0",
-      "-150k--100k" = "Less than 0",
-      "-100k--50k" = "Less than 0",
-      "-50k-0k" = "Less than 0",
-      "0k-50k" = "0k-50k",
-      "50k-100k" = "50k-100k",
-      "100k-150k" = "100k-150k",
-      "150k-200k" = "150k-200k",
-      "200k-250k" = "200k-250k",
-      "250k-300k" = "250k and above",
-      "300k-350k" = "250k and above",
-      "350k-400k" = "250k and above",
-      "400k-450k" = "250k and above",
-      "450k-500k" = "250k and above",
-      "500k-550k" = "250k and above",
-      "550k-600k" = "250k and above",
-      "600k-650k" = "250k and above"
-    ),
-    total_paid_group = factor(total_paid_group, 
-                              levels = c("250k and above", "200k-250k", 
-                                         "150k-200k", "100k-150k", "50k-100k", 
-                                         "0k-50k", "Less than 0"))
-  ) |> 
-  mutate(
-    flag_regular = factor(flag_regular, levels = c("Yes", "No")),
-    flag_overtime = factor(flag_overtime, levels = c("Yes", "No")),
-  ) |> 
-mutate(
-    years_at_agency = 2024 - agency_start_date_year,  # Calculate the years worked
-    years_band = case_when(
-      years_at_agency >= 0 & years_at_agency <= 5 ~ "0-5 years",
-      years_at_agency > 5 & years_at_agency <= 10 ~ "5-10 years",
-      years_at_agency > 10 & years_at_agency <= 20 ~ "10-20 years",
-      years_at_agency > 20 ~ "20+ years",
-      TRUE ~ "Unknown"  # In case of any missing or incorrect data
-    ),
-    years_band = factor(years_band, levels = c("20+ years", "10-20 years", "5-10 years", "0-5 years"))
-  ) |> 
-  mutate(total_paid_group_fill = total_paid_group)
-
-
-
-payroll_data_fire_police_pay_range_frequency <- 
-  payroll_data_fire_police_test |> 
-  # select(total_paid_group,flag_regular,flag_overtime,flag_other,agency_name,total_paid_group_fill) |> 
-  # select(flag_regular,flag_overtime,flag_other,total_paid_group,agency_name,total_paid_group_fill) |>
-  select(work_location_borough,flag_overtime,total_paid_group,agency_name,total_paid_group_fill) |>
-# select(years_at_agency,flag_overtime,total_paid_group,agency_name,total_paid_group_fill) |> 
-  group_by(across(everything())) |> 
-  summarise(frequency = n(), .groups = 'drop')
-
-# payroll_data_fire_police_pay_range_frequency <-
-#   payroll_data_fire_police_pay_range_frequency |> 
-#   mutate(total_paid_group_fill = total_paid_group)
-
-essay_grades_frequency_lode = to_lodes_form(payroll_data_fire_police_pay_range_frequency, axes = 1:3)
-essay_grades_frequency_lode$x <- factor(essay_grades_frequency_lode$x,
-                                        labels = c(1,2,
-                                                   "Total"))
-
-
-
-library(scales)
-
-essay_grades_frequency_lode <- essay_grades_frequency_lode |> 
-  mutate(
-    stratum_width = ifelse(stratum == "Total", 2, 1) # Replace "LastStratumName" with the actual name
-  )
-
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  # geom_flow(width = 0.5) +
-  # geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = total_paid_group_fill), alpha = 0.8,
-                # width = 0.5
-                ) +
-  # geom_lode() +
-  
-  # geom_stratum(color = "#00509d",
-  #              fill='white',
-  #              linewidth = 1.5,
-  #              aes(fill = NA),
-  #              alpha = 0.5) +
-  geom_stratum(aes(fill = total_paid_group_fill),
-               # width = c(0.5,0.5,0.5,2),
-               # width = 0.7,
-               # width =ifelse(as.character(total_paid_group_fill) == 4, 3, NA),
-               # position = "jitter",
-               ) +
-   geom_label(stat = "stratum", 
-              # aes(label = after_stat(stratum)),
-              aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-              size =3,
-              ) +
-  # geom_text(stat = "stratum",
-  #           aes(label = paste(after_stat(stratum)
-  #                             # ,                              "\n" ,after_stat(count)
-  #                             )),
-  #            # aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-  #           hjust = 0.5,
-  #           size = 3
-  #           ) +
-  scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-   scale_x_discrete(                   expand = c(.1, .1)) +
-  # ggrepel::geom_text_repel(
-  #   aes(label = ifelse(as.numeric(x) == 4, as.character(stratum), NA) ),
-  #   stat = "stratum",
-  #   size = 3, direction = "y", nudge_x = 1.2
-  # ) +
-  scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
-  ggrepel::geom_label_repel(
- aes(label = ifelse(as.numeric(x) == 5, as.character(stratum), NA)),
-  stat = "stratum",
-  size = 3,
-  direction = "y",
-  nudge_x = .7,
-  box.padding = 0.3, # Padding around the text
-  label.padding = unit(0.25, "lines"), # Padding inside the box
-  label.size = 0.5, # Border thickness
-  label.r = unit(0.15, "lines"), # Corner radius of the box
-  fill = "white", # Background color for the label
-  color = "black" # Text color
-) +
-  # facet_wrap(~ agency_name, scales = "free") +
-  facet_grid(agency_name ~ ., scales = "free") +
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "bottom",
-         panel.spacing = unit(3, "lines"),
-        legend.direction = "horizontal",
-        legend.box = "horizontal", 
-        legend.text = element_text(size = 10) ,
-        )+
-  guides(
-    fill = guide_legend(
-      nrow = 1,                      # Force legend items into one row
-      # keywidth = 1.5, keyheight = 0.5 # Adjust key size for spacing
-    )
-  )
-```
-
-
-
-
-```{r}
-#| fig-width: 9
-#| fig-height: 11
-
-range_band= 50000
-
-payroll_data_fire_police_test <-
-payroll_data_fire_police |> 
-  filter(fiscal_year == 2024) |>
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
-  # filter(leave_status_as_of_june_30 == "ACTIVE") |> 
-   mutate(
-    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
-    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
-    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
-  ) |> 
-    mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_paid_group = cut(
-      total_paid,
-      breaks = seq(
-        floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-        ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-        by = range_band
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band - 1) * range_band,
-          by = range_band
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band + range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-          by = range_band
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    total_paid_group = recode(
-      total_paid_group,
-      "-200k--150k" = "Less than 0",
-      "-150k--100k" = "Less than 0",
-      "-100k--50k" = "Less than 0",
-      "-50k-0k" = "Less than 0",
-      "0k-50k" = "0k-50k",
-      "50k-100k" = "50k-100k",
-      "100k-150k" = "100k-150k",
-      "150k-200k" = "150k-200k",
-      "200k-250k" = "200k-250k",
-      "250k-300k" = "250k and above",
-      "300k-350k" = "250k and above",
-      "350k-400k" = "250k and above",
-      "400k-450k" = "250k and above",
-      "450k-500k" = "250k and above",
-      "500k-550k" = "250k and above",
-      "550k-600k" = "250k and above",
-      "600k-650k" = "250k and above"
-    ),
-    total_paid_group = factor(total_paid_group, 
-                              levels = c("250k and above", "200k-250k", 
-                                         "150k-200k", "100k-150k", "50k-100k", 
-                                         "0k-50k", "Less than 0"))
-  ) |> 
-  mutate(
-    flag_regular = factor(flag_regular, levels = c("Yes", "No")),
-    flag_overtime = factor(flag_overtime, levels = c("Yes", "No")),
-  ) |> 
-  mutate(total_paid_group_fill = total_paid_group)
-
-
-
-payroll_data_fire_police_pay_range_frequency <- 
-  payroll_data_fire_police_test |> 
-  # select(total_paid_group,flag_regular,flag_overtime,flag_other,agency_name,total_paid_group_fill) |> 
-  # select(flag_regular,flag_overtime,flag_other,total_paid_group,agency_name,total_paid_group_fill) |>
-  select(pay_basis,flag_overtime,total_paid_group,agency_name,total_paid_group_fill) |> 
-  group_by(across(everything())) |> 
-  summarise(frequency = n(), .groups = 'drop')
-
-# payroll_data_fire_police_pay_range_frequency <-
-#   payroll_data_fire_police_pay_range_frequency |> 
-#   mutate(total_paid_group_fill = total_paid_group)
-
-essay_grades_frequency_lode = to_lodes_form(payroll_data_fire_police_pay_range_frequency, axes = 1:3)
-essay_grades_frequency_lode$x <- factor(essay_grades_frequency_lode$x,
-                                        labels = c(1,2,
-                                                   "Total"))
-
-
-
-library(scales)
-
-essay_grades_frequency_lode <- essay_grades_frequency_lode |> 
-  mutate(
-    stratum_width = ifelse(stratum == "Total", 2, 1) # Replace "LastStratumName" with the actual name
-  )
-
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  # geom_flow(width = 0.5) +
-  # geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = total_paid_group_fill), alpha = 0.8,
-                # width = 0.5
-                ) +
-  # geom_lode() +
-  
-  # geom_stratum(color = "#00509d",
-  #              fill='white',
-  #              linewidth = 1.5,
-  #              aes(fill = NA),
-  #              alpha = 0.5) +
-  geom_stratum(aes(fill = total_paid_group_fill),
-               # width = c(0.5,0.5,0.5,2),
-               # width = 0.7,
-               # width =ifelse(as.character(total_paid_group_fill) == 4, 3, NA),
-               # position = "jitter",
-               ) +
-   geom_label(stat = "stratum", 
-              # aes(label = after_stat(stratum)),
-              aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-              size =3,
-              ) +
-  # geom_text(stat = "stratum",
-  #           aes(label = paste(after_stat(stratum)
-  #                             # ,                              "\n" ,after_stat(count)
-  #                             )),
-  #            # aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-  #           hjust = 0.5,
-  #           size = 3
-  #           ) +
-  scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-   scale_x_discrete(                   expand = c(.1, .1)) +
-  # ggrepel::geom_text_repel(
-  #   aes(label = ifelse(as.numeric(x) == 4, as.character(stratum), NA) ),
-  #   stat = "stratum",
-  #   size = 3, direction = "y", nudge_x = 1.2
-  # ) +
-  scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
-  ggrepel::geom_label_repel(
- aes(label = ifelse(as.numeric(x) == 5, as.character(stratum), NA)),
-  stat = "stratum",
-  size = 3,
-  direction = "y",
-  nudge_x = .7,
-  box.padding = 0.3, # Padding around the text
-  label.padding = unit(0.25, "lines"), # Padding inside the box
-  label.size = 0.5, # Border thickness
-  label.r = unit(0.15, "lines"), # Corner radius of the box
-  fill = "white", # Background color for the label
-  color = "black" # Text color
-) +
-  # facet_wrap(~ agency_name, scales = "free") +
-  facet_grid(agency_name ~ ., scales = "free") +
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "bottom",
-         panel.spacing = unit(3, "lines"),
-        legend.direction = "horizontal",
-        legend.box = "horizontal", 
-        legend.text = element_text(size = 10) ,
-        )+
-  guides(
-    fill = guide_legend(
-      nrow = 1,                      # Force legend items into one row
-      # keywidth = 1.5, keyheight = 0.5 # Adjust key size for spacing
-    )
-  )
-```
-
-```{r}
-#| fig-width: 9
-#| fig-height: 11
-
-range_band= 50000
-
-payroll_data_fire_police_test <-
-payroll_data_fire_police |> 
-  filter(fiscal_year == 2024) |>
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
-  # filter(leave_status_as_of_june_30 == "ACTIVE") |> 
-   mutate(
-    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
-    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
-    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
-  ) |> 
-    mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_paid_group = cut(
-      total_paid,
-      breaks = seq(
-        floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-        ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-        by = range_band
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band - 1) * range_band,
-          by = range_band
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band + range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-          by = range_band
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    total_paid_group = recode(
-      total_paid_group,
-      "-200k--150k" = "Less than 0",
-      "-150k--100k" = "Less than 0",
-      "-100k--50k" = "Less than 0",
-      "-50k-0k" = "Less than 0",
-      "0k-50k" = "0k-50k",
-      "50k-100k" = "50k-100k",
-      "100k-150k" = "100k-150k",
-      "150k-200k" = "150k-200k",
-      "200k-250k" = "200k-250k",
-      "250k-300k" = "250k and above",
-      "300k-350k" = "250k and above",
-      "350k-400k" = "250k and above",
-      "400k-450k" = "250k and above",
-      "450k-500k" = "250k and above",
-      "500k-550k" = "250k and above",
-      "550k-600k" = "250k and above",
-      "600k-650k" = "250k and above"
-    ),
-    total_paid_group = factor(total_paid_group, 
-                              levels = c("250k and above", "200k-250k", 
-                                         "150k-200k", "100k-150k", "50k-100k", 
-                                         "0k-50k", "Less than 0"))
-  ) |> 
-  mutate(
-    flag_regular = factor(flag_regular, levels = c("Yes", "No")),
-    flag_overtime = factor(flag_overtime, levels = c("Yes", "No")),
-  ) |> 
-mutate(
-    years_at_agency = 2024 - agency_start_date_year,  # Calculate the years worked
-    years_band = case_when(
-      years_at_agency >= 0 & years_at_agency <= 5 ~ "0-5 years",
-      years_at_agency > 5 & years_at_agency <= 10 ~ "5-10 years",
-      years_at_agency > 10 & years_at_agency <= 20 ~ "10-20 years",
-      years_at_agency > 20 ~ "20+ years",
-      TRUE ~ "Unknown"  # In case of any missing or incorrect data
-    ),
-    years_band = factor(years_band, levels = c("20+ years", "10-20 years", "5-10 years", "0-5 years"))
-  ) |> 
-  mutate(total_paid_group_fill = total_paid_group,
-years_band_group = years_band)
-
-
-
-payroll_data_fire_police_pay_range_frequency <- 
-  payroll_data_fire_police_test |> 
-  # select(total_paid_group,flag_regular,flag_overtime,flag_other,agency_name,total_paid_group_fill) |> 
-  # select(flag_regular,flag_overtime,flag_other,total_paid_group,agency_name,total_paid_group_fill) |>
-  # select(work_location_borough,flag_overtime,total_paid_group,agency_name,total_paid_group_fill) |>
-select(years_band,flag_overtime,total_paid_group,agency_name,total_paid_group_fill,years_band_group) |>
-  group_by(across(everything())) |> 
-  summarise(frequency = n(), .groups = 'drop')
-
-# payroll_data_fire_police_pay_range_frequency <-
-#   payroll_data_fire_police_pay_range_frequency |> 
-#   mutate(total_paid_group_fill = total_paid_group)
-
-essay_grades_frequency_lode = to_lodes_form(payroll_data_fire_police_pay_range_frequency, axes = 1:3)
-essay_grades_frequency_lode$x <- factor(essay_grades_frequency_lode$x,
-                                        labels = c(1,2,
-                                                   "Total"))
-
-
-
-library(scales)
-
-essay_grades_frequency_lode <- essay_grades_frequency_lode |> 
-  mutate(
-    stratum_width = ifelse(stratum == "Total", 2, 1) # Replace "LastStratumName" with the actual name
-  )
-
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  # geom_flow(width = 0.5) +
-  # geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = total_paid_group_fill), alpha = 0.8,
-                # width = 0.5
-                ) +
-  # geom_lode() +
-  
-  # geom_stratum(color = "#00509d",
-  #              fill='white',
-  #              linewidth = 1.5,
-  #              aes(fill = NA),
-  #              alpha = 0.5) +
-  geom_stratum(aes(fill = total_paid_group_fill),
-               # width = c(0.5,0.5,0.5,2),
-               # width = 0.7,
-               # width =ifelse(as.character(total_paid_group_fill) == 4, 3, NA),
-               # position = "jitter",
-               ) +
-   geom_label(stat = "stratum", 
-              # aes(label = after_stat(stratum)),
-              aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-              size =3,
-              ) +
-  # geom_text(stat = "stratum",
-  #           aes(label = paste(after_stat(stratum)
-  #                             # ,                              "\n" ,after_stat(count)
-  #                             )),
-  #            # aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-  #           hjust = 0.5,
-  #           size = 3
-  #           ) +
-  scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-   scale_x_discrete(                   expand = c(.1, .1)) +
-  # ggrepel::geom_text_repel(
-  #   aes(label = ifelse(as.numeric(x) == 4, as.character(stratum), NA) ),
-  #   stat = "stratum",
-  #   size = 3, direction = "y", nudge_x = 1.2
-  # ) +
-  # scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
-  ggrepel::geom_label_repel(
- aes(label = ifelse(as.numeric(x) == 5, as.character(stratum), NA)),
-  stat = "stratum",
-  size = 3,
-  direction = "y",
-  nudge_x = .7,
-  box.padding = 0.3, # Padding around the text
-  label.padding = unit(0.25, "lines"), # Padding inside the box
-  label.size = 0.5, # Border thickness
-  label.r = unit(0.15, "lines"), # Corner radius of the box
-  fill = "white", # Background color for the label
-  color = "black" # Text color
-) +
-  # facet_wrap(~ agency_name, scales = "free") +
-  # facet_grid(agency_name ~ years_band_group, scales = "free") +
-# facet_grid(years_band_group ~ agency_name, scales = "free_y") +
- facet_wrap(~ years_band_group + agency_name, scales = "free_y") + 
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "bottom",
-         panel.spacing = unit(3, "lines"),
-        legend.direction = "horizontal",
-        legend.box = "horizontal", 
-        legend.text = element_text(size = 10) ,
-        )+
-  guides(
-    fill = guide_legend(
-      nrow = 1,                      # Force legend items into one row
-      # keywidth = 1.5, keyheight = 0.5 # Adjust key size for spacing
-    )
-  )
-```
-
-
-
-
-```{r}
-#| fig-width: 9
-#| fig-height: 11
-
-range_band= 50000
-
-payroll_data_fire_police_test <-
-payroll_data_fire_police |> 
-  filter(fiscal_year == 2024) |>
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
-  # filter(leave_status_as_of_june_30 == "ACTIVE") |> 
-   mutate(
-    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
-    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
-    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
-  ) |> 
-    mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_paid_group = cut(
-      total_paid,
-      breaks = seq(
-        floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-        ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-        by = range_band
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band - 1) * range_band,
-          by = range_band
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band + range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-          by = range_band
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    total_paid_group = recode(
-      total_paid_group,
-      "-200k--150k" = "Less than 0",
-      "-150k--100k" = "Less than 0",
-      "-100k--50k" = "Less than 0",
-      "-50k-0k" = "Less than 0",
-      "0k-50k" = "0k-50k",
-      "50k-100k" = "50k-100k",
-      "100k-150k" = "100k-150k",
-      "150k-200k" = "150k-200k",
-      "200k-250k" = "200k-250k",
-      "250k-300k" = "250k and above",
-      "300k-350k" = "250k and above",
-      "350k-400k" = "250k and above",
-      "400k-450k" = "250k and above",
-      "450k-500k" = "250k and above",
-      "500k-550k" = "250k and above",
-      "550k-600k" = "250k and above",
-      "600k-650k" = "250k and above"
-    ),
-    total_paid_group = factor(total_paid_group, 
-                              levels = c("250k and above", "200k-250k", 
-                                         "150k-200k", "100k-150k", "50k-100k", 
-                                         "0k-50k", "Less than 0"))
-  ) |> 
-  mutate(
-    flag_regular = factor(flag_regular, levels = c("Yes", "No")),
-    flag_overtime = factor(flag_overtime, levels = c("Yes", "No")),
-  ) |> 
-mutate(
-    years_at_agency = 2024 - agency_start_date_year,  # Calculate the years worked
-    years_band = case_when(
-      years_at_agency >= 0 & years_at_agency <= 5 ~ "0-5 years",
-      years_at_agency > 5 & years_at_agency <= 10 ~ "5-10 years",
-      years_at_agency > 10 & years_at_agency <= 20 ~ "10-20 years",
-      years_at_agency > 20 ~ "20+ years",
-      TRUE ~ "Unknown"  # In case of any missing or incorrect data
-    ),
-    years_band = factor(years_band, levels = c("20+ years", "10-20 years", "5-10 years", "0-5 years"))
-  ) |> 
-  mutate(total_paid_group_fill = total_paid_group,
-years_band_group = years_band)
-
-
-
-payroll_data_fire_police_pay_range_frequency <- 
-  payroll_data_fire_police_test |> 
-  # select(total_paid_group,flag_regular,flag_overtime,flag_other,agency_name,total_paid_group_fill) |> 
-  # select(flag_regular,flag_overtime,flag_other,total_paid_group,agency_name,total_paid_group_fill) |>
-  # select(work_location_borough,flag_overtime,total_paid_group,agency_name,total_paid_group_fill) |>
-select(years_band,,flag_regular,flag_overtime,flag_other,total_paid_group,agency_name,total_paid_group_fill,years_band_group) |>
-  group_by(across(everything())) |> 
-  summarise(frequency = n(), .groups = 'drop')
-
-# payroll_data_fire_police_pay_range_frequency <-
-#   payroll_data_fire_police_pay_range_frequency |> 
-#   mutate(total_paid_group_fill = total_paid_group)
-
-essay_grades_frequency_lode = to_lodes_form(payroll_data_fire_police_pay_range_frequency, axes = 1:5)
-essay_grades_frequency_lode$x <- factor(essay_grades_frequency_lode$x,
-                                        labels = c(1,2,3,4,
-                                                   "Total"))
-
-
-
-library(scales)
-
-essay_grades_frequency_lode <- essay_grades_frequency_lode |> 
-  mutate(
-    stratum_width = ifelse(stratum == "Total", 2, 1) # Replace "LastStratumName" with the actual name
-  )
-
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  # geom_flow(width = 0.5) +
-  # geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = total_paid_group_fill), alpha = 0.8,
-                # width = 0.5
-                ) +
-  # geom_lode() +
-  
-  # geom_stratum(color = "#00509d",
-  #              fill='white',
-  #              linewidth = 1.5,
-  #              aes(fill = NA),
-  #              alpha = 0.5) +
-  geom_stratum(aes(fill = total_paid_group_fill),
-               # width = c(0.5,0.5,0.5,2),
-               # width = 0.7,
-               # width =ifelse(as.character(total_paid_group_fill) == 4, 3, NA),
-               # position = "jitter",
-               ) +
-   geom_label(stat = "stratum", 
-              # aes(label = after_stat(stratum)),
-              aes(label = ifelse(as.numeric(x) != 5, as.character(stratum), NA) ),
-              size =3,
-              ) +
-  # geom_text(stat = "stratum",
-  #           aes(label = paste(after_stat(stratum)
-  #                             # ,                              "\n" ,after_stat(count)
-  #                             )),
-  #            # aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-  #           hjust = 0.5,
-  #           size = 3
-  #           ) +
-  scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-   scale_x_discrete(                   expand = c(.1, .1)) +
-  # ggrepel::geom_text_repel(
-  #   aes(label = ifelse(as.numeric(x) == 4, as.character(stratum), NA) ),
-  #   stat = "stratum",
-  #   size = 3, direction = "y", nudge_x = 1.2
-  # ) +
-  # scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
-  ggrepel::geom_label_repel(
- aes(label = ifelse(as.numeric(x) == 5, as.character(stratum), NA)),
-  stat = "stratum",
-  size = 3,
-  direction = "y",
-  nudge_x = .7,
-  box.padding = 0.3, # Padding around the text
-  label.padding = unit(0.25, "lines"), # Padding inside the box
-  label.size = 0.5, # Border thickness
-  label.r = unit(0.15, "lines"), # Corner radius of the box
-  fill = "white", # Background color for the label
-  color = "black" # Text color
-) +
-  # facet_wrap(~ agency_name, scales = "free") +
-  facet_grid(agency_name ~ ., scales = "free") +
-# facet_grid(years_band_group ~ agency_name, scales = "free_y") +
- # facet_wrap(~ years_band_group + agency_name, scales = "free_y") + 
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "bottom",
-         panel.spacing = unit(3, "lines"),
-        legend.direction = "horizontal",
-        legend.box = "horizontal", 
-        legend.text = element_text(size = 10) ,
-        )+
-  guides(
-    fill = guide_legend(
-      nrow = 1,                      # Force legend items into one row
-      # keywidth = 1.5, keyheight = 0.5 # Adjust key size for spacing
-    )
-  )
-```
-
-
-
-```{r}
-#| fig-width: 9
-#| fig-height: 6
-
-range_band= 50000
-
-payroll_data_fire_police_test <-
-payroll_data_fire_police |> 
-  filter(fiscal_year == 2024) |>
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
-  # filter(leave_status_as_of_june_30 == "ACTIVE") |>
-   mutate(
-    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
-    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
-    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
-  ) |> 
-    mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_paid_group = cut(
-      total_paid,
-      breaks = seq(
-        floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-        ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-        by = range_band
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band - 1) * range_band,
-          by = range_band
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band + range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-          by = range_band
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    total_paid_group = recode(
-      total_paid_group,
-      "-200k--150k" = "Less than 0",
-      "-150k--100k" = "Less than 0",
-      "-100k--50k" = "Less than 0",
-      "-50k-0k" = "Less than 0",
-      "0k-50k" = "0k-50k",
-      "50k-100k" = "50k-100k",
-      "100k-150k" = "100k-150k",
-      "150k-200k" = "150k-200k",
-      "200k-250k" = "200k-250k",
-      "250k-300k" = "250k and above",
-      "300k-350k" = "250k and above",
-      "350k-400k" = "250k and above",
-      "400k-450k" = "250k and above",
-      "450k-500k" = "250k and above",
-      "500k-550k" = "250k and above",
-      "550k-600k" = "250k and above",
-      "600k-650k" = "250k and above"
-    ),
-    total_paid_group = factor(total_paid_group, 
-                              levels = c("250k and above", "200k-250k", 
-                                         "150k-200k", "100k-150k", "50k-100k", 
-                                         "0k-50k", "Less than 0"))
-  ) |> 
-  mutate(
-    flag_regular = factor(flag_regular, levels = c("Yes", "No")),
-    flag_overtime = factor(flag_overtime, levels = c("Yes", "No")),
-  ) |> 
-mutate(
-    years_at_agency = 2024 - agency_start_date_year,  # Calculate the years worked
-    years_band = case_when(
-      years_at_agency >= 0 & years_at_agency <= 5 ~ "0-5 years",
-      years_at_agency > 5 & years_at_agency <= 10 ~ "5-10 years",
-      years_at_agency > 10 & years_at_agency <= 20 ~ "10-20 years",
-      years_at_agency > 20 ~ "20+ years",
-      TRUE ~ "Unknown"  # In case of any missing or incorrect data
-    ),
-    years_band = factor(years_band, levels = c("20+ years", "10-20 years", "5-10 years", "0-5 years"))
-  ) |> 
-  mutate(total_paid_group_fill = total_paid_group,
-years_band_group = years_band)
-
-
-
-payroll_data_fire_police_pay_range_frequency <- 
-  payroll_data_fire_police_test |> 
-  # select(total_paid_group,flag_regular,flag_overtime,flag_other,agency_name,total_paid_group_fill) |> 
-  # select(flag_regular,flag_overtime,flag_other,total_paid_group,agency_name,total_paid_group_fill) |>
-  # select(work_location_borough,flag_overtime,total_paid_group,agency_name,total_paid_group_fill) |>
-select(years_band,total_paid_group,agency_name,total_paid_group_fill,years_band_group,work_location_borough) |>
-  group_by(across(everything())) |> 
-  summarise(frequency = n(), .groups = 'drop')
-
-# payroll_data_fire_police_pay_range_frequency <-
-#   payroll_data_fire_police_pay_range_frequency |> 
-#   mutate(total_paid_group_fill = total_paid_group)
-
-essay_grades_frequency_lode = to_lodes_form(payroll_data_fire_police_pay_range_frequency, axes = 1:2)
-essay_grades_frequency_lode$x <- factor(essay_grades_frequency_lode$x,
-                                        # labels = c(1,                                                   "Total")
-)
-
-
-
-library(scales)
-
-essay_grades_frequency_lode <- essay_grades_frequency_lode |> 
-  mutate(
-    stratum_width = ifelse(stratum == "Total", 2, 1) # Replace "LastStratumName" with the actual name
-  )
-
-ggplot(essay_grades_frequency_lode, 
-       aes(alluvium=alluvium, x=x, stratum=stratum, y=frequency)) +
-  # geom_flow(width = 0.5) +
-  # geom_alluvium(decreasing = TRUE)+
-  geom_alluvium(aes(fill = total_paid_group_fill), alpha = 0.8,
-                # width = 0.5
-                ) +
-  # geom_lode() +
-  
-  # geom_stratum(color = "#00509d",
-  #              fill='white',
-  #              linewidth = 1.5,
-  #              aes(fill = NA),
-  #              alpha = 0.5) +
-  geom_stratum(aes(fill = total_paid_group_fill),
-               # width = c(0.5,0.5,0.5,2),
-               # width = 0.7,
-               # width =ifelse(as.character(total_paid_group_fill) == 4, 3, NA),
-               # position = "jitter",
-               ) +
-   geom_label(stat = "stratum", 
-              # aes(label = after_stat(stratum)),
-              aes(label = ifelse(as.numeric(x) != 2, as.character(stratum), NA) ),
-              size =3,
-              ) +
-  # geom_text(stat = "stratum",
-  #           aes(label = paste(after_stat(stratum)
-  #                             # ,                              "\n" ,after_stat(count)
-  #                             )),
-  #            # aes(label = ifelse(as.numeric(x) != 4, as.character(stratum), NA) ),
-  #           hjust = 0.5,
-  #           size = 3
-  #           ) +
-  scale_fill_brewer(palette = "Spectral", direction = -1, na.translate = FALSE) +
-   scale_x_discrete(                   expand = c(.1, .1)) +
-# ggrepel::geom_text_repel(
-#   aes(label = ifelse(as.numeric(x) == 2, as.character(stratum), NA) ),
-#   stat = "stratum",
-#   size = 3, direction = "y", nudge_x = 1.2
-# ) +
-scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
-  ggrepel::geom_label_repel(
- aes(label = ifelse(as.numeric(x) == 2, as.character(stratum), NA)),
-  stat = "stratum",
-  size = 3,
-  direction = "y",
-  nudge_x = .8,
-  box.padding = 0.3, # Padding around the text
-  label.padding = unit(0.25, "lines"), # Padding inside the box
-  label.size = 0.5, # Border thickness
-  label.r = unit(0.15, "lines"), # Corner radius of the box
-  fill = "white", # Background color for the label
-  color = "black" # Text color
-) +
-  facet_wrap(~ agency_name, scales = "free") +
-# facet_wrap(~ work_location_borough, scales = "free_y") +
-  # facet_grid(agency_name ~ ., scales = "free") +
-# facet_wrap(~ agency_name, scales = "free_y") +
-# facet_grid(years_band_group ~ agency_name, scales = "free_y") +
-# facet_grid(work_location_borough ~ agency_name, scales = "free_y") +
-# work_location_borough
- # facet_wrap(~ years_band_group + agency_name, scales = "free_y") + 
-  labs(title = "Student Performance on the Three Essays",
-       x = "Essays",
-       y = "Number of Students",
-       fill="Section") +
-  theme_minimal() +
-  theme(legend.position = "bottom",
-         panel.spacing = unit(3, "lines"),
-        legend.direction = "horizontal",
-        legend.box = "horizontal", 
-        legend.text = element_text(size = 10) ,
-        )+
-  guides(
-    fill = guide_legend(
-      nrow = 1,                      # Force legend items into one row
-      # keywidth = 1.5, keyheight = 0.5 # Adjust key size for spacing
-    )
-  )
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r}
-range_band= 50000
-
-payroll_data_fire_police_chart_2 <-
-  payroll_data_fire_police |> 
-  filter(fiscal_year == 2024) |>
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
-  # filter(leave_status_as_of_june_30 == "ACTIVE") |>
-  mutate(
-    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
-    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
-    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
-  ) |> 
-  mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_paid_group = cut(
-      total_paid,
-      breaks = seq(
-        floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-        ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-        by = range_band
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band - 1) * range_band,
-          by = range_band
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band + range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-          by = range_band
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    total_paid_group = recode(
-      total_paid_group,
-      "-200k--150k" = "Less than 0",
-      "-150k--100k" = "Less than 0",
-      "-100k--50k" = "Less than 0",
-      "-50k-0k" = "Less than 0",
-      "0k-50k" = "0k-50k",
-      "50k-100k" = "50k-100k",
-      "100k-150k" = "100k-150k",
-      "150k-200k" = "150k-200k",
-      "200k-250k" = "200k-250k",
-      "250k-300k" = "250k and above",
-      "300k-350k" = "250k and above",
-      "350k-400k" = "250k and above",
-      "400k-450k" = "250k and above",
-      "450k-500k" = "250k and above",
-      "500k-550k" = "250k and above",
-      "550k-600k" = "250k and above",
-      "600k-650k" = "250k and above"
-    ),
-    total_paid_group = factor(total_paid_group, 
-                              levels = c("250k and above", "200k-250k", 
-                                         "150k-200k", "100k-150k", "50k-100k", 
-                                         "0k-50k", "Less than 0"))
-  ) |> 
-  mutate(
-    flag_regular = factor(flag_regular, levels = c("Yes", "No")),
-    flag_overtime = factor(flag_overtime, levels = c("Yes", "No")),
-  ) |> 
-  mutate(
-    years_at_agency = 2024 - agency_start_date_year,  # Calculate the years worked
-    years_band = case_when(
-      years_at_agency >= 0 & years_at_agency <= 5 ~ "0-5 years",
-      years_at_agency > 5 & years_at_agency <= 10 ~ "5-10 years",
-      years_at_agency > 10 & years_at_agency <= 20 ~ "10-20 years",
-      years_at_agency > 20 ~ "20+ years",
-      TRUE ~ "Unknown"  # In case of any missing or incorrect data
-    ),
-    years_band = factor(years_band, levels = c("20+ years", "10-20 years", "5-10 years", "0-5 years"))
-  ) |> 
-  mutate(total_paid_group_fill = total_paid_group,
-         years_band_group = years_band)
-
-
-
-payroll_data_fire_police_chart_2 |> 
-  filter(total_paid_group == "250k and above") |> 
-  group_by(agency_name,title_description) |> 
-  summarise(
-    total_records = n(),
-    mean_total_paid = mean(total_paid)) |> 
-  arrange(desc(mean_total_paid))
-
-```
-
-
-```{r}
-#| fig-width: 2
-#| fig-height: 2
-
-library(parcoords)
-
-payroll_data_fire_police_chart_2_250 <-
-payroll_data_fire_police_chart_2 |> 
-  filter(total_paid_group == "250k and above")
-  # filter(total_paid_group == "0k-50k")
-
-parcoords(
-  payroll_data_fire_police_chart_2_250[, c("agency_name", 
-                            "title_description",
-                            "regular_gross_paid",
-                            "total_ot_paid",
-                            "total_other_pay",
-                            "total_paid"
-                            )], 
-  rownames = FALSE,
-  brushMode = "1D-axes",
-  reorderable = TRUE,
-  queue = TRUE,
-  alpha = 0.25,
-  alphaOnBrushed = 0.15,
-  height = 750,
-  # dimensions = list(
-  #   outliers_rank = list(
-  #     title = "outliers_rank",
-  #     tickValues = c("High","Not an Outlier","Low")
-  #   ),
-  #   order_sequence = list(
-  #     title = "newspaper",
-  #     tickValues = rev(unique(pulitzer_data_outliers$newspaper))
-  #   )
-  #   
-  # ),
-  # color = list(
-  #   colorBy = "outliers_rank",  
-  #   colorScale = "scaleOrdinal",
-  #   colorScheme = outliers_colors
-  # ),
-   color = list(
-    colorBy = "agency_name",  
-    colorScale = "scaleOrdinal",
-    colorScheme = c("#0099CC", "#f94144","deepskyblue3") 
-  ),
-  withD3 = TRUE
-)
-```
-
-
-
-
-```{r}
-#| fig-width: 8
-#| fig-height: 11
-
-
-# payroll_data_fire_police_chart_2 |> 
-  # filter(total_paid_group == "250k and above") |> 
-  # select(title_description) |> distinct() |> pull()
-
-
-
-library(parcoords)
-
-title_mapping <- c(
-  "EXECUTIVE AGENCY COUNSEL" = "EXEC AGENCY CNSL",
-  "COMPUTER SYSTEMS MANAGER" = "COMPUTER SYS MGR",
-  "COUNSEL TO THE POLICE COMMISSIONER" = "POLICE CNSL",
-  "ADMINISTRATIVE STAFF ANALYST" = "ADMIN STAFF ANALYST",
-  "CAPTAIN - CHIEF OF STAFF" = "CAPT - CHIEF STAFF",
-  "DEPUTY COMMISSIONER" = "DEPUTY COMM",
-  "CAPTAIN DETAILED AS ASSISTANT CHIEF" = "CAPT - ASST CHIEF",
-  "CAPTAIN DETAILED AS CHIEF OF TRAINING" = "CAPT - CHIEF TRAINING",
-  "COMMISSIONER" = "COMMISSIONER",
-  "CAPTAIN DETAILED AS CHIEF OF SPECIAL OPERATIONS" = "CAPT - SPEC OPS CHIEF",
-  "CAPTAIN: CHIEF OF TRANSPORTATION BUREAU" = "CAPT - TRANS CHIEF",
-  "CAPTAIN DETAILED AS CHIEF OF DETECTIVES" = "CAPT - DET CHIEF",
-  "CHIEF OF INFORMATION TECHNOLOGY" = "IT CHIEF",
-  "CAPT DET CHIEF OF THE HOUSING BUREAU" = "CAPT DET - HOUSING",
-  "CAPT DET CHIEF OF THE TRANSIT BUREAU" = "CAPT DET - TRANSIT",
-  "CAPT DET CHIEF OF INTERNAL AFFAIRS" = "CAPT DET - INTERNAL AFF",
-  "CAPTAIN DETAILED AS CHIEF OF INTERAGENCY OPERATIONS" = "CAPT - INTERAGENCY OPS",
-  "CAPTAIN DETAILED AS CHIEF OF CRIME CONTROL STRATEGIES" = "CAPT - CRIME CTRL",
-  "SUPERVISING CHIEF SURGEON" = "CHIEF SURGEON",
-  "CAPT DET CHIEF OF DEPARTMENT" = "CAPT DET - DEPT CHIEF",
-  "SENIOR STATIONARY ENGINEER" = "SR STAT ENG",
-  "CAPTAIN DETAILED AS CHIEF OF PATROL" = "CAPT - PATROL CHIEF",
-  "CAPTAIN DETAILED AS CHIEF OF PERSONNEL" = "CAPT - PERS CHIEF",
-  "SUPERVISOR OF MECHANICS" = "SUPV MECHANICS",
-  "AGENCY ATTORNEY" = "AGENCY ATTY",
-  "FIRST DEPUTY COMMISSIONER" = "1ST DEPUTY COMM",
-  "POLICE OFFICER" = "POLICE OFFICER",
-  "P.O. DA DET GR3" = "P.O. DA DET GR3",
-  "P.O. DET SPEC" = "P.O. DET SPEC",
-  "LIEUTENANT" = "LIEUTENANT",
-  "CAPTAIN" = "CAPTAIN",
-  "OILER" = "OILER",
-  "SERGEANT-D/A SPECIAL ASSIGNMENT" = "SERG-SPEC ASSIGN",
-  "SERGEANT-" = "SERGEANT",
-  "POLICE OFFICER D/A DETECTIVE 2ND GR" = "P.O. DET 2ND GR",
-  "POLICE OFFICER D/A DETECTIVE 1ST GR" = "P.O. DET 1ST GR",
-  "LIEUTENANT D/A SPECIAL ASSIGNMENT" = "LIEUT-SPEC ASSIGN",
-  "LIEUTENANT D/A COMMANDER OF DETECTIVE SQUAD" = "LIEUT-DETECT CMD",
-  "STATIONARY ENGINEER" = "STAT ENG",
-  "CAPTAIN D/A DEPUTY CHIEF" = "CAPT-DEPUTY CHIEF",
-  "SERGEANT-D/A SUPERVISOR DETECTIVE SQUAD" = "SERG-DETECT CMD",
-  "CAPTAIN D/A INSPECTOR" = "CAPT-INSPECTOR",
-  "FIRE MEDICAL OFFICER" = "FIRE MED OFFICER",
-  "ADMINISTRATOR OF MEDICAL AFFAIRS" = "ADMIN MED AFFAIRS",
-  "DEPUTY ASSISTANT CHIEF OF DEPARTMENT" = "DEP ASST CHIEF",
-  "ASSISTANT CHIEF OF DEPARTMENT" = "ASST CHIEF",
-  "CHIEF OF DEPARTMENT" = "CHIEF OF DEPT",
-  "SUPERVISING EMERGENCY MEDICAL SERVICE SPECIALIST" = "SUPV EMS SPEC",
-  "ASSISTANT CHIEF FIRE MARSHAL" = "ASST CHIEF MARSHAL",
-  "SUPERVISOR ELECTRICIAN" = "SUPV ELECTRICIAN",
-  "CHIEF FIRE MARSHAL" = "CHIEF MARSHAL",
-  "FIREFIGHTER" = "FIREFIGHTER",
-  "MARINE ENGINEER" = "MARINE ENGINEER",
-  "WIPER" = "WIPER",
-  "PILOT" = "PILOT",
-  "BATTALION CHIEF" = "BATTALION CHIEF",
-  "SUPERVISING FIRE MARSHAL" = "SUPV FIRE MARSHAL",
-  "FIRE MARSHAL" = "FIRE MARSHAL",
-  "DEPUTY CHIEF" = "DEPUTY CHIEF",
-  "AUTO MECHANIC" = "AUTO MECHANIC"
-)
-
-
-
-
-payroll_data_fire_police_chart_2_250 <-
-payroll_data_fire_police_chart_2 |> 
-  filter(total_paid_group == "250k and above") |> 
-  # filter(total_paid_group == "0k-50k") |> 
-  mutate(title_description_short = title_mapping[title_description]) |> 
-  mutate(agency_name_order = ifelse(agency_name == "FIRE DEPARTMENT", "ag-002","ag-001"))
-
-
-# 
-# payroll_data_fire_police_chart_2_250 |> 
-#   select(title_description_short) |> distinct() |> 
-#   arrange(desc(title_description_short)) |> 
-#   mutate(order_sequence = paste0("000-",sprintf("%05d", row_number())))
-
-title_order_sequence <- payroll_data_fire_police_chart_2_250 |> 
-  select(title_description_short) |> 
-  distinct() |> 
-  arrange(desc(title_description_short)) |> 
-  mutate(order_sequence = paste0("000-", sprintf("%05d", row_number())))
-
-# Perform a left join to add order_sequence
-payroll_data_fire_police_chart_2_250 <- payroll_data_fire_police_chart_2_250 |> 
-  left_join(title_order_sequence, by = "title_description_short")
-
-title_description_list <- payroll_data_fire_police_chart_2_250 |> 
-  select(title_description_short) |> 
-  distinct(title_description_short) |> 
-  arrange(title_description_short) |> 
-  pull(title_description_short)
-
-# View the list
-# print(as.character(title_description_list))
-  
-
-parcoords(
-  payroll_data_fire_police_chart_2_250[, c(
-    # "agency_name_order", 
-    "order_sequence",
-    "agency_name_order", 
-    # "title_description_short",
-    "regular_gross_paid",
-    "total_ot_paid",
-    "total_other_pay",
-    "total_paid"
-  )], 
-  rownames = FALSE,
-  brushMode = "1D-axes",
-  reorderable = TRUE,
-  queue = TRUE,
-  alpha = 0.25,
-  alphaOnBrushed = 0.1,
-  height = 750,
-  dimensions = list(
-    # outliers_rank = list(
-    #   title = "outliers_rank",
-    #   tickValues = c("High","Not an Outlier","Low")
-    # ),
-    agency_name_order = list(
-      title = "Agency",
-      tickValues = c("FIRE","POLICE")
-    ),
-    order_sequence = list(
-      title = "Job Title",
-      tickValues = as.character(title_description_list)
-    )
-
-  ),
-  # color = list(
-  #   colorBy = "outliers_rank",  
-  #   colorScale = "scaleOrdinal",
-  #   colorScheme = outliers_colors
-  # ),
-   color = list(
-    colorBy = "agency_name_order",  
-    colorScale = "scaleOrdinal",
-    colorScheme = c("#0099CC", "#f94144")
-  ),
-  withD3 = TRUE,
-  margin = list(
-    top = 30,    # Adjust top margin
-    right = 20,  # Adjust right margin
-    bottom = 30, # Adjust bottom margin
-    left = 125   # Increase left margin for better spacing
-  )
-)
-```
-
-
-
-
-
-
+:::

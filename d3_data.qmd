@@ -88,22 +88,18 @@ payroll_data_fire_police |>
 ```
 
 
-
-## Nodes 
-
-### All titles
-
 ```{r}
-#| message: false
-#| warning: false
-
-
-nodes_all_title <-
 payroll_data_fire_police |>
-  # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
-  filter(agency_start_date_year >= 2015) |>
-  filter(agency_start_date_year < 2025) |>
-  select(agency_name, title_description, agency_start_date) |>
+  filter(title_description %in% c("POLICE OFFICER")) |>
+  filter(agency_start_date_year == 2021) |>
+  # filter(agency_start_date_year < 2025) |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  group_by(agency_name, title_description, agency_start_date) |> 
+  summarise(count_of_hired_employees = n()) |> 
+  ungroup() |> 
+  dplyr::select(agency_name, title_description, agency_start_date,count_of_hired_employees) |>
   distinct() |>
   mutate(
     agency_start_date = floor_date(agency_start_date, unit = "month")
@@ -118,7 +114,7 @@ payroll_data_fire_police |>
       agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
     )
   ) |>
-  group_by(agency_name, title_description, group) |>
+  group_by(agency_name, title_description,count_of_hired_employees, group) |>
   summarise(
     # id = paste(agency_name, title_description, sep = "_"),
     id =  title_description,
@@ -129,10 +125,79 @@ payroll_data_fire_police |>
       agency_name == "FIRE DEPARTMENT" ~ "f",
       TRUE ~ NA_character_
     ),
+    ct = count_of_hired_employees,
+    # ct = case_when(
+    #   agency_name == "POLICE DEPARTMENT" ~ "5",
+    #   agency_name == "FIRE DEPARTMENT" ~ "20",
+    #   TRUE ~ NA_character_
+    # ),
     .groups = "drop"
   ) |>
   filter(!is.na(ag)) |> # Remove rows with invalid agency_name
-  select(id, start, end, ag) |>
+  dplyr::select(id, start, end, ag,ct) |>
+  distinct() |> 
+  arrange(start)
+```
+
+
+
+
+## Nodes 
+
+### All titles
+
+```{r}
+#| message: false
+#| warning: false
+
+
+nodes_all_title <-
+payroll_data_fire_police |>
+  # filter(title_description %in% c("POLICE OFFICER")) |>
+  filter(agency_start_date_year >= 2015) |>
+  filter(agency_start_date_year < 2025) |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  group_by(agency_name, title_description, agency_start_date) |> 
+  summarise(count_of_hired_employees = n()) |> 
+  ungroup() |> 
+  dplyr::select(agency_name, title_description, agency_start_date,count_of_hired_employees) |>
+  distinct() |>
+  mutate(
+    agency_start_date = floor_date(agency_start_date, unit = "month")
+  ) |>
+  distinct() |>
+  arrange(agency_name, title_description, agency_start_date) |>
+  group_by(agency_name, title_description) |>
+  mutate(
+    # Detect breaks in the month sequence
+    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
+    group = cumsum(
+      agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
+    )
+  ) |>
+  group_by(agency_name, title_description,count_of_hired_employees, group) |>
+  summarise(
+    # id = paste(agency_name, title_description, sep = "_"),
+    id =  title_description,
+    start = min(agency_start_date),
+    end = max(agency_start_date) + months(1),
+    ag = case_when(
+      agency_name == "POLICE DEPARTMENT" ~ "p",
+      agency_name == "FIRE DEPARTMENT" ~ "f",
+      TRUE ~ NA_character_
+    ),
+    ct = count_of_hired_employees,
+    # ct = case_when(
+    #   agency_name == "POLICE DEPARTMENT" ~ "5",
+    #   agency_name == "FIRE DEPARTMENT" ~ "20",
+    #   TRUE ~ NA_character_
+    # ),
+    .groups = "drop"
+  ) |>
+  filter(!is.na(ag)) |> # Remove rows with invalid agency_name
+  dplyr::select(id, start, end, ag,ct) |>
   distinct()
 ```
 
@@ -171,7 +236,7 @@ nodes_police_jobs <-
   # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
   filter(agency_start_date_year >= 2015) |>
   filter(agency_start_date_year < 2025) |>
-  select(agency_name, agency_start_date) |>
+  dplyr::select(agency_name, agency_start_date) |>
   distinct() |>
   mutate(
     agency_start_date = floor_date(agency_start_date, unit = "month")
@@ -202,10 +267,16 @@ nodes_police_jobs <-
     #   TRUE ~ NA_character_
     # ),
     ag = 'pr',
+    ct = '',
+    # ct = case_when(
+    #   agency_name == "POLICE DEPARTMENT" ~ "5",
+    #   agency_name == "FIRE DEPARTMENT" ~ "20",
+    #   TRUE ~ NA_character_
+    # ),
     .groups = "drop"
   ) |>
   filter(!is.na(ag)) |> # Remove rows with invalid agency_name
-  select(id, start, end,ag) |>
+  dplyr::select(id, start, end,ag,ct) |>
   distinct()
 
 # 
@@ -280,7 +351,7 @@ nodes_fire_jobs <-
   # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
   filter(agency_start_date_year >= 2015) |>
   filter(agency_start_date_year < 2025) |>
-  select(agency_name, agency_start_date) |>
+  dplyr::select(agency_name, agency_start_date) |>
   distinct() |>
   mutate(
     agency_start_date = floor_date(agency_start_date, unit = "month")
@@ -308,10 +379,17 @@ nodes_fire_jobs <-
     #   TRUE ~ NA_character_
     # ),
     ag = 'fr',
+    ct = '',
+    # ct = case_when(
+    #   agency_name == "POLICE DEPARTMENT" ~ "5",
+    #   agency_name == "FIRE DEPARTMENT" ~ "20",
+    #   TRUE ~ NA_character_
+    # ),
+    
     .groups = "drop"
   ) |>
   filter(!is.na(ag)) |> # Remove rows with invalid agency_name
-  select(id, start, end,ag) |>
+  dplyr::select(id, start, end,ag,ct) |>
   distinct()
 
 ```
@@ -347,7 +425,7 @@ nodes_ems_jobs <-
   # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
   filter(agency_start_date_year >= 2015) |>
   filter(agency_start_date_year < 2025) |>
-  select(agency_name, agency_start_date) |>
+  dplyr::select(agency_name, agency_start_date) |>
   distinct() |>
   mutate(
     agency_start_date = floor_date(agency_start_date, unit = "month")
@@ -375,10 +453,16 @@ nodes_ems_jobs <-
     #   TRUE ~ NA_character_
     # ),
     ag = 'fr',
+    ct = '',
+    # ct = case_when(
+    #   agency_name == "POLICE DEPARTMENT" ~ "5",
+    #   agency_name == "FIRE DEPARTMENT" ~ "20",
+    #   TRUE ~ NA_character_
+    # ),
     .groups = "drop"
   ) |>
   filter(!is.na(ag)) |> # Remove rows with invalid agency_name
-  select(id, start, end,ag) |>
+  dplyr::select(id, start, end,ag,ct) |>
   distinct()
 ```
 
@@ -401,72 +485,72 @@ json_nodes_ems_jobs <-
 
 ## Links
 
-### Police Officer Career Links
+<!-- ### Police Officer Career Links -->
 
 
-```{r}
-payroll_data_fire_police |>
-  select(agency_name, title_description) |>
-  filter(agency_name == "POLICE DEPARTMENT") |>
-  filter(str_detect(title_description, "POLICE OFFICER|P\\.O\\.")) |> 
-  distinct() 
-```
+<!-- ```{r} -->
+<!-- payroll_data_fire_police |> -->
+<!--   dplyr::select(agency_name, title_description) |> -->
+<!--   filter(agency_name == "POLICE DEPARTMENT") |> -->
+<!--   filter(str_detect(title_description, "POLICE OFFICER|P\\.O\\.")) |>  -->
+<!--   distinct()  -->
+<!-- ``` -->
 
-```{r}
-#| message: false
-#| warning: false
+<!-- ```{r} -->
+<!-- #| message: false -->
+<!-- #| warning: false -->
 
 
-link_police_career <-
-  payroll_data_fire_police |>
-  # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
-  filter(agency_start_date_year >= 2015) |>
-  filter(agency_start_date_year < 2025) |>
-  select(agency_name, title_description, agency_start_date) |>
-  distinct() |>
-  mutate(
-    agency_start_date = floor_date(agency_start_date, unit = "month")
-  ) |>
-  distinct() |>
-  arrange(agency_name, title_description, agency_start_date) |>
-  group_by(agency_name, title_description) |>
-  mutate(
-    # Detect breaks in the month sequence
-    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
-    group = cumsum(
-      agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
-    )
-  ) |>
-  filter(str_detect(title_description, "POLICE OFFICER|P\\.O\\."))
-```
+<!-- link_police_career <- -->
+<!--   payroll_data_fire_police |> -->
+<!--   # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |> -->
+<!--   filter(agency_start_date_year >= 2015) |> -->
+<!--   filter(agency_start_date_year < 2025) |> -->
+<!--   dplyr::select(agency_name, title_description, agency_start_date) |> -->
+<!--   distinct() |> -->
+<!--   mutate( -->
+<!--     agency_start_date = floor_date(agency_start_date, unit = "month") -->
+<!--   ) |> -->
+<!--   distinct() |> -->
+<!--   arrange(agency_name, title_description, agency_start_date) |> -->
+<!--   group_by(agency_name, title_description) |> -->
+<!--   mutate( -->
+<!--     # Detect breaks in the month sequence -->
+<!--     # group = cumsum(c(1, diff(agency_start_date) > months(1))) -->
+<!--     group = cumsum( -->
+<!--       agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date)) -->
+<!--     ) -->
+<!--   ) |> -->
+<!--   filter(str_detect(title_description, "POLICE OFFICER|P\\.O\\.")) -->
+<!-- ``` -->
 
-```{r}
-link_police_career_transformed <-
-link_police_career |>
-  filter(title_description == "POLICE OFFICER") |>  # Only "POLICE OFFICER" rows as source
-  left_join(link_police_career, by = "agency_start_date", suffix = c("_source", "_target")) |>
-  filter(title_description_target != "POLICE OFFICER") |>  # Avoid self-joins
-  mutate(
-    start = agency_start_date,
-    end = start + months(1)
-  ) |>
-  select(source = title_description_source,
-         target = title_description_target,
-         start, end)
+<!-- ```{r} -->
+<!-- link_police_career_transformed <- -->
+<!-- link_police_career |> -->
+<!--   filter(title_description == "POLICE OFFICER") |>  # Only "POLICE OFFICER" rows as source -->
+<!--   left_join(link_police_career, by = "agency_start_date", suffix = c("_source", "_target")) |> -->
+<!--   filter(title_description_target != "POLICE OFFICER") |>  # Avoid self-joins -->
+<!--   mutate( -->
+<!--     start = agency_start_date, -->
+<!--     end = start + months(1) -->
+<!--   ) |> -->
+<!--   dplyr::select(source = title_description_source, -->
+<!--          target = title_description_target, -->
+<!--          start, end) -->
 
-```
+<!-- ``` -->
 
-```{r}
-json_link_police_career <-
-  toJSON(list(links = link_police_career_transformed),
-                      # pretty = TRUE,
-                      auto_unbox = TRUE)
-# Write to file
-# write(json_output, file = "payroll_data_fire_police.json")
+<!-- ```{r} -->
+<!-- json_link_police_career <- -->
+<!--   toJSON(list(links = link_police_career_transformed), -->
+<!--                       # pretty = TRUE, -->
+<!--                       auto_unbox = TRUE) -->
+<!-- # Write to file -->
+<!-- # write(json_output, file = "payroll_data_fire_police.json") -->
 
-# Print JSON preview
-# cat(json_link_police_career)
-```
+<!-- # Print JSON preview -->
+<!-- # cat(json_link_police_career) -->
+<!-- ``` -->
 
 
 ### Police Officer Related Links 
@@ -480,7 +564,7 @@ links_police_jobs <-
   # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
   filter(agency_start_date_year >= 2015) |>
   filter(agency_start_date_year < 2025) |>
-  select(agency_name, title_description, agency_start_date) |>
+  dplyr::select(agency_name, title_description, agency_start_date) |>
   distinct() |>
   mutate(
     agency_start_date = floor_date(agency_start_date, unit = "month")
@@ -512,7 +596,7 @@ links_police_jobs <-
     .groups = "drop"
   ) |>
   filter(!is.na(ag)) |> # Remove rows with invalid agency_name
-  select(source,target, start, end) |>
+  dplyr::select(source,target, start, end) |>
   distinct()
 ```
 
@@ -544,7 +628,7 @@ links_fire_jobs <-
   # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
   filter(agency_start_date_year >= 2015) |>
   filter(agency_start_date_year < 2025) |>
-  select(agency_name, title_description, agency_start_date) |>
+  dplyr::select(agency_name, title_description, agency_start_date) |>
   distinct() |>
   mutate(
     agency_start_date = floor_date(agency_start_date, unit = "month")
@@ -576,7 +660,7 @@ links_fire_jobs <-
     .groups = "drop"
   ) |>
   filter(!is.na(ag)) |> # Remove rows with invalid agency_name
-  select(source,target, start, end) |>
+  dplyr::select(source,target, start, end) |>
   distinct()
 ```
 
@@ -608,7 +692,7 @@ links_ems_jobs <-
   # filter(title_description %in% c("POLICE OFFICER","ADM MANAGER-NON-MGRL")) |>
   filter(agency_start_date_year >= 2015) |>
   filter(agency_start_date_year < 2025) |>
-  select(agency_name, title_description, agency_start_date) |>
+  dplyr::select(agency_name, title_description, agency_start_date) |>
   distinct() |>
   mutate(
     agency_start_date = floor_date(agency_start_date, unit = "month")
@@ -640,7 +724,7 @@ links_ems_jobs <-
     .groups = "drop"
   ) |>
   filter(!is.na(ag)) |> # Remove rows with invalid agency_name
-  select(source,target, start, end) |>
+  dplyr::select(source,target, start, end) |>
   distinct()
 ```
 
@@ -680,7 +764,8 @@ json_nodes <-
 
 
 json_links <-
-  toJSON(list(links = rbind(link_police_career_transformed,
+  toJSON(list(links = rbind(
+                            # link_police_career_transformed,
                             links_police_jobs,
                             links_fire_jobs,
                             links_ems_jobs)),

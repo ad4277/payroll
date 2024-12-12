@@ -1,82 +1,25 @@
 # Results
+::: callout-note
+## This page contains Tabs. Please click through tabs to see additional charts/info.
+:::
 
-Possible 10 Charts based on Problem Set1:
+```{mermaid}
+%%| echo: false
 
--  [x] hitogram / facets (ps1)
--  [x] boxplot jitter (ps1)
--  [x] with ridgeline (ps1)
--  [ ] density lines
--  [x] Bar chart
--  [ ] bar chart lump facet
--  [x] scattter plot
--  [ ] Density plot
--  [ ] geom_point with facet 9x9 grid (ps2 california)
--  [x] Cleveland dot plot
--  [ ] ggparcords
--  [x] parcoords
--  [ ] likert
--  [ ] mosaic
--  [x] alluvium
-
-
-Possible questions trying to solve:
-
--   What is the concentration data?
--   What are the top 10 positions based on numbers of employees?
--   What are the highest paid positions?
-    -   what is the breakdown for regular/overtime/other?
--   what is the paid amount per number of years working at the each agency?
--   what are the lowest paid positions?
--   what is the proportion of moany paid on top of the regular salary?
--   What is the breakdown per location
--   What is the number of employees overtime, versus cost, versus mean?
--   Cost per year, per location -\> likert
-
-<!-- https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data -->
-
-What is the story?
-
--  Who gets the Money?
-    -   per year analysis
-    -   salary vs
-    -   number of employees
--  Distribution of salary even? is it equal between agencies?
-    -   10-years
-    -   per year
-    -   per location
--  Why is 2024 so high
-    -   salary paid dot plot increase
-    -   number of people added to 
--  Tri modal analysis?
-    -   can we break this down?
--  The more I work, the more I get paid.
--  Who gets paid the most?
--  Who gets paid the least??
-
-
-
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-
-```{r}
-#| echo: false
-
-rm(list = ls())
+flowchart LR
+  A[Fire & Police\nDepartment] --> B[Who Gets the Money?]
+  A[Fire & Police\nDepartment] --> C[Where Do People Work?]
+  B -.-> D[Distribution\nAnalysis]
+  C -.-> D[Distribution\nAnalysis]
+  D --> G[Salary\nvs\nExperience]
+  G --> E[Who Gets\nPaid the Most?]
 ```
 
 ```{r}
-#| echo: false
 #| message: false
 #| warning: false
+
+rm(list = ls())
 
 # Import Libraries
 library(tibble)
@@ -87,163 +30,42 @@ library(ggplot2)
 library(ggridges)
 library(dplyr)
 library(visdat)
-# library(HH)
 library(lubridate)
 library(scales)
 library(ggalluvial)
-library('patchwork')
+library(patchwork)
 library(ggrepel)
 library(parcoords)
 library(GGally)
-```
 
-```{r}
-#| echo: false
-# Read the data RDS
+# Read the source data
 payroll_data_fire_police <- readRDS("data_source/payroll_data_fire_police.rds")
-```
 
-```{r}
-#| echo: false
+# Data Transformations
 payroll_data_fire_police <-
   payroll_data_fire_police |> 
   mutate(title_description = toupper(title_description)) |> 
   mutate(agency_start_date_year = year(agency_start_date)) |> 
+  mutate(work_location_borough = str_replace(work_location_borough, "RICHMOND", "STATEN ISLAND")) |> 
+  mutate(title_description = str_replace(title_description, "SERGEANT-", "SERGEANT")) |> 
   mutate(total_paid = rowSums(across(c(regular_gross_paid, total_ot_paid, total_other_pay)),na.rm = TRUE))
 ```
 
 
-## 1-Who gets the Money?
 
 
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
+## Who gets the Money? 
+Everyone in the payroll database for the Fire and Police departments receives some form of compensation.
 
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
+Perhaps a better question is: how many people are receiving salaries from these departments? From the chart below, we observe that the Fire Department has about one-third the number of employees compared to the Police Department. Additionally, most Fire Department employees are located in Brooklyn, while the Police Department has a higher concentration of employees in Manhattan. Overall, the number of employees in each department has remained relatively stable over the past 10 years, with 2024 recording the highest number of employees for both departments.
+
+Now, let’s examine how much these agencies are paying their employees. The Fire Department shows a slow but steady increase in total salaries paid each year. In contrast, Police Department salaries fluctuate over the years, with a notable spike in 2024. *(Refer to the `Amount Paid per Year` tab.)*
+
+Interestingly, the Police Department employs three times as many people as the Fire Department. However, when comparing total compensation, the Police Department spends only about 2.5 times what the Fire Department spends. This disparity suggests that, on average, individual salaries in the Fire Department might be higher than those in the Police Department.
+
 
 
 ::: panel-tabset
-## Amount Paid per Year
-```{r}
-#| fig-width: 10
-#| fig-height: 6
-
-
-# Ensure fiscal_year is numeric
-summarized_data <- payroll_data_fire_police |> 
-  group_by(agency_name, fiscal_year, work_location_borough) |> 
-  summarise(
-    total_records = n(),
-    total_paid = sum(total_paid),
-    paid_per_person = sum(total_paid) / n(),
-    .groups = "drop"
-  ) |> 
-  mutate(fiscal_year = as.numeric(fiscal_year))
-
-
-# Calculate high-water mark and the corresponding year for each facet
-high_water_mark_records <- summarized_data |>
-  group_by(fiscal_year, agency_name) |>
-  summarise(max_records = sum(total_paid), .groups = "drop") |>
-  group_by(agency_name) |>
-  filter(max_records == max(max_records)) |>
-  summarise(
-    fiscal_year = fiscal_year[1],  # Get the fiscal year for max records
-    max_records = max_records[1]  # Get the maximum record count
-  )
-
-
-
-# Plot
-ggplot(summarized_data) +
-  geom_col(aes(x = fiscal_year, y = total_paid, fill = work_location_borough)) +
-  
-  # Add horizontal dashed line at high water mark with color mapped to a new variable
-  geom_hline(
-    data = high_water_mark_records,
-    aes(yintercept = max_records, color = "Highest value in 10 years"),  # Map color to legend
-    # inherit.aes = FALSE,
-    linetype = "dashed"
-  ) +
-  
-  # Add text labels for high water marks
-  geom_text(
-    data = high_water_mark_records,
-    aes(
-      x = fiscal_year,
-      y = max_records,
-      label = paste0("Year: ", fiscal_year, "\n Amount Paid: ", label_currency()(max_records/1000000000)," Billions")
-    ),
-    inherit.aes = FALSE,
-    color = "black",
-    vjust = -0.5,
-    hjust = 1,
-    size = 4
-  ) +
-  
-  # Add dots at high water marks
-  geom_point(
-    data = high_water_mark_records,
-    aes(x = fiscal_year, y = max_records),
-    inherit.aes = FALSE,
-    color = "black",   # Dot color
-    size = 3,        # Dot size
-    shape = 16       # Circle shape (default)
-  ) +
-  
-  # facet_wrap(~agency_name) 
-  facet_wrap(~agency_name) +
-  
-  # Scale and labels for x-axis
-  scale_x_continuous(
-    breaks = seq(min(summarized_data$fiscal_year), max(summarized_data$fiscal_year), by = 1),
-    labels = function(x) format(as.Date(paste0(x, "-01-01")), "%Y")
-  ) +
-  
-  # Labels for title and axes
-  labs(
-    title = "Amount Paid to Employees by Fiscal Year",
-    x = "Fiscal Year",
-    y = "Amount Paid to Employees",
-    fill = "Location:",
-    color = "Reference Line:"  # Add a label for the color legend
-  ) +
-  
-  # Y-axis settings
-  scale_y_continuous(
-    limits = c(0, NA),  # Keep lower bound at 0
-    labels = scales::label_number(scale = 1/1000000000, suffix = " B"),
-    expand = expansion(mult = c(0, 0.2))  # Add some padding for aesthetics
-  ) +
-  
-  # Set the colors for the fill based on boroughs
-  scale_fill_manual(
-    values = c(
-      "BRONX" = "#FF595E",
-      "BROOKLYN" = "#FFCA3A",
-      "MANHATTAN" = "#8AC926",
-      "QUEENS" = "#1982C4",
-      "RICHMOND" = "#6A4C93"
-    )
-  ) +
-  
-  # Set color for high water mark line
-  scale_color_manual(
-    values = c("Highest value in 10 years" = "black")  # Color the reference line black
-  ) +
-  
-  # Minimal theme
-  theme_minimal() +
-  theme(
-    text = element_text(size = 14),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.title = element_text(hjust = 0.5),
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor.x = element_blank(),
-    legend.position = "bottom",
-    legend.box = "vertical"  #
-  )
-
-```
 ## Number of Employees
 ```{r}
 #| fig-width: 10
@@ -344,7 +166,7 @@ ggplot(summarized_data) +
       "BROOKLYN" = "#FFCA3A",
       "MANHATTAN" = "#8AC926",
       "QUEENS" = "#1982C4",
-      "RICHMOND" = "#6A4C93"
+      "STATEN ISLAND" = "#6A4C93"
     )
   ) +
   
@@ -366,17 +188,411 @@ ggplot(summarized_data) +
   )
 
 ```
+
+## Amount Paid per Year
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+
+# Ensure fiscal_year is numeric
+summarized_data <- payroll_data_fire_police |> 
+  group_by(agency_name, fiscal_year, work_location_borough) |> 
+  summarise(
+    total_records = n(),
+    total_paid = sum(total_paid),
+    paid_per_person = sum(total_paid) / n(),
+    .groups = "drop"
+  ) |> 
+  mutate(fiscal_year = as.numeric(fiscal_year))
+
+
+# Calculate high-water mark and the corresponding year for each facet
+high_water_mark_records <- summarized_data |>
+  group_by(fiscal_year, agency_name) |>
+  summarise(max_records = sum(total_paid), .groups = "drop") |>
+  group_by(agency_name) |>
+  filter(max_records == max(max_records)) |>
+  summarise(
+    fiscal_year = fiscal_year[1],  # Get the fiscal year for max records
+    max_records = max_records[1]  # Get the maximum record count
+  )
+
+
+
+# Plot
+ggplot(summarized_data) +
+  geom_col(aes(x = fiscal_year, y = total_paid, fill = work_location_borough)) +
+  
+  # Add horizontal dashed line at high water mark with color mapped to a new variable
+  geom_hline(
+    data = high_water_mark_records,
+    aes(yintercept = max_records, color = "Highest value in 10 years"),  # Map color to legend
+    # inherit.aes = FALSE,
+    linetype = "dashed"
+  ) +
+  
+  # Add text labels for high water marks
+  geom_text(
+    data = high_water_mark_records,
+    aes(
+      x = fiscal_year,
+      y = max_records,
+      label = paste0("Year: ", fiscal_year, "\n Amount Paid: ", label_currency()(max_records/1000000000)," Billions")
+    ),
+    inherit.aes = FALSE,
+    color = "black",
+    vjust = -0.5,
+    hjust = 1,
+    size = 4
+  ) +
+  
+  # Add dots at high water marks
+  geom_point(
+    data = high_water_mark_records,
+    aes(x = fiscal_year, y = max_records),
+    inherit.aes = FALSE,
+    color = "black",   # Dot color
+    size = 3,        # Dot size
+    shape = 16       # Circle shape (default)
+  ) +
+  
+  # facet_wrap(~agency_name) 
+  facet_wrap(~agency_name) +
+  
+  # Scale and labels for x-axis
+  scale_x_continuous(
+    breaks = seq(min(summarized_data$fiscal_year), max(summarized_data$fiscal_year), by = 1),
+    labels = function(x) format(as.Date(paste0(x, "-01-01")), "%Y")
+  ) +
+  
+  # Labels for title and axes
+  labs(
+    title = "Amount Paid to Employees by Fiscal Year",
+    x = "Fiscal Year",
+    y = "Amount Paid to Employees",
+    fill = "Location:",
+    color = "Reference Line:"  # Add a label for the color legend
+  ) +
+  
+  # Y-axis settings
+  scale_y_continuous(
+    limits = c(0, NA),  # Keep lower bound at 0
+    labels = scales::label_number(scale = 1/1000000000, suffix = " B"),
+    expand = expansion(mult = c(0, 0.2))  # Add some padding for aesthetics
+  ) +
+  
+  # Set the colors for the fill based on boroughs
+  scale_fill_manual(
+    values = c(
+      "BRONX" = "#FF595E",
+      "BROOKLYN" = "#FFCA3A",
+      "MANHATTAN" = "#8AC926",
+      "QUEENS" = "#1982C4",
+      "STATEN ISLAND" = "#6A4C93"
+    )
+  ) +
+  
+  # Set color for high water mark line
+  scale_color_manual(
+    values = c("Highest value in 10 years" = "black")  # Color the reference line black
+  ) +
+  
+  # Minimal theme
+  theme_minimal() +
+  theme(
+    text = element_text(size = 14),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(hjust = 0.5),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "bottom",
+    legend.box = "vertical"  #
+  )
+
+```
+
 :::
 
 \
 \
 
-## 2-Who gets the Money?
+## Where Do People Work?
+
+For the Fire Department, the majority of employees (**38%**) are based in Brooklyn, while for the Police Department, Manhattan has the highest concentration of employees at **45%**. The proportion of salary paid (Regular + Overtime + Other) across locations closely mirrors the employee distribution.
 
 
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
 
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
+
+```{r}
+#| fig-width: 9
+#| fig-height: 2
+#| message: false
+#| warning: false
+
+
+payroll_data_fire_police |>
+  group_by(agency_name, work_location_borough) |>
+  summarise(
+    count_of_employees = n(), 
+    total_salary_paid  = sum(total_paid), 
+    .groups = 'drop')|>
+  group_by(agency_name) |> # Group by fiscal_year and agency_name for percentage calculations
+  mutate(
+    Employees = count_of_employees / sum(count_of_employees) * 100,
+    `Salary Paid`= total_salary_paid / sum(total_salary_paid) * 100
+  ) |>
+  ungroup() |>
+  pivot_longer(
+    cols = c( `Salary Paid`,Employees),
+    names_to = "metric",
+    values_to = "percentage"
+  ) |> 
+  ggplot(aes(
+    x = percentage,
+    y = fct_rev(metric),
+    fill = fct_rev(work_location_borough)
+  )) +
+  geom_bar(stat = "identity", position = "stack") + # Stacked bar chart
+  geom_label(
+    aes(
+      label = paste0(round(percentage,0),"%"),
+      # hjust = ifelse(percentage > 30, 0, 100),
+      # hjust = ifelse(percentage > 30, 0, 100),
+      # size = if_else(percentage > 30, 3.1, 3),
+    ),
+    position = position_stack(vjust = 0.5),
+    # position = "identity",
+    color="black",
+    fill = "#ffffff",
+    alignment= "left",
+    size = 3,
+  )+
+#   ggrepel::geom_label_repel(
+#  aes(label = paste0(round(percentage,0),"%"),),
+#   # stat = "stratum",
+#  # position = position_stack(vjust = 0.5),
+#   size = 3,
+#   direction = "y",
+#   nudge_x = .8,
+#   box.padding = 0.3, # Padding around the text
+#   label.padding = unit(0.25, "lines"), # Padding inside the box
+#   label.size = 0.5, # Border thickness
+#   label.r = unit(0.15, "lines"), # Corner radius of the box
+#   fill = "white", # Background color for the label
+#   color = "black" # Text color
+# ) +
+  facet_wrap(~ agency_name) + # Facet by agency_name
+  # facet_grid(agency_name ~ .) + # Facet by agency_name
+  labs(
+    title = "Employee and Salary Proportions per Location",
+    x = "Percentage of Employees or Salary",
+    y = "",
+    fill = "Location"
+  ) +
+   scale_fill_manual(
+    values = c(
+      "BRONX" = "#FF595E",
+      "BROOKLYN" = "#FFCA3A",
+      "MANHATTAN" = "#8AC926",
+      "QUEENS" = "#1982C4",
+      "STATEN ISLAND" = "#6A4C93"
+    )
+  ) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.05))) + # Add padding to x-axis
+  theme_light() +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 12),
+    # axis.title.x = element_text(size = 12),
+    axis.title.y = element_text(size = 12),
+    anel.grid.minor.x = element_blank() ,
+    legend.position = "right",
+    # legend.position = "bottom",
+  )+
+  guides(fill = guide_legend(reverse=T))
+```
+\
+
+Examining employee proportions per location reveals interesting patterns. Police employees in Manhattan make up the largest group across all locations and agencies. In Brooklyn, the Fire Department accounts for 35.4% of employees, while in Staten Island, Fire employees represent 34.9%, the second-highest proportion relative to Police. The darkest colors in the mosaic chart represent the ranked percentage of each agency's presence across all locations (see the `Percentages` tab for details).
+
+::: panel-tabset
+## Employees per Location
+
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+#| message: false
+#| warning: false
+
+payroll_data_fire_police_mosaic <-
+  payroll_data_fire_police |> 
+  mutate(
+    work_location_borough = as.factor(work_location_borough),
+    agency_name = as.factor(agency_name)
+  ) |> 
+  mutate(
+    agency_name_clean = str_remove(agency_name, " DEPARTMENT"),
+    work_location_borough_clean = str_replace(work_location_borough, "RICHMOND", "STATEN ISLAND"),
+    work_location_borough_clean_proper = str_to_title(work_location_borough_clean),
+    work_location_borough_clean_proper = str_replace(work_location_borough_clean_proper, "Staten Island", "S. Island"),
+  )
+
+library(vcd)
+mosaic(agency_name_clean~work_location_borough_clean_proper, 
+       data=payroll_data_fire_police_mosaic,
+       direction=c("v",'h'),
+       highlighting_fill = c(
+         "#EF3B2C",
+         "#4292C6",
+         "#A50F15",
+         "#9ECAE1",
+         "#FC9272",
+         "#08519C",
+         "#FB6A4A",
+         "#2171B5",
+         "#CB181D",
+         "#6BAED6" 
+       ),
+       main = "Employees per Location\n",
+       main_gp = gpar(cex = 1.4, lineheight = 0.6),
+       split_vertical = TRUE,
+       spacing = spacing_dimequal(c(1.1,1)),
+       # spacing = spacing_increase(start = unit(3, "lines"), rate = 1.5),
+       labeling = labeling_values,
+       rot_labels=c(30,0,0,90),
+       offset_label =c(0.6,5,0, 0),
+       labeling_args = list(
+         set_varnames = c(
+           work_location_borough_clean_proper = "Location",
+           agency_name_clean = "Agency Name"
+         )),
+)
+
+```
+
+## Employees per Location - Percentages
+
+```{r}
+payroll_data_fire_police_mosaic_table <-
+payroll_data_fire_police |>
+  group_by(agency_name, work_location_borough) |>
+  summarise(
+    count_of_employees = n(), 
+    # total_salary_paid  = sum(total_paid), 
+    .groups = 'drop')|>
+  group_by(work_location_borough) |> # Group by fiscal_year and agency_name for percentage calculations
+  mutate(
+    percentage_count_of_employees = paste0(format(round(count_of_employees / sum(count_of_employees) * 100,1),nsmall=1)," %"),
+    sum(count_of_employees)
+    
+  ) |>
+  ungroup() |> 
+  # arrange(agency_name,percentage_count_of_employees) |> 
+  mutate(Agency = agency_name) |> 
+  dplyr::select(Agency, work_location_borough,percentage_count_of_employees) |> 
+  pivot_wider(names_from = work_location_borough, 
+              values_from = percentage_count_of_employees)
+  
+  
+  kable(payroll_data_fire_police_mosaic_table,
+      # caption = "Dataset Format", 
+      align = "lccccc") |>
+  kable_styling(full_width = FALSE)|> 
+  row_spec(which(payroll_data_fire_police_mosaic_table$Agency == "FIRE DEPARTMENT"),   background = "#f94144", color = "white") |> 
+  row_spec(which(payroll_data_fire_police_mosaic_table$Agency == "POLICE DEPARTMENT"), background = "deepskyblue3", color = "white")
+```
+:::
+\
+
+Salary distributions also vary by location. Brooklyn (Fire) and Manhattan (Police) have the lowest median salaries, despite hosting the highest number of employees (indicated by the density of jittered dots). Staten Island, on the other hand, has the highest median salary for both agencies but the lowest number of employees.
+
+Additionally, the Fire Department’s salary boxes on the x-axis are slightly to the left of the Police Department’s, indicating slightly higher salaries. An intriguing observation is the presence of negative salary outliers, which could reflect advanced compensation, deductions, or other adjustments beyond the gross amount.
+
+
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5
+#| message: false
+#| warning: false 
+
+
+payroll_data_fire_police |> 
+  mutate(agency_name_clean = str_remove(agency_name, " DEPARTMENT")) |> 
+
+ggplot() +
+  geom_boxplot(mapping = aes(x = total_paid, 
+                             y = fct_rev(as.factor(work_location_borough)),
+                             color=agency_name_clean,
+                             ),
+               outlier.alpha = 0.25,
+               outlier.stroke = 0.6,
+               # outlier.color = "#00a6de",
+               # outlier.shape = "|",
+               ) +
+  geom_jitter(mapping = aes(x = total_paid,
+                            y = work_location_borough,
+                            color=agency_name,
+                            # alpha = ifelse(agency_name == "POLICE DEPARTMENT", 0.0008, 0.01)
+                            ),
+              width = 0.25,
+              height = 0.25,
+              size = 0.001,
+              # alpha = 0.008,
+              alpha = ifelse(payroll_data_fire_police$agency_name == "POLICE DEPARTMENT", 0.008, 0.02),
+              #color='deepskyblue4',
+              ) +
+  scale_alpha_identity() +
+  facet_grid(agency_name ~ .) +
+  scale_fill_manual(
+    values = c("POLICE DEPARTMENT" = "#00537d", "FIRE DEPARTMENT" = "#910002")
+  ) +
+  scale_color_manual(
+    values = c("POLICE DEPARTMENT" = "#00a6de",
+               "FIRE DEPARTMENT" = "#f94144",
+               "POLICE" = "#00537d", 
+               "FIRE" = "#910002"
+               )
+  ) +
+  scale_x_continuous(
+    # limits = c(-25000, 300000),
+    breaks = seq(-200000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 100000),
+    labels = scales::label_number(scale = 1/1000, suffix = "k")
+  ) +
+  # scale_x_log10(labels = scales::label_comma()) +
+  labs(title = "Salary Paid per Location",
+       x = "Salary Paid (Regular + Overtime + Other Compensation)",
+       y = "Location") +
+  theme_minimal() +
+  theme_light() +
+  theme(legend.position = "none",
+         panel.grid.minor.x = element_blank() ,
+         panel.grid.minor.y = element_blank() ,
+         panel.grid.major.y = element_blank() ,
+         panel.grid.major.x = element_line(colour = "gray",linetype="dashed",size=0.1),
+         )
+```
+
+\
+\
+
+
+
+
+## Three Mountains of Money
+
+### Overall Distributions
+
+Analyzing the salary distributions reveals a trimodal pattern for the combined departments.
+
+When separating the distributions by agency, the Fire Department shows three distinct density peaks. The leftmost peak is higher than the middle, which in turn is higher than the right. This suggests that a larger proportion of Fire Department employees fall within the leftmost peak, earning between $110,000 and $140,000.
+
+In contrast, the Police Department's highest density peak occurs in the center mode, with most employees earning between $50,000 and $70,000.
+
+Overall, the Fire Department has a higher mean salary of $103,000 compared to the Police Department's $87,000.
+
 
 
 
@@ -558,18 +774,199 @@ ggplot(payroll_data_fire_police) +
 
 chart_01 + chart_02 +
   plot_layout(ncol = 1) 
-  # plot_annotation(title = "Data Distribution")
+```
+\
+\
+
+### Isolating the Peaks
+
+To separate the three salary peaks, we analyzed the following variables and their key factors:
+
+-   **Pay Basis**: Per Annum, Per Hour
+-   **Employment Status**: Active, Ceased
+-   **Years of Experience**: Time since employment began at the agency
+
+The rightmost peak corresponds primarily to employees in the `Per Annum - Ceased` and `Per Hour - Active` categories.
+
+The central and left peaks are associated with `Per Annum - Active` employees and are influenced by years of experience. Most employees with 0–5 years of experience earn under $100,000 (central peak). The higher density in the 5–10-year range suggests reduced hiring in recent years and strong employee retention.
+
+Over time, the left peak emerges around $100,000 for employees with 0–5 years of experience and gradually shifts leftward (toward higher salaries) as experience increases.
+
+For employees with 15–20 years and 20+ years of experience, the Fire Department has a larger proportion in the left peak compared to the central peak, as shown by the visibly greater red area in the left peak on the stacked chart. This highlights that longer-tenured employees tend to earn higher salaries.
+
+
+
+```{r}
+#| fig-width: 8
+#| fig-height: 7
+#| message: false
+#| warning: false
+
+
+range_band= 50000
+
+payroll_data_fire_police_test_2 <-
+payroll_data_fire_police |> 
+  # filter(fiscal_year == 2024) |>
+  # filter(fiscal_year %in% c("2024","2023")) |>
+  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
+  # filter(leave_status_as_of_june_30 == "ACTIVE") |>
+   mutate(
+    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
+    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
+    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
+  ) |> 
+    mutate(
+    # Define the range for breaks, including the floor of minimum to handle negative values
+    total_paid_group = cut(
+      total_paid,
+      breaks = seq(
+        floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
+        ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
+        by = range_band
+      ),
+      labels = paste0(
+        seq(
+          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
+          ceiling(max(total_paid, na.rm = TRUE) / range_band - 1) * range_band,
+          by = range_band
+        ) / 1000,
+        "k-",
+        seq(
+          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band + range_band, 
+          ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
+          by = range_band
+        ) / 1000,
+        "k"
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) |> 
+  mutate(
+    total_paid_group = recode(
+      total_paid_group,
+      "-200k--150k" = "Less than 0",
+      "-150k--100k" = "Less than 0",
+      "-100k--50k" = "Less than 0",
+      "-50k-0k" = "Less than 0",
+      "0k-50k" = "0k-50k",
+      "50k-100k" = "50k-100k",
+      "100k-150k" = "100k-150k",
+      "150k-200k" = "150k-200k",
+      "200k-250k" = "200k-250k",
+      "250k-300k" = "250k and above",
+      "300k-350k" = "250k and above",
+      "350k-400k" = "250k and above",
+      "400k-450k" = "250k and above",
+      "450k-500k" = "250k and above",
+      "500k-550k" = "250k and above",
+      "550k-600k" = "250k and above",
+      "600k-650k" = "250k and above"
+    ),
+    total_paid_group = factor(total_paid_group, 
+                              levels = c("250k and above", "200k-250k", 
+                                         "150k-200k", "100k-150k", "50k-100k", 
+                                         "0k-50k", "Less than 0"))
+  ) |> 
+  mutate(
+    flag_regular = factor(flag_regular, levels = c("Yes", "No")),
+    flag_overtime = factor(flag_overtime, levels = c("Yes", "No")),
+  ) |> 
+mutate(
+    years_at_agency = 2024 - agency_start_date_year,  # Calculate the years worked
+    years_band = case_when(
+      years_at_agency >= 0 & years_at_agency <= 5 ~ "0-5 years",
+      years_at_agency > 5 & years_at_agency <= 10 ~ "5-10 years",
+      # years_at_agency > 10 & years_at_agency <= 20 ~ "10-20 years",
+      years_at_agency > 10 & years_at_agency <= 15 ~ "10-15 years",
+      years_at_agency > 15 & years_at_agency <= 20 ~ "15-20 years",
+      years_at_agency > 20 ~ "20+ years",
+      TRUE ~ "Unknown"  # In case of any missing or incorrect data
+    ),
+    years_band = factor(years_band, levels = c("20+ years", "15-20 years", "10-15 years", "5-10 years", "0-5 years"))
+  ) |> 
+  mutate(total_paid_group_fill = total_paid_group,
+years_band_group = years_band)
+
+
+
+
+
+# <!-- #| fig-width: 8 -->
+# <!-- #| fig-height: 7 -->
+# <!-- #| message: false -->
+# <!-- #| warning: false -->
+
+payroll_data_fire_police_test_2 |> 
+ # filter(fiscal_year %in% c("2024")) |>
+  # filter(fiscal_year %in% c("2023")) |>
+  # filter(fiscal_year %in% c("2022")) |>
+  # filter(agency_name == "POLICE DEPARTMENT") |>
+  # filter(leave_status_as_of_june_30 == "ACTIVE") |>
+  filter(leave_status_as_of_june_30 %in% c("ACTIVE","CEASED")) |>
+  filter(pay_basis %in% c("per Annum","per Hour")) |>
+  filter(!years_band_group %in% c(NA)) |>
+  # filter(pay_basis == "per Annum") |>
+  # filter(pay_basis == "per Hour") |>
+  # filter(str_detect(title_description, "POLICE OFFICER|P\\.O\\.")) |>
+  # filter(str_detect(title_description, "P\\.O\\.")) |>
+  # filter(str_detect(title_description, "POLICE OFFICER")) |>
+  mutate(pay_basis_and_leave = paste0(pay_basis," - ",leave_status_as_of_june_30)) |> 
+  filter(pay_basis_and_leave %in% c("per Annum - ACTIVE","per Annum - CEASED","per Hour - ACTIVE")) |>
+
+
+
+ggplot() +
+  geom_density(mapping = aes(x = total_paid,after_stat(count),fill=agency_name),
+               alpha = 0.5,
+               # na.rm = TRUE,
+               # trim =TRUE,
+               # stat = "density",
+                position = "stack",
+               bounds = c(-50000,300000)
+               ) +
+  # scale_fill_manual(values = c("In state" = "yellow",
+  #                              "Out of state" = "red",
+  #                              "In district" = "cyan")) +
+  facet_grid(years_band_group ~ pay_basis_and_leave)+
+  scale_fill_manual(
+    values = c("POLICE DEPARTMENT" = "deepskyblue3", "FIRE DEPARTMENT" = "#f94144"))+
+  labs(title = "Salary paid per Pay Basis over years of experience",
+       x = "Salary Paid",
+       y = "Density",
+       fill = "Agency",
+       caption = "Pay Basis: per Annum, per Hour. ACTIVE and CEASED refer to the person's employment contract status."
+       )+
+  # theme_minimal() +
+  scale_x_continuous(
+    limits = c(-15000, 250000),
+    breaks = seq(-200000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 100000),
+    labels = scales::label_number(scale = 1/1000, suffix = "k"),
+    # expand = expansion(add = c(10, 0))
+  ) +
+  theme_light() +
+  # theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    )
+
 ```
 
+
 \
 \
 
-## 3-Who gets the Money?
+### Ten Years of Salaries
 
+The distribution of salaries paid shows small variations over most of the 10-year period, except for a few distinct years where notable changes occur in each agency’s density.
 
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
+For the Fire Department, the most significant change begins in 2022. There is a noticeable increase in employees receiving higher compensation (evidenced by the curve stretching and the left peak shifting further left). Additionally, there is a surge in employees receiving lower salaries, creating a bump in the right area of the curve.
 
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
+For the Police Department, 2024 brings a dramatic shift in the salary curve. A new bump appears on the right, representing a large number of employees earning less than $25,000. This is primarily associated with `Per Annum - Ceased` police officers in 2024. At the same time, the left peak shifts further left, reflecting higher compensation for some employees.
 
 
 ```{r}
@@ -631,63 +1028,14 @@ theme(
   )
 ```
 
-## 4-Who gets the Money?
-
-
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
-
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
-
-```{r}
-#| fig-width: 8
-#| fig-height: 5
-
-ggplot(payroll_data_fire_police) +
-  geom_boxplot(mapping = aes(x = total_paid, 
-                             y = fct_rev(as.factor(work_location_borough))
-                             ),
-               outlier.alpha = 0.25,
-               outlier.stroke = 0.7,
-               ) +
-  geom_jitter(mapping = aes(x = total_paid,
-                            y = work_location_borough,
-                            color=agency_name,
-                            # alpha = ifelse(agency_name == "POLICE DEPARTMENT", 0.0008, 0.01)
-                            ),
-              width = 0.25,
-              height = 0.25,
-              size = 0.001,
-              # alpha = 0.008,
-              alpha = ifelse(payroll_data_fire_police$agency_name == "POLICE DEPARTMENT", 0.006, 0.02),
-              #color='deepskyblue4',
-              ) +
-  scale_alpha_identity() +
-  facet_grid(agency_name ~ .) +
-  scale_color_manual(
-    values = c("POLICE DEPARTMENT" = "#00a6de", "FIRE DEPARTMENT" = "#f94144")
-  ) +
-  scale_x_continuous(
-    # limits = c(-25000, 300000),
-    breaks = seq(-200000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 100000),
-    labels = scales::label_number(scale = 1/1000, suffix = "k")
-  ) +
-  # scale_x_log10(labels = scales::label_comma()) +
-  labs(title = "Boxplot with jitter of Salary Paid over 10 years by Agency",
-       x = "Salary Paid",
-       y = "Location") +
-  theme_minimal() +
-  theme_light() +
-  theme(legend.position = "none")
-```
 
 
 
-## 5-Who gets the Money?
+## Why Is 2024 So High?
 
+The total salary paid by the Police Department in 2024 is unusually high. Comparing 2023 and 2024, we see an increase of **7,285** employees receiving salaries and a **$2 billion** rise in total compensation.
 
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
-
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
+Analyzing the total salary differences by position reveals that the top 10 positions with the highest increases account for 97% of the overall compensation difference. 
 
 
 ```{r}
@@ -768,16 +1116,18 @@ payroll_data_fire_police |>
     guide = "none" # Remove legend for fill
   ) +
   labs(
-    x = "Salary Paid Diffence", 
-    y = "Percentage Difference", 
+    x = "Salary Paid Diffence Year over Year", 
+    y = "Percentage Difference Year over Year", 
     title = "Salary Paid Diffence between 2023 and 2024", 
-    color = "Job Titles with higher Salary YoY"
+    color = "Positions contributing to the Total Salary Paid"
   ) +
+  # geom_vline(xintercept=0,color='grey')+
   scale_x_log10(
     # labels = scales::label_comma(),
+    # limits = c(-100000, 300000),
     breaks = c(0, 10000,100000, 1000000, 10000000, 100000000,1000000000,10000000000),
     labels = c("0","10K","100K", "1M", "10M", "100M","1B","10B"),
-    # expand = expansion(add = c(10, 0))
+    # expand = expansion(add = c(1, 0))
                 ) +
   scale_y_continuous(
     limits = c(0, 300),
@@ -793,14 +1143,113 @@ payroll_data_fire_police |>
 
 ```
 
+\
+\
+
+Notably, the Police Officer position alone added 6,728 employees in 2024, accounting for 92% of the increase in staff receiving salaries. 
+
+However, this surge in new hires is not the sole reason for the **$1.4 billion** rise in salaries observed for this position, as shown in the chart above. The overall increase in salary payouts across all Police Officers and related positions between 2023 and 2024 also significantly contributed to the higher total paid compensation.
 
 
-## 6-Who gets the Money?
+```{r}
+#| fig-width: 8
+#| fig-height: 4
+
+library(RColorBrewer)
+
+payroll_data_fire_police |> 
+  filter(fiscal_year %in% c("2024","2023")) |>
+  filter(agency_name == "POLICE DEPARTMENT") |>
+  # filter(leave_status_as_of_june_30 == "ACTIVE") |>
+  # filter(str_detect(title_description, "POLICE OFFICER|P\\.O\\.")) |> 
+  group_by(fiscal_year,title_description) |> 
+  summarise(
+    total_records = n(),
+    # total_paid = sum(total_paid),
+    .groups = 'drop'
+  ) |>
+  pivot_wider(names_from = fiscal_year, values_from = total_records) |> 
+  mutate(difference = `2024`-`2023`,
+         difference_perc = (`2024`-`2023`)/`2023` * 100,) |> 
+  # arrange(difference)
+  # arrange(desc(`difference_perc`))
+  arrange(desc(`difference`)) |> 
+  dplyr::select(title_description,difference) |> 
+  mutate(
+    title_description = ifelse(row_number() <= 10, title_description, "Other")
+  ) |> 
+  group_by(title_description) |> 
+  summarise(
+    total_difference = sum(difference, na.rm=TRUE),
+    .groups = 'drop'
+  ) |> 
+  arrange(desc(total_difference)) |> 
+mutate(
+    fill_color = ifelse(
+      title_description == "Other", 
+      "gray", 
+      c("#03045eff", "#023e8aff", "#0077b6ff", "#0096c7ff", "#00a5d0ff", "#00b4d8ff", "#48cae4ff", "#90e0efff", "#ade8f4ff", "#caf0f8ff")[rank(-total_difference)]
+    )
+  ) |> 
+
+# Create the bar chart
+ggplot(aes(
+  y = reorder(title_description, ifelse(title_description == "Other", -Inf, total_difference)),
+  x = total_difference,
+  fill = fill_color
+)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  geom_text(
+    aes(
+      label = total_difference,
+      hjust = ifelse(total_difference > 0, -0.1, 1.1),
+    ),
+    # position = position_stack(vjust = 0.5),
+    # hjust = -1.2,
+    
+    size = 3, # Adjust text size
+    color = "skyblue4" # Text color
+  ) +
+  scale_fill_identity() + # Use identity to apply pre-assigned colors
+  # coord_flip() +
+  labs(
+    title = "Total Employee Difference Between 2023 and 2024",
+    y = "Position",
+    x = "Number of Employees"
+  ) +
+  scale_x_continuous(
+    limits = c(-1000, 7500),
+    expand = expansion(add = c(1000,0))) +
+  # theme_minimal() +
+  # theme_classic() +
+  theme_light() +
+  theme(
+    axis.text.y = element_text(size = 10),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_text(size = 12),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    plot.margin = margin(10, 20, 10, 20),
+    plot.title.position = "plot",
+  )
+  
+```
+
+\
+\
 
 
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
+## The More I Work, the More I Get Paid
 
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
+Our next analysis focuses on **Years of Experience** groups and their relationship to **Salary ranges**, which include Regular pay, Overtime, and Other compensations. Let’s take a look at the 2024 fiscal year.
+
+For both departments, the majority of employees in the 0–5 years of experience group earn less than $100,000. In the next group (5–10 years), we observe a notable presence of employees earning between $150,000 and $200,000, with the Fire Department having a higher percentage of employees in this range compared to others. Additionally, there are employees in the $200,000–$250,000 range within this group.
+
+The 10–20 years of experience group shows the highest proportion of employees in the $200,000–$250,000 range, and we also see some employees making $250,000 or more.
+
+The 20+ years group includes employees across all salary ranges. Interestingly, both agencies have a number of employees in this group earning less than $50,000. For the Fire Department, the larger salary ranges for this group are $200,000–$250,000 and $250,000+.
+
+Overall, while both departments show a clear trend of higher salaries with more years of experience, the Fire Department has a higher proportion of employees with extensive experience compared to the Police Department. This suggests a more experienced workforce in the Fire Department relative to the Police Department.
 
 
 ```{r}
@@ -1004,22 +1453,26 @@ scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
 
 
 
-## 7-Who gets the Money?
+## Who Gets Paid the Most?
+
+### Employees Earning Over $250K
+
+When analyzing 2024 employees earning more than $250K, we can break down their total salary into three categories: Regular pay, Overtime, and Other compensation.
+
+For those earning over $200K in Regular pay, it’s clear that they generally do not receive Overtime compensation, although some do receive Other compensation.
+
+Employees earning between $100K and $200K in regular pay, tend to earn significant Overtime ranging from $60K to $130K. This Overtime is the main factor contributing to their final salary being above $250K. Additionally, they receive Other compensation, ranging from $25K to $50K.
+
+Interestingly, only 9 employees earning less than $100K in Regular pay received total compensation over $250K. Of these, 3 follow a similar pattern to the previous group (earning significant Overtime), while 6 are outliers who receive no Regular or Overtime pay but have very high Other compensation.
 
 
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
 
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
-
-<!-- ::: panel-tabset -->
-<!-- ## Number of Employees -->
-
-
-
-
+::: panel-tabset
+## Salary Breakdown - Combined
 
 ```{r}
-
+#| fig-width: 8
+#| fig-height: 4
 
 payroll_data_fire_police_chart_2 <-
   payroll_data_fire_police |> 
@@ -1212,9 +1665,64 @@ title_description_list <-
 
 # View the list
 # print(as.character(title_description_list))
+
+
+payroll_data_fire_police_chart_2_250_selection <-
+  payroll_data_fire_police_chart_2_250 |> 
+  # filter(regular_gross_paid >= 250000) |> 
+  mutate(agency_name_factor = as.factor(agency_name)) |> 
+  mutate(regular_paid_group = as.factor(
+    dplyr::if_else(regular_gross_paid>= 200000, "200k and above", 
+                   dplyr::if_else(regular_gross_paid>= 100000 & regular_gross_paid< 200000, "100k-200k", 
+                                      "Less than 100k"))
+  )
+         )|> 
+  mutate(regular_paid_group = fct_relevel(regular_paid_group, "200k and above","100k-200k","Less than 100k")) |> 
+  dplyr::select(
+    agency_name_factor,
+    # title_description_short,
+    regular_paid_group,
+    regular_gross_paid,
+    total_ot_paid,
+    total_other_pay,
+    total_paid)
+
+ggparcoord(data = payroll_data_fire_police_chart_2_250_selection,
+           columns = 3:6,
+           alphaLines = 0.1,
+           groupColumn = "regular_paid_group",
+           # mapping = aes(color = agency_name,fill = I("lightblue1")),
+           scale="globalminmax",
+           # splineFactor = 1, 
+           # missing="median",
+           showPoints = TRUE,
+          ) +
+  # geom_hline(yintercept =  2.5, color = "black", linetype = "dashed") +
+  # geom_hline(yintercept = -2.5, color = "black", linetype = "dashed") +
+  scale_color_manual("regular_paid_group",
+                     name= 'Regular Pay Range',
+                     # values = c("#0496ff", "#ade8f4", "#023e8a")) +
+                     values = c("#76c893", "#d9ed92", "#4f772d")) +
+  labs(x = "Variables", 
+       y = "Salary", 
+       title = "Salary Breakdown for Employees Earning over 250k") +
+  # guides(alpha = "none") + 
+  scale_x_discrete(
+    labels = c(
+      "regular_gross_paid" = "Regular Pay",
+      "total_ot_paid" = "Overtime Pay",
+      "total_other_pay" = "Other Pay",
+      "total_paid" = "Total Salary\n(Regular + Overtime + Other)"
+    )
+  ) +
+  scale_y_continuous(
+    breaks = seq(0, 400000, 100000), # Adjust the breaks
+    labels = scales::label_number(scale = 1 /1000, suffix = "K") # Show in 'K' format
+  ) +
+  theme_classic()
+
 ```
-
-
+## Salary Breakdown - Faceted by Range
 
 ```{r}
 #| fig-width: 8
@@ -1258,30 +1766,41 @@ ggparcoord(data = payroll_data_fire_police_chart_2_250_selection,
                      values = c("#76c893", "#d9ed92", "#4f772d")) +
   labs(x = "Variables", 
        y = "Salary", 
-       title = "Parallel Coordinates Plot for Outliers") +
+       title = "Salary Breakdown for Employees Earning over 250k- Faceted by Range") +
   # guides(alpha = "none") + 
+  facet_wrap(~ regular_paid_group) + 
   scale_x_discrete(
     labels = c(
       "regular_gross_paid" = "Regular Pay",
       "total_ot_paid" = "Overtime Pay",
       "total_other_pay" = "Other Pay",
-      "total_paid" = "Total Salary\n(Regular + Overtime + Other)"
+      "total_paid" = "Total Salary"
     )
   ) +
   scale_y_continuous(
     breaks = seq(0, 400000, 100000), # Adjust the breaks
     labels = scales::label_number(scale = 1 /1000, suffix = "K") # Show in 'K' format
   ) +
-  theme_classic()
+  theme_classic()+
+  theme(
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    )
 
 ```
 
+:::
+
+\
+
+### Salary Playground
+
+For a deeper analysis, the following interactive parallel coordinates chart provides a detailed breakdown of salary components (Regular, Overtime, Other) for employees earning over $250K, along with their job titles and departments.
 
 
-
-
-
-
+::: callout-note
+## Make a selection in the chart by clicking, holding, and dragging your mouse across each vertical axis.
+:::
 
 ```{r}
 #| fig-width: 8
@@ -1338,7 +1857,7 @@ parcoords(
   withD3 = TRUE,
   margin = list(
     top = 30,    # Adjust top margin
-    right = 20,  # Adjust right margin
+    right = 40,  # Adjust right margin
     bottom = 30, # Adjust bottom margin
     left = 125   # Increase left margin for better spacing
   )
@@ -1346,14 +1865,29 @@ parcoords(
 ```
 <!-- ::: -->
 
-## 8-Who gets the Money?
+\
+\
 
 
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
+## Understanding the Gap: Regular Pay and Total Salary
 
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
+In this analysis, we explore the gap between Regular Pay and Total Salary for the Top 25 most popular positions by department (ranked by employee count). We will examine three key variables for each position:
+
+-   **Regular Salary Paid**: Mean regular salary for each position.
+-   **Total Salary Paid**: Mean salary including Regular, Overtime, and Other Pay.
+-   **Ratio**: The ratio of Total Salary Paid to Regular Salary Paid.
+
+For the Fire Department, the percentage of additional compensation (Overtime + Other) varies widely across positions. More than 50% (13 out of 25) of these positions earn less than 25% above their regular pay in additional compensation. However, positions such as Captain and Lieutenant receive more than 70% additional pay on top of their regular salary.
+
+In the Police Department, positions earning a mean regular salary below $100K do not receive a high amount of Overtime or Other compensation. All positions in this category earn less than 50% above their regular salary in additional pay. On the other hand, most positions earning a regular salary above $100K see a significant proportion (greater than 50%) of additional compensation to their salaries.
 
 ```{r}
+#| fig-width: 8
+#| fig-height: 10
+#| message: false
+#| warning: false
+
+
 title_descriptions_top_fire <-
 payroll_data_fire_police |>
   filter(fiscal_year == "2024") |>
@@ -1385,9 +1919,7 @@ payroll_data_fire_police |>
   slice_max(order_by = Total_records, n = 25) |>
   ungroup() |>
   pull(title_description)
-```
 
-```{r}
 title_short_fire <- c(
   "FIREFIGHTER" = "Firefighter",
     "SUPERVISING EMERGENCY MEDICAL SERVICE SPECIALIST-DPTY CHIEFS" = "Supervising EMS Specialist-Dpty Chiefs",
@@ -1427,133 +1959,11 @@ exceptions_proper <- c(
   "Ems-Emt" = "EMS-EMT"
 )
 
-```
 
-
-
-```{r}
-#| fig-width: 8
-#| fig-height: 10
-
-payroll_data_fire_police |>
-  filter(fiscal_year == "2024") |>
-  # filter(leave_status_as_of_june_30 == 'ACTIVE') |>
-  # filter(title_description %in% title_descriptions_top10) |>
-  # filter(pay_basis == 'per Annum') |>
-  filter((agency_name == 'FIRE DEPARTMENT' & title_description %in% title_descriptions_top_fire) |
-          (agency_name == 'POLICE DEPARTMENT' & title_description %in% title_descriptions_top_police)  ) |>    mutate(
-     title_description = str_replace_all(title_description, title_short_fire)
-   ) |>
-  # group_by(agency_name, title_description) |>
-  mutate(
-    title_description = str_to_title(title_description),
-    title_description = str_remove(title_description, "-$"),
-    title_description = str_replace_all(title_description, exceptions_proper)
-  ) |>
-  group_by(agency_name, title_description, pay_basis, work_location_borough) |>
-  group_by(agency_name, title_description, work_location_borough) |>
-  group_by(agency_name, title_description) |>
-  # group_by(agency_name, work_location_borough) |>
-  summarise(
-    Total_records = n(),
-    mean_base_salary = mean(base_salary, na.rm = TRUE),
-    mean_regular_paid = mean(regular_gross_paid, na.rm = TRUE),
-    mean_total_paid = mean(total_paid, na.rm = TRUE),
-    .groups = "drop"
-  ) |>
-  arrange(agency_name, desc(Total_records)) |>
-  dplyr::select('agency_name',
-         'title_description',
-         'mean_regular_paid' ,
-         'mean_total_paid') |>
-  # pivot_wider(names_from = tuition_type_factor, values_from = mean_tuition) |>
-  mutate(perc_diff = abs(mean_total_paid - mean_regular_paid) / mean_regular_paid * 100) |>
-  mutate(perc_diff_band = cut(perc_diff,
-                              breaks = c(seq(0, 1000, by = 25), Inf),
-                              include.lowest = TRUE)) |>
-ggplot() +
-  geom_bar(aes(x = -perc_diff *2500,
-               y= title_description,
-               fill = perc_diff_band),
-           stat = 'identity',
-           alpha = 1,
-  ) +
-  geom_text(aes(x = -perc_diff * 2500,
-                y = title_description,
-                label = paste0(round(perc_diff, 0), "%")),
-            hjust = 1.2,
-            size = 3,
-            color = "black",
-            alpha = 0.8,
-            check_overlap=TRUE,
-  ) +
-  geom_point(aes(x = mean_regular_paid,
-                 y = reorder(title_description, mean_regular_paid)),
-             color = "deepskyblue3",
-             size = 1.5,
-             stroke=2,
-  ) +
-  geom_segment(aes(x = 0,
-                   xend = mean_regular_paid,
-                   y = reorder(title_description, mean_regular_paid,),
-                   yend = reorder(title_description, mean_regular_paid)),
-               color = "deepskyblue3",
-               alpha=1,
-  ) +
-  geom_text(aes(x = mean_regular_paid,
-                y = reorder(title_description, mean_regular_paid),
-                label = scales::label_comma()(round(mean_regular_paid, 0))),
-            hjust = -0.4,
-            size = 3,
-            alpha = 0.6,
-            check_overlap=TRUE,
-  ) +
-  facet_grid(fct_infreq(agency_name) ~ .,
-             scales ='free_y',
-             space = 'free_y') +
-  scale_fill_brewer(name = "% Ratio",
-                    palette = "RdYlGn",
-                    direction = -1,
-                    na.translate = FALSE) +
-  scale_color_brewer(name = "% Ratio",
-                     palette = "RdYlGn",
-                     direction = -1,
-                     na.translate = FALSE) +
-  scale_x_continuous(
-    limits = c(-250000, 250000),
-    name = "Regular Salary Paid (dots)",
-    labels = function(x) ifelse(x >= 0, scales::label_number()(x), ""),
-    sec.axis = sec_axis(~./-2500, name = "% Ratio (bars)",
-                        labels = function(x) ifelse(x >= 0,
-                                                    paste0(scales::label_number()(x),
-                                                           '%'), ""))
-  ) +
-  labs(title = "Ratio of `Total Salary` to `Regular Salary` VS Regular Salary by Job Title, Facet by Agency",
-       y = "Job Titles",
-       caption = "% Ratio = Total Salary Paid (Regular + Overtime + Other) / Regular Salary Paid") +
-  theme_minimal() +
-  theme(
-    legend.position = "bottom",
-          # legend.position = c(0, 0),             # Place the legend at the bottom left
-  legend.justification = c(1, 1)      ,   # Align the legend to the left
-        panel.border = element_rect(color = "darkgray", fill = NA, linewidth = 1),
-        axis.title.x = element_text(hjust = 1),
-        axis.title.x.top = element_text(hjust = 0),
-        plot.title = element_text(hjust = 0),
-  plot.title.position = "plot",
-  # plot.title.justification = c(0.5, 0.5) 
-  )
-
-```
-
-
-
-
-```{r}
-#| fig-width: 8
-#| fig-height: 10
-#| message: false
-#| warning: false
+# <!-- #| fig-width: 8 -->
+# <!-- #| fig-height: 10 -->
+# <!-- #| message: false -->
+# <!-- #| warning: false -->
 
 
 payroll_data_fire_police |>
@@ -1686,9 +2096,11 @@ ggplot() +
                                                     paste0(scales::label_number()(x),
                                                            '%'), ""))
   ) +
-  labs(title = "Ratio of `Total Salary` to `Regular Salary` VS Regular Salary by Job Title, Facet by Agency",
-       y = "Job Titles",
-       caption = "% Ratio = Total Salary Paid (Regular + Overtime + Other) / Regular Salary Paid") +
+  labs(
+    # title = "Ratio of `Total Salary` to `Regular Salary` VS Regular Salary by Job Title, Facet by Agency",
+    title =  "Understanding the Gap: Regular Pay and Total Salary",
+    y = "Job Titles",
+    caption = "% Ratio = Total Salary Paid (Regular + Overtime + Other) / Regular Salary Paid") +
   theme_minimal() +
   theme(
     legend.position = "bottom",
@@ -1709,288 +2121,55 @@ ggplot() +
 
 
 
-
-
-
-
-
-
-
-## Who gets the Money?
-
-
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
-
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
-
-
-## Who gets the Money?
-
-
-Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus. 
-
-Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus. 
-
-
-
-
-```{r}
-#| fig-width: 10
-#| fig-height: 10
-payroll_data_fire_police |> 
- # filter(fiscal_year %in% c("2024")) |>
-  # filter(fiscal_year %in% c("2023")) |>
-  # filter(agency_name == "POLICE DEPARTMENT") |>
-  # filter(leave_status_as_of_june_30 == "ACTIVE") |>
-  # filter(str_detect(title_description, "POLICE OFFICER|P\\.O\\.")) |>
-  # filter(str_detect(title_description, "P\\.O\\.")) |>
-  # filter(str_detect(title_description, "POLICE OFFICER")) |>
-
-
-
-ggplot() +
-  geom_density(mapping = aes(x = total_paid,after_stat(scaled),fill=agency_name),
-               alpha = 0.5,
-               # na.rm = TRUE,
-               # trim =TRUE,
-               # stat = "density",
-                # position = "stack",
-               bounds = c(-50000,300000)
-               ) +
-  # scale_fill_manual(values = c("In state" = "yellow",
-  #                              "Out of state" = "red",
-  #                              "In district" = "cyan")) +
-  facet_grid(leave_status_as_of_june_30 ~ pay_basis)+
-  scale_fill_manual(
-    values = c("POLICE DEPARTMENT" = "deepskyblue3", "FIRE DEPARTMENT" = "#f94144"))+
-  labs(title = "Separate Density Plots of Tuition Fees by Tuition Type and Level of Study",
-       x = "Tuition Fees (FT)",
-       y = "Density",
-       # fill = "Tuition Type"
-       )+
-  # theme_minimal() +
-  scale_x_continuous(
-    # limits = c(-25000, 300000),
-    breaks = seq(-200000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 100000),
-    labels = scales::label_number(scale = 1/1000, suffix = "k")
-  ) +
-  theme_light() +
-  theme(
-    legend.position = "bottom",
-    panel.grid.minor.x = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    )
-
-
-# ggplot(payroll_data_fire_police) +
-#   geom_density(mapping = aes(x = total_paid,after_stat(count),fill=agency_name),
-#                alpha = 0.5,
-#                # na.rm = TRUE,
-#                # trim =TRUE,
-#                # stat = "density",
-#                 position = "stack",
-#                bounds = c(-50000,300000)
-#                ) +
-#   # scale_fill_manual(values = c("In state" = "yellow",
-#   #                              "Out of state" = "red",
-#   #                              "In district" = "cyan")) +
-#   facet_grid(leave_status_as_of_june_30 ~ pay_basis)+
-#   scale_fill_manual(
-#     values = c("POLICE DEPARTMENT" = "deepskyblue3", "FIRE DEPARTMENT" = "#f94144"))+
-#   labs(title = "Separate Density Plots of Tuition Fees by Tuition Type and Level of Study",
-#        x = "Tuition Fees (FT)",
-#        y = "Density",
-#        # fill = "Tuition Type"
-#        )
-```
-
-```{r}
-range_band= 50000
-
-payroll_data_fire_police_test <-
-payroll_data_fire_police |> 
-  # filter(fiscal_year == 2024) |>
-  # filter(fiscal_year %in% c("2024","2023")) |>
-  # filter(title_description %in% c("POLICE OFFICER","FIREFIGHTER")) |>
-  # filter(leave_status_as_of_june_30 == "ACTIVE") |>
-   mutate(
-    flag_regular = ifelse(regular_gross_paid == 0, "No", "Yes"),
-    flag_overtime = ifelse(total_ot_paid == 0, "No", "Yes"),
-    flag_other = ifelse(total_other_pay == 0, "No", "Yes")
-  ) |> 
-    mutate(
-    # Define the range for breaks, including the floor of minimum to handle negative values
-    total_paid_group = cut(
-      total_paid,
-      breaks = seq(
-        floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-        ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-        by = range_band
-      ),
-      labels = paste0(
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band - 1) * range_band,
-          by = range_band
-        ) / 1000,
-        "k-",
-        seq(
-          floor(min(total_paid, na.rm = TRUE) / range_band) * range_band + range_band, 
-          ceiling(max(total_paid, na.rm = TRUE) / range_band) * range_band,
-          by = range_band
-        ) / 1000,
-        "k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) |> 
-  mutate(
-    total_paid_group = recode(
-      total_paid_group,
-      "-200k--150k" = "Less than 0",
-      "-150k--100k" = "Less than 0",
-      "-100k--50k" = "Less than 0",
-      "-50k-0k" = "Less than 0",
-      "0k-50k" = "0k-50k",
-      "50k-100k" = "50k-100k",
-      "100k-150k" = "100k-150k",
-      "150k-200k" = "150k-200k",
-      "200k-250k" = "200k-250k",
-      "250k-300k" = "250k and above",
-      "300k-350k" = "250k and above",
-      "350k-400k" = "250k and above",
-      "400k-450k" = "250k and above",
-      "450k-500k" = "250k and above",
-      "500k-550k" = "250k and above",
-      "550k-600k" = "250k and above",
-      "600k-650k" = "250k and above"
-    ),
-    total_paid_group = factor(total_paid_group, 
-                              levels = c("250k and above", "200k-250k", 
-                                         "150k-200k", "100k-150k", "50k-100k", 
-                                         "0k-50k", "Less than 0"))
-  ) |> 
-  mutate(
-    flag_regular = factor(flag_regular, levels = c("Yes", "No")),
-    flag_overtime = factor(flag_overtime, levels = c("Yes", "No")),
-  ) |> 
-mutate(
-    years_at_agency = 2024 - agency_start_date_year,  # Calculate the years worked
-    years_band = case_when(
-      years_at_agency >= 0 & years_at_agency <= 5 ~ "0-5 years",
-      years_at_agency > 5 & years_at_agency <= 10 ~ "5-10 years",
-      years_at_agency > 10 & years_at_agency <= 20 ~ "10-20 years",
-      years_at_agency > 20 ~ "20+ years",
-      TRUE ~ "Unknown"  # In case of any missing or incorrect data
-    ),
-    years_band = factor(years_band, levels = c("20+ years", "10-20 years", "5-10 years", "0-5 years"))
-  ) |> 
-  mutate(total_paid_group_fill = total_paid_group,
-years_band_group = years_band)
-
-
-
-
-
-```
-
-```{r}
-#| fig-width: 10
-#| fig-height: 6
-  
-payroll_data_fire_police_test |> 
- # filter(fiscal_year %in% c("2024")) |>
-  # filter(fiscal_year %in% c("2023")) |>
-  # filter(fiscal_year %in% c("2022")) |>
-  # filter(agency_name == "POLICE DEPARTMENT") |>
-  filter(leave_status_as_of_june_30 == "ACTIVE") |>
-  filter(pay_basis == "per Annum") |>
-  # filter(str_detect(title_description, "POLICE OFFICER|P\\.O\\.")) |>
-  # filter(str_detect(title_description, "P\\.O\\.")) |>
-  # filter(str_detect(title_description, "POLICE OFFICER")) |>
-
-
-
-ggplot() +
-  geom_density(mapping = aes(x = total_paid,after_stat(count),fill=agency_name),
-               alpha = 0.5,
-               # na.rm = TRUE,
-               # trim =TRUE,
-               # stat = "density",
-                position = "stack",
-               bounds = c(-50000,300000)
-               ) +
-  # scale_fill_manual(values = c("In state" = "yellow",
-  #                              "Out of state" = "red",
-  #                              "In district" = "cyan")) +
-  facet_grid(years_band_group ~ pay_basis)+
-  scale_fill_manual(
-    values = c("POLICE DEPARTMENT" = "deepskyblue3", "FIRE DEPARTMENT" = "#f94144"))+
-  labs(title = "Separate Density Plots of Tuition Fees by Tuition Type and Level of Study",
-       x = "Tuition Fees (FT)",
-       y = "Density",
-       # fill = "Tuition Type"
-       )+
-  # theme_minimal() +
-  scale_x_continuous(
-    # limits = c(-25000, 300000),
-    breaks = seq(-200000, max(payroll_data_fire_police$total_paid, na.rm = TRUE), by = 100000),
-    labels = scales::label_number(scale = 1/1000, suffix = "k")
-  ) +
-  theme_light() +
-  theme(
-    legend.position = "bottom",
-    panel.grid.minor.x = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    )
-
-```
-
-
-
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 \
 \
 \
 
-<!-- ## hitogram / facets (ps1) -->
+------------------------------------------------------------------------
 
-<!-- ## boxplot jitter (ps1) -->
+\
+\
 
-<!-- ## with ridgeline (ps1) -->
+::: callout-note
+## Congratulations! You made it to the end of this section =)
 
-<!-- ## density lines -->
+Here is a quick summary of the charts you saw on this page:
 
-<!-- ## bar chart lump facet -->
+-  [x] Bar Chart Stacked
+-  [x] Mosaic
+-  [x] Box Plot with Jitter Points
+-  [x] Histogram
+-  [x] Density Curve
+-  [x] Normal Curve
+-  [x] Density Stacked Area
+-  [x] Ridgeline Density 
+-  [x] Scatter Plot with Repel Labels
+-  [x] Bar Chart with Lump
+-  [x] Alluvium
+-  [x] Parallel Coordinates 
+-  [x] Parallel Coordinates - Interactive (parcoords)
+-  [x] Lollipop Chart Combo
 
-<!-- ## scattter plot -->
 
-<!-- ## D3ensity plot -->
+<!-- -  [x] hitogram / facets (ps1) -->
+<!-- -  [x] boxplot jitter (ps1) -->
+<!-- -  [x] with ridgeline (ps1) -->
+<!-- -  [ ] density lines -->
+<!-- -  [x] Bar chart -->
+<!-- -  [ ] bar chart lump facet -->
+<!-- -  [x] scattter plot -->
+<!-- -  [ ] Density plot -->
+<!-- -  [ ] geom_point with facet 9x9 grid (ps2 california) -->
+<!-- -  [x] Cleveland dot plot -->
+<!-- -  [ ] ggparcords -->
+<!-- -  [x] parcoords -->
+<!-- -  [ ] likert -->
+<!-- -  [ ] mosaic -->
+<!-- -  [x] alluvium -->
 
-<!-- ## geom_point with facet 9x9 grid (ps2 california) -->
+:::
 
-<!-- ## Cleveland dot plot -->
 
-<!-- ## ggparcords -->
 
-<!-- ## parcoords -->
 
-<!-- ## likert -->
-
-<!-- ## mosaic -->
-
-<!-- ##alluvium -->
-
-<!-- # other -->

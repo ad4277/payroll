@@ -33,6 +33,10 @@ format:
     # theme: darkly
     # theme: Litera
     code-fold: true
+    # toc: true
+    # toc-depth: 3
+    toc-expand: true
+    
     
 
 

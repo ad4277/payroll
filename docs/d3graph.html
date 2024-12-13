@@ -151,11 +151,14 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#who-gets-the-money" id="toc-who-gets-the-money" class="nav-link active" data-scroll-target="#who-gets-the-money"><span class="header-section-number">4.1</span> Who gets the Money?</a></li>
+  <li><a href="#hiring-over-time" id="toc-hiring-over-time" class="nav-link active" data-scroll-target="#hiring-over-time"><span class="header-section-number">4.1</span> Hiring Over Time</a></li>
+  <li><a href="#how-to-use-the-chart" id="toc-how-to-use-the-chart" class="nav-link" data-scroll-target="#how-to-use-the-chart"><span class="header-section-number">4.2</span> How to Use the Chart</a></li>
+  <li><a href="#supporting-visualizations" id="toc-supporting-visualizations" class="nav-link" data-scroll-target="#supporting-visualizations"><span class="header-section-number">4.3</span> Supporting Visualizations</a></li>
+  <li><a href="#interesting-observations" id="toc-interesting-observations" class="nav-link" data-scroll-target="#interesting-observations"><span class="header-section-number">4.4</span> Interesting Observations</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ad4277/payroll/edit/main/d3graph.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ad4277/payroll/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -181,20 +184,6 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<!-- <style> -->
-<!--   * { -->
-<!--     font-family: sans-serif; -->
-<!--   } -->
-<!-- </style> -->
-<!-- <div id="plot"> -->
-<!-- </div> -->
-<!-- <div style="padding-left: 30px;"> -->
-<!--   <p></p> -->
-<!--   <button type="button" onclick="add()">Add bar</button> -->
-<!--   <button type="button" onclick="remove()">Remove bar</button> -->
-<!-- </div> -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
-<!-- <script src="scripts/myscript.js"></script> -->
 <meta charset="utf-8">
 <meta http-equiv="cache-control" content="no-cache">
 <meta http-equiv="Pragma" content="no-cache">
@@ -202,14 +191,13 @@ ul.task-list li input[type="checkbox"] {
 <title>
 Temporal force-directed graph
 </title>
-<link rel="stylesheet" type="text/css" href="./scripts/inspector.css">
+<p><link rel="stylesheet" type="text/css" href="./scripts/inspector.css"></p>
 <script type="module">
 
 import define from "./scripts/force_chart_script_js.js";
 import {Runtime, Library, Inspector} from "./scripts/runtime.js";
 
 const runtime = new Runtime();
-// const main = runtime.module(define, Inspector.into(document.body));
 const main = runtime.module(define, Inspector.into(document.getElementById('chart_force')));
 
 // part modified in inspector: add white to text
@@ -217,36 +205,88 @@ const main = runtime.module(define, Inspector.into(document.getElementById('char
 
 </script>
 
-<!-- <h1>something to go right below2</h1> -->
-<!-- <h2>something to go right below2</h2> -->
-<!-- <h3>something to go right below2</h3> -->
-<section id="who-gets-the-money" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="who-gets-the-money"><span class="header-section-number">4.1</span> Who gets the Money?</h2>
-<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Finibus et dictum egestas scelerisque gravida turpis. Morbi ligula condimentum pulvinar; augue justo lobortis. Class enim nullam parturient montes a porttitor gravida ante dignissim. Congue efficitur curabitur euismod id dolor phasellus.</p>
-<p>Metus tempus nulla in vestibulum iaculis interdum; porta eleifend praesent. Iaculis porttitor adipiscing augue ullamcorper placerat. Pulvinar quam scelerisque ex sem nascetur sit ipsum eros. Magnis luctus facilisis justo massa mauris dictumst. Nibh sollicitudin malesuada vitae maximus cras lacus.</p>
+<section id="hiring-over-time" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="hiring-over-time"><span class="header-section-number">4.1</span> Hiring Over Time</h2>
+<p>This section explores the hiring history of NYC’s Fire and Police Departments over the past 10 years. The interactive chart below visualizes the number of unique job positions hired each month. Each position is represented by a dot, with the size of the dot reflecting the number of employees hired for that role.</p>
+<h3 class="anchored">
+10-Year Hiring History for the Fire and Police Departments
+</h3>
+<p style="font-size: 14px;margin-top:-5px">
+Count of job titles per month, with each dot representing a position and dot size reflecting the number of employees hired.
+</p>
 <div id="chart_force">
 
 </div>
-<p><img src="./jobs_timeline.png" alt="My Image" width="750"></p>
-<p><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></p>
-<p>What is the story? hi this is a test2wss</p>
-<p>jan 15 balance october 16 nov 2015 red july 18 red March 2022 blue july 2020 blue</p>
-<div id="chart">
+Legend:
+<ul style="font-size: 12px;list-style-type: none;">
+<li>
+<span style="color:#919494;font-size: 10px;">●</span><span style="color:#919494;font-size: 15px;">●</span><span style="color:#919494;font-size: 20px;">●</span><span style="color:#919494;font-size: 25px;">●</span> Size of the bubble represents the number of employees hired in each position
+</li>
+<li>
+<strong><span style="color:#f94144;font-size: 10px;">●</span></strong> represents a position in the Fire Department.
+</li>
+<li>
+<strong><span style="color:#008ccd;font-size: 10px;">●</span></strong> represents a position in the Police Department.
+</li>
+<li>
+<strong>—</strong> indicates positions within the same career path, such as:
+</li>
+<li style="padding-left: 20px;">
+<span style="color:#fcaeaf;font-size: 10px;">●</span>—<span style="color:#f94144;font-size: 10px;">●</span> Firefighter roles, or Emergency Medical Services (EMS) roles
+</li>
+<li style="padding-left: 20px;">
+<span style="color:#99dfff;font-size: 10px;">●</span>—<span style="color:#008ccd;font-size: 10px;">●</span> Police Officer roles
+</li>
+</ul>
+<p><img src="./jobs_timeline_line_bar.png" alt="Supporting Charts" width="750"> <!-- <img src="./jobs_timeline.png" alt="My Image" width="750"> --></p>
+</section>
+<section id="how-to-use-the-chart" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="how-to-use-the-chart"><span class="header-section-number">4.2</span> How to Use the Chart</h2>
+<ul>
+<li>
+<strong>Play/Pause Button:</strong> Start or stop the animation.
+</li>
+<li>
+<strong>Date Slicer:</strong> Drag to select a specific date range.
+</li>
+<li>
+<strong>Click and Drag:</strong> Move a dot to adjust its location for better visualization.
+</li>
+<li>
+<strong>Hover:</strong> Hover over a dot to view the corresponding job title and the count of hired employees.
+</li>
+</ul>
+</section>
+<section id="supporting-visualizations" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="supporting-visualizations"><span class="header-section-number">4.3</span> Supporting Visualizations</h2>
+<ul>
+<li>
+<strong>Line Chart:</strong> Displays the count of unique job titles over time. Use this as a reference to identify periods with high or low hiring activity.
+</li>
+<li>
+<strong>100% Stacked Bar Chart:</strong> Shows the proportion of hiring between the Fire and Police Departments for each period, with a 50% reference line to quickly identify which department had more hires.
+</li>
+</ul>
+</section>
+<section id="interesting-observations" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="interesting-observations"><span class="header-section-number">4.4</span> Interesting Observations</h2>
 <p>
-something1
+Here are a few interesting periods to explore:
 </p>
-<p><button type="button" onclick="add()">Add bar</button> <button type="button" onclick="remove()">Remove bar</button></p>
-</div>
-<div style="padding-left: 30px;">
-<p>
-something2
-</p>
-<p><button type="button" onclick="add()">Add bar</button> <button type="button" onclick="remove()">Remove bar</button></p>
-</div>
-<p>
-something to go right below2
-
-</p><p>another this there</p>
+<ul>
+<li>
+<strong>January 2016:</strong> Highest number of Police Officers hired in a month (over 10k).
+</li>
+<li>
+<strong>October 2016:</strong> The month with the highest number of unique job titles hired.
+</li>
+<li>
+<strong>March 2018:</strong> A period dominated by Police Department hires.
+</li>
+<li>
+<strong>April 2020:</strong> Only Fire Department positions were hired during this month.
+</li>
+</ul>
 
 
 </section>

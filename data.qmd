@@ -4,15 +4,15 @@
 :::
 ## Description
 For this project, we will be using a subset of the **Citywide Payroll Data**.\
-This dataset is available via NYC OpenData and provided by the Office of Payroll Administration (OPA).
+This dataset is available via [NYC OpenData](https://data.cityofnewyork.us/City-Government/Citywide-Payroll-Data-Fiscal-Year-/k397-673e/about_data) and provided by the Office of Payroll Administration (OPA).
 
-The final subset of data for this project will be focused on 2 Agencies:\
+The data for this project will be focused on 2 Agencies:\
 <p style="margin-top: -15px">
 -   Fire Department 🧑‍🚒 🚒
 -   Police Department 👮🚓
 </p>
 
-Here are the filters applied to the original data to produce our final subset of data:
+The original payroll dataset was filtered using the following criteria to create the final subset data:
 ```{r}
 #| echo: false
 #| message: false

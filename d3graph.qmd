@@ -44,7 +44,7 @@ Legend:
   
 </ul>
 
-<img src="./jobs_timeline_line_bar.png" alt="Supporting Charts" width="750"/>
+<img src="./scripts/jobs_timeline_line_bar.png" alt="Supporting Charts" width="750"/>
 <!-- <img src="./jobs_timeline.png" alt="My Image" width="750"> -->
 
 
@@ -75,5 +75,15 @@ Legend:
   <li><strong>March 2018:</strong> A period dominated by Police Department hires.</li>
   <li><strong>April 2020:</strong> Only Fire Department positions were hired during this month.</li>
 </ul>
+
+
+
+
+
+
+
+
+
+
 
 

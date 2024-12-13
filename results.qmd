@@ -508,7 +508,7 @@ payroll_data_fire_police |>
 
 Salary distributions also vary by location. Brooklyn (Fire) and Manhattan (Police) have the lowest median salaries, despite hosting the highest number of employees (indicated by the density of jittered dots). Staten Island, on the other hand, has the highest median salary for both agencies but the lowest number of employees.
 
-Additionally, the Fire Department’s salary boxes on the x-axis are slightly to the left of the Police Department’s, indicating slightly higher salaries. An intriguing observation is the presence of negative salary outliers, which could reflect advanced compensation, deductions, or other adjustments beyond the gross amount.
+Additionally, the Fire Department’s salary boxes on the x-axis are slightly to the left of the Police Department’s, indicating slightly higher salaries. An intriguing observation is the presence of negative salary outliers, which could reflect advanced compensation repayments, deductions, or other adjustments beyond the gross amount.
 
 
 
@@ -790,7 +790,7 @@ The rightmost peak corresponds primarily to employees in the `Per Annum - Ceased
 
 The central and left peaks are associated with `Per Annum - Active` employees and are influenced by years of experience. Most employees with 0–5 years of experience earn under $100,000 (central peak). The higher density in the 5–10-year range suggests reduced hiring in recent years and strong employee retention.
 
-Over time, the left peak emerges around $100,000 for employees with 0–5 years of experience and gradually shifts leftward (toward higher salaries) as experience increases.
+Over time, the left peak emerges around $100,000 for employees with 0–5 years of experience and gradually shifts upwards and leftward (toward higher salaries) as experience increases.
 
 For employees with 15–20 years and 20+ years of experience, the Fire Department has a larger proportion in the left peak compared to the central peak, as shown by the visibly greater red area in the left peak on the stacked chart. This highlights that longer-tenured employees tend to earn higher salaries.
 
@@ -1799,7 +1799,7 @@ ggparcoord(data = payroll_data_fire_police_chart_2_250_selection,
 
 ### Salary Playground
 
-For a deeper analysis, the following interactive parallel coordinates chart provides a detailed breakdown of salary components (Regular, Overtime, Other) for employees earning over $250K, along with their job titles and departments.
+Using the same data, you can perform different combinations and scenarios for a deeper analysis. The following interactive parallel coordinates chart provides a detailed breakdown of salary components (Regular, Overtime, Other) for employees earning over $250K, along with their job titles and departments.
 
 
 ::: callout-note

@@ -88,60 +88,6 @@ payroll_data_fire_police |>
 ```
 
 
-```{r}
-payroll_data_fire_police |>
-  filter(title_description %in% c("POLICE OFFICER")) |>
-  filter(agency_start_date_year == 2021) |>
-  # filter(agency_start_date_year < 2025) |>
-  mutate(
-    agency_start_date = floor_date(agency_start_date, unit = "month")
-  ) |>
-  group_by(agency_name, title_description, agency_start_date) |> 
-  summarise(count_of_hired_employees = n()) |> 
-  ungroup() |> 
-  dplyr::select(agency_name, title_description, agency_start_date,count_of_hired_employees) |>
-  distinct() |>
-  mutate(
-    agency_start_date = floor_date(agency_start_date, unit = "month")
-  ) |>
-  distinct() |>
-  arrange(agency_name, title_description, agency_start_date) |>
-  group_by(agency_name, title_description) |>
-  mutate(
-    # Detect breaks in the month sequence
-    # group = cumsum(c(1, diff(agency_start_date) > months(1)))
-    group = cumsum(
-      agency_start_date != lag(agency_start_date + months(1), default = first(agency_start_date))
-    )
-  ) |>
-  group_by(agency_name, title_description,count_of_hired_employees, group) |>
-  summarise(
-    # id = paste(agency_name, title_description, sep = "_"),
-    id =  title_description,
-    start = min(agency_start_date),
-    end = max(agency_start_date) + months(1),
-    ag = case_when(
-      agency_name == "POLICE DEPARTMENT" ~ "p",
-      agency_name == "FIRE DEPARTMENT" ~ "f",
-      TRUE ~ NA_character_
-    ),
-    ct = count_of_hired_employees,
-    # ct = case_when(
-    #   agency_name == "POLICE DEPARTMENT" ~ "5",
-    #   agency_name == "FIRE DEPARTMENT" ~ "20",
-    #   TRUE ~ NA_character_
-    # ),
-    .groups = "drop"
-  ) |>
-  filter(!is.na(ag)) |> # Remove rows with invalid agency_name
-  dplyr::select(id, start, end, ag,ct) |>
-  distinct() |> 
-  arrange(start)
-```
-
-
-
-
 ## Nodes 
 
 ### All titles
@@ -169,7 +115,7 @@ payroll_data_fire_police |>
   ) |>
   distinct() |>
   arrange(agency_name, title_description, agency_start_date) |>
-  group_by(agency_name, title_description) |>
+  group_by(agency_name, title_description,count_of_hired_employees) |>
   mutate(
     # Detect breaks in the month sequence
     # group = cumsum(c(1, diff(agency_start_date) > months(1)))

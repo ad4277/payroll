@@ -66,15 +66,14 @@ Legend:
   </li>
 </ul>
 
-## Key Insights
+## Interesting Observations 
 
 <p>Here are a few interesting periods to explore:</p>
 <ul>
-  
+  <li><strong>January 2016:</strong> Highest number of Police Officers hired in a month (over 10k).</li>
   <li><strong>October 2016:</strong> The month with the highest number of unique job titles hired.</li>
   <li><strong>March 2018:</strong> A period dominated by Police Department hires.</li>
   <li><strong>April 2020:</strong> Only Fire Department positions were hired during this month.</li>
-  <li><strong>May 2021:</strong> Highest number of Police Officers hired in a month (over 10k).</li>
 </ul>
 
 

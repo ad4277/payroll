@@ -175,7 +175,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./conclusion.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Conclusion</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -637,7 +637,7 @@ Using a sample of 1 million records (from 6.22 million rows) we have close to <s
 </div>
 </div>
 <p><br>
-After transforming our original data to create our final subset data (Fire and Police Departments), we can now examine the missing values of the final dataset.</p>
+After transforming our original data to create our final subset data (<strong>Fire and Police Departments</strong>), we can now examine the missing values of the final dataset.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1171,9 +1171,15 @@ Diverging stacked bar chart to analyze missing data
 </div>
 <p>Our original dataset has <span style="color:#D7191C;">■</span> NA data for payroll_number, first_name, last_name. It also has <span style="color:#FDAE61;">■</span> Blank data in 6 columns: first_name, mid_init, last_name, work_location_borough, title_description, agency_start_date.</p>
 <p>For both datasets, <span style="color:#ABD9E9;">■</span> Zero values show up in columns related to the amount paid to a person, which can be 3 categories: regular, overtime, other. If a certain category is 0, it means the person did not receive any money for that category. This in an important information because it does not requires us to exclude or impute these values. We can observe a significant reduction of zero values in the subset dataset compared to the original.</p>
-<p>Our final subset data (Fire and Police Departments) no longer contains <span style="color:#D7191C;">■</span> NA data, but still contains <span style="color:#FDAE61;">■</span> Blank data in 3 columns: first_name, mid_init, last_name.</p>
-<p>For <strong>mid_init</strong> (Middle Name Initials), 29% of the data in the final subset is Blank, it is ok for us to have blanks in the data, this will not affect the future analysis. For <strong>first_name</strong> and <strong>last_name</strong> blank data (1.2% of the data in the final subset is Blank), these values are blank on purpose by the data provider:<br>
-<span style="font-size:70%;"><em>…As a part of FISA-OPA’s routine process for reviewing and releasing Citywide Payroll Data, data for some agencies (specifically NYC Police Department (NYPD) and the District Attorneys’ Offices (Manhattan, Kings, Queens, Richmond, Bronx, and Special Narcotics)) have been redacted since they are exempt from disclosure pursuant to the Freedom of Information Law, POL § 87(2)(f), on the ground that disclosure of the information could endanger the life and safety of the public servants listed thereon…</em></span></p>
+Our final subset data (Fire and Police Departments) no longer contains <span style="color:#D7191C;">■</span> NA data, but still contains <span style="color:#FDAE61;">■</span> Blank data in 3 columns: first_name, mid_init, last_name.<br>
+
+<p style="margin-top: -15px;">
+</p><ul>
+<li>For <strong>mid_init</strong> (Middle Name Initials), 29% of the data in the final subset is Blank, it is ok for us to have blanks in the data, this will not affect the future analysis.</li>
+<li>For <strong>first_name</strong> and <strong>last_name</strong> blank data (1.2% of the data in the final subset is Blank), these values are blank on purpose by the data provider:<br>
+<span style="font-size:70%;"><em>…As a part of FISA-OPA’s routine process for reviewing and releasing Citywide Payroll Data, data for some agencies (specifically NYC Police Department (NYPD) and the District Attorneys’ Offices (Manhattan, Kings, Queens, Richmond, Bronx, and Special Narcotics)) have been redacted since they are exempt from disclosure pursuant to the Freedom of Information Law, POL § 87(2)(f), on the ground that disclosure of the information could endanger the life and safety of the public servants listed thereon…</em></span></li>
+</ul>
+<p></p>
 <!-- Based on this disclosure, we can confirm the Blank values for the names are part of the Police Department agency: -->
 <!-- ```{r} -->
 <!-- payroll_data_fire_police |>  -->
@@ -1182,8 +1188,7 @@ Diverging stacked bar chart to analyze missing data
 <!--   summarise(`Count of Blank Records` = n()) |>  -->
 <!--   kable(col.names = c("Agency", "Count of Blank Records"))  -->
 <!-- ``` -->
-<p><br>
-In conclusion, the subset data for FIRE and POLICE departments (which will be used in the Results section) contains no <span style="color:#D7191C;">■</span> NA values, only <span style="color:#FDAE61;">■</span> Blank values that won’t affect the analysis, <span style="color:#ABD9E9;">■</span> Zero values that are crucial for salary-related insights, and multiple columns with a <span style="color:#2C7BB6;">■</span> Complete set of values for all rows.</p>
+<p>In conclusion, the subset data for <strong>FIRE and POLICE</strong> departments (which will be used in the Results section) contains no <span style="color:#D7191C;">■</span> NA values, only <span style="color:#FDAE61;">■</span> Blank values that won’t affect the analysis, <span style="color:#ABD9E9;">■</span> Zero values that are crucial for salary-related insights, and multiple columns with a <span style="color:#2C7BB6;">■</span> Complete set of values for all rows.</p>
 <!-- &nbsp;&nbsp;&nbsp; [■]{style="color:#D7191C;"}  NA      - any values equal to *NA* \ -->
 <!-- &nbsp;&nbsp;&nbsp; [■]{style="color:#FDAE61;"}  Blank   - string values equal to "" \ -->
 <!-- &nbsp;&nbsp;&nbsp; [■]{style="color:#ABD9E9;"}  Zero    - numeric values equal to 0 \ -->

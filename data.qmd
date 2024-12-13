@@ -392,7 +392,7 @@ payroll_data_missing |>
 ```
 
 \
-After transforming our original data to create our final subset data (Fire and Police Departments), we can now examine the missing values of the final dataset.
+After transforming our original data to create our final subset data (**Fire and Police Departments**), we can now examine the missing values of the final dataset.
 
 
 
@@ -888,11 +888,12 @@ Our original dataset has [■]{style="color:#D7191C;"} NA data for payroll_numbe
 
 For both datasets, [■]{style="color:#ABD9E9;"} Zero values show up in columns related to the amount paid to a person, which can be 3 categories: regular, overtime, other. If a certain category is 0, it means the person did not receive any money for that category. This in an important information because it does not requires us to exclude or impute these values. We can observe a significant reduction of zero values in the subset dataset compared to the original.
 
-Our final subset data (Fire and Police Departments) no longer contains [■]{style="color:#D7191C;"} NA data, but still contains [■]{style="color:#FDAE61;"} Blank data in 3 columns: first_name, mid_init, last_name. 
-
-For **mid_init** (Middle Name Initials), 29% of the data in the final subset is Blank, it is ok for us to have blanks in the data, this will not affect the future analysis. For **first_name** and **last_name** blank data (1.2% of the data in the final subset is Blank), these values are blank on purpose by the data provider: \
+Our final subset data (Fire and Police Departments) no longer contains [■]{style="color:#D7191C;"} NA data, but still contains [■]{style="color:#FDAE61;"} Blank data in 3 columns: first_name, mid_init, last_name. \
+<p style="margin-top: -15px;">
+-  For **mid_init** (Middle Name Initials), 29% of the data in the final subset is Blank, it is ok for us to have blanks in the data, this will not affect the future analysis. 
+-  For **first_name** and **last_name** blank data (1.2% of the data in the final subset is Blank), these values are blank on purpose by the data provider: \
 [*...As a part of FISA-OPA’s routine process for reviewing and releasing Citywide Payroll Data, data for some agencies (specifically NYC Police Department (NYPD) and the District Attorneys’ Offices (Manhattan, Kings, Queens, Richmond, Bronx, and Special Narcotics)) have been redacted since they are exempt from disclosure pursuant to the Freedom of Information Law, POL § 87(2)(f), on the ground that disclosure of the information could endanger the life and safety of the public servants listed thereon...*]{style="font-size:70%;"}
-
+</p>
 <!-- Based on this disclosure, we can confirm the Blank values for the names are part of the Police Department agency: -->
 <!-- ```{r} -->
 <!-- payroll_data_fire_police |>  -->
@@ -902,9 +903,7 @@ For **mid_init** (Middle Name Initials), 29% of the data in the final subset is 
 <!--   kable(col.names = c("Agency", "Count of Blank Records"))  -->
 <!-- ``` -->
 
-\
-In conclusion, the subset data for FIRE and POLICE departments (which will be used in the Results section) contains no [■]{style="color:#D7191C;"} NA values, only [■]{style="color:#FDAE61;"} Blank values that won't affect the analysis, [■]{style="color:#ABD9E9;"} Zero values that are crucial for salary-related insights, and multiple columns with a [■]{style="color:#2C7BB6;"} Complete set of values for all rows.
-
+In conclusion, the subset data for **FIRE and POLICE** departments (which will be used in the Results section) contains no [■]{style="color:#D7191C;"} NA values, only [■]{style="color:#FDAE61;"} Blank values that won't affect the analysis, [■]{style="color:#ABD9E9;"} Zero values that are crucial for salary-related insights, and multiple columns with a [■]{style="color:#2C7BB6;"} Complete set of values for all rows.
 
 
 <!-- &nbsp;&nbsp;&nbsp; [■]{style="color:#D7191C;"}  NA      - any values equal to *NA* \ -->

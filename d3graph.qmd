@@ -45,7 +45,7 @@ Legend:
   
 </ul>
 
-<img src="./scripts/jobs_timeline_line_bar.png" alt="Supporting Charts" width="750"/>
+<img src="./scripts/jobs_timeline_line_bar.png" alt="Supporting Charts" width="100%"/>
 <!-- <img src="./jobs_timeline.png" alt="My Image" width="750"> -->
 
 

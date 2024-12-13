@@ -114,10 +114,11 @@ function _chart(d3,invalidation,drag)
   .data(nodes, d => d.id)
   .join(
     enter => enter.append("circle")
-      .attr("r", getNodeSize) // Set initial radius
+      .attr("r", getNodeSize)
       .attr("fill", getNodeAgency)
       .call(drag(simulation))
       .on("mouseover", function (event, d) {
+
         // Create a group to hold the label and background rect
         const labelGroup = svg.append("g")
           .attr("class", "node-label-group");
@@ -125,9 +126,9 @@ function _chart(d3,invalidation,drag)
         // Add background rectangle
         labelGroup.append("rect")
           .attr("class", "node-label-bg")
-          .attr("x", d.x + 10) // Position slightly offset
-          .attr("y", d.y - 20) // Adjust for text height
-          .attr("rx", 4) // Rounded corners
+          .attr("x", d.x + 10) /
+          .attr("y", d.y - 20) 
+          .attr("rx", 4) 
           .attr("ry", 4)
           .attr("fill", "rgba(235, 239, 242, 0.9)");
 
@@ -155,7 +156,7 @@ function _chart(d3,invalidation,drag)
         svg.selectAll(".node-label-group").remove();
       }),
     update => update
-      .transition().duration(200) // Smooth transition for radius updates
+      .transition().duration(200) 
       .attr("r", getNodeSize) // Update radius when data changes
     // .call(node => node.append("title").text(d => d.id))
     ); // Optional tooltip

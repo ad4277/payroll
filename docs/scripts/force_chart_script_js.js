@@ -21,9 +21,7 @@ Scrubber(times, {
 
 function _chart(d3,invalidation,drag)
 {
-  // const width = 928;
   const width = 740;
-  // const height = 680;
   const height = 350;
 
   const simulation = d3.forceSimulation()
@@ -114,54 +112,51 @@ function _chart(d3,invalidation,drag)
 
  node = node
   .data(nodes, d => d.id)
-  .join(enter => enter.append("circle")
-    // .attr("r", 5)
-    .attr("r", getNodeSize)
-    .attr("fill", getNodeAgency)
-    .call(drag(simulation))
-    .on("mouseover", function (event, d) {
-      // Create a group to hold the label and background rect
-      const labelGroup = svg.append("g")
-        .attr("class", "node-label-group");
+  .join(
+    enter => enter.append("circle")
+      .attr("r", getNodeSize) // Set initial radius
+      .attr("fill", getNodeAgency)
+      .call(drag(simulation))
+      .on("mouseover", function (event, d) {
+        // Create a group to hold the label and background rect
+        const labelGroup = svg.append("g")
+          .attr("class", "node-label-group");
 
-      // Add background rectangle
-      labelGroup.append("rect")
-        .attr("class", "node-label-bg")
-        .attr("x", d.x + 10) // Position slightly offset
-        .attr("y", d.y - 20) // Adjust for text height
-        .attr("rx", 4) // Rounded corners
-        .attr("ry", 4)
-        // .attr("fill", "rgba(255, 255, 255, 0.7)");
-        // .attr("fill", getNodeLabel); 
-        .attr("fill", "rgba(235, 239, 242, 0.9)")
-        
+        // Add background rectangle
+        labelGroup.append("rect")
+          .attr("class", "node-label-bg")
+          .attr("x", d.x + 10) // Position slightly offset
+          .attr("y", d.y - 20) // Adjust for text height
+          .attr("rx", 4) // Rounded corners
+          .attr("ry", 4)
+          .attr("fill", "rgba(235, 239, 242, 0.9)");
 
-      // Add text label
-      labelGroup.append("text")
-        .attr("class", "node-label")
-        .attr("x", d.x + 10) 
-        .attr("y", d.y - 10)
-        .attr("text-anchor", "start")
-        .attr("font-size", "12px")
-        .attr("fill", "#333")
-        // .text(d.id); 
-        // .text(`${d.id} (${d.ct} hired employees)`);
-        .text(d.ct === "" ? `${d.id} ` : `${d.id} (${d.ct} hired employees)`);
+        // Add text label
+        labelGroup.append("text")
+          .attr("class", "node-label")
+          .attr("x", d.x + 10)
+          .attr("y", d.y - 10)
+          .attr("text-anchor", "start")
+          .attr("font-size", "12px")
+          .attr("fill", "#333")
+          .text(d.ct === "" ? `${d.id} ` : `${d.id} (${d.ct} hired employees)`);
 
-
-      // Dynamically adjust the background size based on text
-      const textElement = labelGroup.select("text").node();
-      const bbox = textElement.getBBox();
-      labelGroup.select("rect")
-        .attr("width", bbox.width + 6) 
-        .attr("height", bbox.height + 4)
-        .attr("x", bbox.x - 3) 
-        .attr("y", bbox.y - 2);
-    })
-    .on("mouseout", function () {
-      // Remove the label group on mouseout
-      svg.selectAll(".node-label-group").remove();
-    })
+        // Dynamically adjust the background size based on text
+        const textElement = labelGroup.select("text").node();
+        const bbox = textElement.getBBox();
+        labelGroup.select("rect")
+          .attr("width", bbox.width + 6)
+          .attr("height", bbox.height + 4)
+          .attr("x", bbox.x - 3)
+          .attr("y", bbox.y - 2);
+      })
+      .on("mouseout", function () {
+        // Remove the label group on mouseout
+        svg.selectAll(".node-label-group").remove();
+      }),
+    update => update
+      .transition().duration(200) // Smooth transition for radius updates
+      .attr("r", getNodeSize) // Update radius when data changes
     // .call(node => node.append("title").text(d => d.id))
     ); // Optional tooltip
 
@@ -250,6 +245,7 @@ export default function define(runtime, observer) {
   ]);
   main.builtin("FileAttachment", runtime.fileAttachments(name => fileAttachments.get(name)));
 
+  // keeping this for troublshoting
   // main.variable(observer()).define(["md"], _1);
   // main.variable(observer("viewof time")).define("viewof time", ["Scrubber","times"], _time);
   // main.variable(observer("time")).define("time", ["Generators", "viewof time"], (G, _) => G.input(_));

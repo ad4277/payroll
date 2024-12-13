@@ -126,7 +126,7 @@ function _chart(d3,invalidation,drag)
         // Add background rectangle
         labelGroup.append("rect")
           .attr("class", "node-label-bg")
-          .attr("x", d.x + 10) /
+          .attr("x", d.x + 10) 
           .attr("y", d.y - 20) 
           .attr("rx", 4) 
           .attr("ry", 4)
@@ -158,7 +158,6 @@ function _chart(d3,invalidation,drag)
     update => update
       .transition().duration(200) 
       .attr("r", getNodeSize) // Update radius when data changes
-    // .call(node => node.append("title").text(d => d.id))
     ); // Optional tooltip
 
 

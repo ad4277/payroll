@@ -4,8 +4,9 @@
 <meta http-equiv="cache-control" content="no-cache" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="-1" />
-<title>Temporal force-directed graph</title>
 
+
+<title>10-Year Hiring History for the Fire and Police Departments</title>
 <link rel="stylesheet" type="text/css" href="./scripts/inspector.css">
 
 
@@ -23,8 +24,8 @@ const main = runtime.module(define, Inspector.into(document.getElementById('char
 </script>
 
 
-<body>
 
+<body>
 
 ## Hiring Over Time
 
